@@ -95,7 +95,7 @@ export function HomePage() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: "url('/hero-bg.jpg'), url('/hero-bg.svg')",
+            backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.jpg')`,
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/90" />
@@ -163,9 +163,9 @@ export function HomePage() {
               transition={{ duration: 0.6 }}
             >
               <img
-                src="/president.jpg"
+                src={`${import.meta.env.BASE_URL}president.jpg`}
                 onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).src = "/president-photo.svg";
+                  (e.currentTarget as HTMLImageElement).src = `${import.meta.env.BASE_URL}president-photo.svg`;
                 }}
                 alt="Martins Imabeh - President"
                 className="rounded-lg shadow-2xl w-full object-cover aspect-[4/5]"

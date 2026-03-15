@@ -64,7 +64,7 @@ export function MediaHubPage() {
       <section className="relative py-20 md:py-32 text-white overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/hero-bg.jpg'), url('/hero-bg.svg')" }}
+          style={{ backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.jpg')` }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/90" />
         </div>

@@ -29,10 +29,10 @@ export function Header() {
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center space-x-3">
             <img
-              src="/pegasus-logo.jpg"
+              src={`${import.meta.env.BASE_URL}pegasus-logo.jpg`}
               alt="Pegasus Football Academy Logo"
               onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = "/pegasus-logo.svg";
+                (e.currentTarget as HTMLImageElement).src = `${import.meta.env.BASE_URL}pegasus-logo.svg`;
               }}
               className="w-12 h-12 object-contain"
             />
