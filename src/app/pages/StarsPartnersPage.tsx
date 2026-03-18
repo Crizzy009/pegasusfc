@@ -1,17 +1,33 @@
 import { Card } from "../components/ui/card";
 import { Star, Handshake, Award } from "lucide-react";
 import { motion } from "motion/react";
+import { usePublicContent } from "../content/useContent";
+import type { Partner as PartnerType, Star as StarType } from "../content/types";
 
 export function StarsPartnersPage() {
+  const { data: starsData } = usePublicContent<StarType>("star");
+  const { data: partnersData } = usePublicContent<PartnerType>("partner");
+  const placeholderPhotoUrl = `${import.meta.env.BASE_URL}placeholders/photo.svg`;
+
   const stars = [
     {
       name: "Guest Star Visits",
       achievement: "Nigerian Football Legend",
       quote: "Pegasus is doing great work in developing young talent in Lagos. Keep up the excellent work!",
-      image: "https://images.unsplash.com/photo-1580712700519-d5d7f84c2cfd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwZm9vdGJhbGwlMjBzdGFyJTIwY2VsZWJyYXRpbmd8ZW58MXx8fHwxNzcxNTEyMjE1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      image: placeholderPhotoUrl,
       visitDate: "2024",
     },
   ];
+
+  const starItems = starsData.length
+    ? starsData.map((s) => ({
+        name: s.name,
+        achievement: s.achievement,
+        quote: s.quote,
+        image: s.image.url,
+        visitDate: s.visitDate,
+      }))
+    : stars;
 
   return (
     <div>
@@ -50,7 +66,7 @@ export function StarsPartnersPage() {
             </p>
           </div>
           <div className="max-w-4xl mx-auto space-y-8">
-            {stars.map((star, index) => (
+            {starItems.map((star, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
@@ -110,23 +126,36 @@ export function StarsPartnersPage() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              {
-                icon: "🏫",
-                title: "Local Schools",
-                description: "Partnerships with schools in Badore, Ajah, and Lekki for talent identification",
-              },
-              {
-                icon: "⚽",
-                title: "Sports Equipment Providers",
-                description: "Quality training equipment and gear for our players",
-              },
-              {
-                icon: "🏥",
-                title: "Medical Partners",
-                description: "Healthcare support and fitness assessments for player safety",
-              },
-            ].map((partner, index) => (
+            {(partnersData.length
+              ? partnersData
+              : [
+                  {
+                    name: "Local Schools",
+                    tier: "community",
+                    descriptionHtml:
+                      "Partnerships with schools in Badore, Ajah, and Lekki for talent identification",
+                    logo: { url: "", alt: "Local Schools", caption: "" },
+                    websiteUrl: "",
+                    order: 10,
+                  },
+                  {
+                    name: "Sports Equipment Providers",
+                    tier: "community",
+                    descriptionHtml: "Quality training equipment and gear for our players",
+                    logo: { url: "", alt: "Equipment Providers", caption: "" },
+                    websiteUrl: "",
+                    order: 20,
+                  },
+                  {
+                    name: "Medical Partners",
+                    tier: "community",
+                    descriptionHtml: "Healthcare support and fitness assessments for player safety",
+                    logo: { url: "", alt: "Medical Partners", caption: "" },
+                    websiteUrl: "",
+                    order: 30,
+                  },
+                ]
+            ).map((partner: any, index: number) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
@@ -134,9 +163,20 @@ export function StarsPartnersPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className="p-8 text-center h-full shadow-lg hover:shadow-xl transition-shadow">
-                  <div className="text-5xl mb-4">{partner.icon}</div>
-                  <h3 className="text-xl font-bold mb-3 text-secondary">{partner.title}</h3>
-                  <p className="text-gray-600">{partner.description}</p>
+                  {partner.logo?.url ? (
+                    <img
+                      src={partner.logo.url}
+                      alt={partner.logo.alt || partner.name}
+                      className="h-14 w-auto mx-auto mb-4 object-contain"
+                    />
+                  ) : (
+                    <div className="text-5xl mb-4">🤝</div>
+                  )}
+                  <h3 className="text-xl font-bold mb-3 text-secondary">{partner.name}</h3>
+                  <div
+                    className="text-gray-600 text-sm"
+                    dangerouslySetInnerHTML={{ __html: partner.descriptionHtml }}
+                  />
                 </Card>
               </motion.div>
             ))}

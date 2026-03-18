@@ -1,8 +1,13 @@
 import { Card } from "../components/ui/card";
 import { Target, Eye, Heart, Award, Users, TrendingUp } from "lucide-react";
 import { motion } from "motion/react";
+import { usePublicContent } from "../content/useContent";
+import type { Facility } from "../content/types";
 
 export function AboutPage() {
+  const { data: facilitiesData } = usePublicContent<Facility>("facility");
+  const placeholderPhotoUrl = `${import.meta.env.BASE_URL}placeholders/photo.svg`;
+
   const timeline = [
     {
       year: "2023",
@@ -257,32 +262,59 @@ export function AboutPage() {
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <Card className="overflow-hidden shadow-lg">
-              <img
-                src="https://images.unsplash.com/photo-1651043421470-88b023bb9636?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb290YmFsbCUyMHBpdGNoJTIwYWVyaWFsJTIwdmlld3xlbnwxfHx8fDE3NzE0NTM0Nzl8MA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Training Pitch"
-                className="w-full aspect-video object-cover"
-              />
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-secondary">Training Pitch</h3>
-                <p className="text-gray-600">
-                  Quality grass pitch with proper markings and goals for authentic match experience
-                </p>
-              </div>
-            </Card>
-            <Card className="overflow-hidden shadow-lg">
-              <img
-                src="https://images.unsplash.com/photo-1623596146585-29891bcf8e4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb290YmFsbCUyMHRyYWluaW5nJTIwZXF1aXBtZW50JTIwZmllbGR8ZW58MXx8fHwxNzcxNTEyMDM2fDA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Training Equipment"
-                className="w-full aspect-video object-cover"
-              />
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2 text-secondary">Modern Equipment</h3>
-                <p className="text-gray-600">
-                  Professional-grade training equipment including cones, bibs, and balls
-                </p>
-              </div>
-            </Card>
+            {(facilitiesData.length
+              ? facilitiesData
+              : [
+                  {
+                    name: "Training Pitch",
+                    descriptionHtml: "Quality grass pitch with proper markings and goals for authentic match experience",
+                    amenities: [],
+                    images: [
+                      {
+                        url: placeholderPhotoUrl,
+                        alt: "Training Pitch",
+                        caption: "",
+                      },
+                    ],
+                    order: 10,
+                  },
+                  {
+                    name: "Modern Equipment",
+                    descriptionHtml: "Professional-grade training equipment including cones, bibs, and balls",
+                    amenities: [],
+                    images: [
+                      {
+                        url: placeholderPhotoUrl,
+                        alt: "Training Equipment",
+                        caption: "",
+                      },
+                    ],
+                    order: 20,
+                  },
+                ]
+            ).map((facility, index) => (
+              <Card key={index} className="overflow-hidden shadow-lg">
+                <img
+                  src={facility.images?.[0]?.url}
+                  alt={facility.images?.[0]?.alt || facility.name}
+                  className="w-full aspect-video object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2 text-secondary">{facility.name}</h3>
+                  <div className="text-gray-600" dangerouslySetInnerHTML={{ __html: facility.descriptionHtml }} />
+                  {facility.amenities?.length ? (
+                    <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-700">
+                      {facility.amenities.map((a, i) => (
+                        <li key={i} className="flex items-center gap-2">
+                          <span className="w-2 h-2 bg-primary rounded-full" />
+                          {a}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
+              </Card>
+            ))}
           </div>
         </div>
       </section>

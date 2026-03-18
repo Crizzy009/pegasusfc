@@ -5,18 +5,109 @@ import * as TabsPrimitive from "@radix-ui/react-tabs";
 
 import { cn } from "./utils";
 
-function Tabs({
-  className,
-  ...props
-}: React.ComponentProps<typeof TabsPrimitive.Root>) {
-  return (
-    <TabsPrimitive.Root
-      data-slot="tabs"
-      className={cn("flex flex-col gap-2", className)}
-      {...props}
-    />
-  );
+type TabsProps = React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root> & {
+  scrollToTopOnValueChange?: boolean;
+  scrollBehavior?: "auto" | "smooth";
+};
+
+function getScrollContainer(el: HTMLElement | null): HTMLElement | Window {
+  let cur: HTMLElement | null = el;
+  while (cur && cur !== document.body) {
+    const style = window.getComputedStyle(cur);
+    const oy = style.overflowY;
+    const canScroll = (oy === "auto" || oy === "scroll" || oy === "overlay") && cur.scrollHeight > cur.clientHeight;
+    if (canScroll) return cur;
+    cur = cur.parentElement;
+  }
+  return window;
 }
+
+function findScrollableDescendant(root: HTMLElement | null): HTMLElement | null {
+  if (!root) return null;
+  const isScrollable = (el: HTMLElement) => {
+    const style = window.getComputedStyle(el);
+    const oy = style.overflowY;
+    return (oy === "auto" || oy === "scroll" || oy === "overlay") && el.scrollHeight > el.clientHeight;
+  };
+
+  if (isScrollable(root)) return root;
+
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+  let n = walker.nextNode() as HTMLElement | null;
+  while (n) {
+    if (n instanceof HTMLElement && isScrollable(n)) return n;
+    n = walker.nextNode() as HTMLElement | null;
+  }
+  return null;
+}
+
+function scrollToTop(target: HTMLElement | Window, behavior: "auto" | "smooth") {
+  if (target === window) {
+    window.scrollTo({ top: 0, behavior });
+    return;
+  }
+  target.scrollTo({ top: 0, behavior });
+  target.scrollTop = 0;
+}
+
+const Tabs = React.forwardRef<React.ElementRef<typeof TabsPrimitive.Root>, TabsProps>(
+  ({ className, onValueChange, scrollToTopOnValueChange = true, scrollBehavior, ...props }, ref) => {
+    const localRef = React.useRef<React.ElementRef<typeof TabsPrimitive.Root> | null>(null);
+
+    const setRef = React.useCallback(
+      (node: React.ElementRef<typeof TabsPrimitive.Root> | null) => {
+        localRef.current = node;
+        if (!ref) return;
+        if (typeof ref === "function") ref(node);
+        else (ref as React.MutableRefObject<React.ElementRef<typeof TabsPrimitive.Root> | null>).current = node;
+      },
+      [ref]
+    );
+
+    const reducedMotion =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const behavior = scrollBehavior ?? (reducedMotion ? "auto" : "smooth");
+
+    const handleValueChange = React.useCallback(
+      (value: string) => {
+        onValueChange?.(value);
+        if (!scrollToTopOnValueChange) return;
+        const rootEl = localRef.current as unknown as HTMLElement | null;
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const activeContent = rootEl?.querySelector(
+              "[data-radix-tabs-content][data-state='active'],[data-slot='tabs-content'][data-state='active']"
+            ) as HTMLElement | null;
+
+            const innerScroll = findScrollableDescendant(activeContent);
+            if (innerScroll) {
+              scrollToTop(innerScroll, behavior);
+              return;
+            }
+
+            const outer = getScrollContainer(rootEl);
+            scrollToTop(outer, behavior);
+          });
+        });
+      },
+      [behavior, onValueChange, scrollToTopOnValueChange]
+    );
+
+    return (
+      <TabsPrimitive.Root
+        ref={setRef}
+        data-slot="tabs"
+        className={cn("flex flex-col gap-2", className)}
+        onValueChange={handleValueChange}
+        {...props}
+      />
+    );
+  }
+);
+Tabs.displayName = "Tabs";
 
 function TabsList({
   className,

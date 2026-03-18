@@ -2,36 +2,43 @@ import { Card } from "../components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Calendar, Eye } from "lucide-react";
 import { motion } from "motion/react";
+import { usePublicContent } from "../content/useContent";
+import type { MediaPhoto, NewsPost } from "../content/types";
 
 export function MediaHubPage() {
+  const { data: photosData } = usePublicContent<MediaPhoto>("mediaPhoto");
+  const { data: newsData } = usePublicContent<NewsPost>("newsPost");
+
+  const placeholderPhotoUrl = `${import.meta.env.BASE_URL}placeholders/photo.svg`;
+
   const photos = [
     {
-      src: "https://images.unsplash.com/photo-1731673092066-cff4ea887d57?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxraWRzJTIwc29jY2VyJTIwcHJhY3RpY2UlMjBkcmlsbHN8ZW58MXx8fHwxNzcxNTEyMDM2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      src: placeholderPhotoUrl,
       category: "Training",
       title: "Saturday Skills Session",
     },
     {
-      src: "https://images.unsplash.com/photo-1764438344341-d4700ad674f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb2NjZXIlMjBnb2FsJTIwY2VsZWJyYXRpb24lMjB0ZWFtfGVufDF8fHx8MTc3MTUxMjAzNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      src: placeholderPhotoUrl,
       category: "Match",
       title: "U10 Championship Celebration",
     },
     {
-      src: "https://images.unsplash.com/photo-1762053275412-03726506562a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb2NjZXIlMjBjb2FjaGluZyUyMHNlc3Npb24lMjB5b3V0aHxlbnwxfHx8fDE3NzE1MTIwOTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      src: placeholderPhotoUrl,
       category: "Training",
       title: "Coaching Masterclass",
     },
     {
-      src: "https://images.unsplash.com/photo-1762013315117-1c8005ad2b41?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb290YmFsbCUyMG1hdGNoJTIwYWN0aW9uJTIwc3RhZGl1bXxlbnwxfHx8fDE3NzE1MTIyMTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      src: placeholderPhotoUrl,
       category: "Match",
       title: "Match Day Action",
     },
     {
-      src: "https://images.unsplash.com/photo-1770237711414-e91a21755b4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3V0aCUyMHNvY2NlciUyMHRyYWluaW5nJTIwYWN0aW9ufGVufDF8fHx8MTc3MTUxMjAzNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      src: placeholderPhotoUrl,
       category: "Training",
       title: "Youth Development Program",
     },
     {
-      src: "https://images.unsplash.com/photo-1764438246710-83c535cada80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb2NjZXIlMjB0ZWFtJTIwZ3JvdXAlMjBwaG90b3xlbnwxfHx8fDE3NzE0NTEwMTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      src: placeholderPhotoUrl,
       category: "Events",
       title: "Team Photo Day",
     },
@@ -42,21 +49,38 @@ export function MediaHubPage() {
       date: "Feb 15, 2026",
       title: "U10 Squad Wins Badore Community Cup",
       excerpt: "In an exciting final, our U10 team secured a 3-1 victory to claim the championship trophy.",
-      image: "https://images.unsplash.com/photo-1764408721535-2dcb912db83e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cm9waHklMjBmb290YmFsbCUyMGNoYW1waW9uc2hpcHxlbnwxfHx8fDE3NzE1MTIyMTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      image: placeholderPhotoUrl,
     },
     {
       date: "Feb 10, 2026",
       title: "Registration Open for New Term",
       excerpt: "We're accepting new registrations for all age categories. Limited spaces available!",
-      image: "https://images.unsplash.com/photo-1623596146585-29891bcf8e4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb290YmFsbCUyMHRyYWluaW5nJTIwZXF1aXBtZW50JTIwZmllbGR8ZW58MXx8fHwxNzcxNTEyMDM2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      image: placeholderPhotoUrl,
     },
     {
       date: "Jan 28, 2026",
       title: "5 Players Selected for State Trials",
       excerpt: "Congratulations to our talented athletes chosen to represent Lagos State at U15 level.",
-      image: "https://images.unsplash.com/photo-1769383924825-44706af97281?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMHNvY2NlciUyMHBsYXllciUyMGFjdGlvbiUyMHNob3R8ZW58MXx8fHwxNzcxNTEyMjEzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      image: placeholderPhotoUrl,
     },
   ];
+
+  const photoItems = photosData.length
+    ? photosData.map((p) => ({
+        src: p.image.mediumUrl || p.image.largeUrl || p.image.originalUrl,
+        category: p.category,
+        title: p.title,
+      }))
+    : photos;
+
+  const newsItems = newsData.length
+    ? newsData.map((n) => ({
+        date: n.date,
+        title: n.title,
+        excerpt: n.excerpt,
+        image: n.image.url,
+      }))
+    : news;
 
   return (
     <div>
@@ -93,7 +117,7 @@ export function MediaHubPage() {
 
             <TabsContent value="photos" className="space-y-8">
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {photos.map((photo, index) => (
+                {photoItems.map((photo, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -123,7 +147,7 @@ export function MediaHubPage() {
 
             <TabsContent value="news" className="space-y-8">
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {news.map((article, index) => (
+                {newsItems.map((article, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, y: 30 }}
@@ -169,7 +193,7 @@ export function MediaHubPage() {
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="p-8 text-center shadow-lg">
+            <Card className="p-8 text-center shadow-lg h-full flex flex-col">
               <div className="text-5xl mb-4">📘</div>
               <h3 className="text-2xl font-bold mb-4 text-secondary">Facebook</h3>
               <p className="text-gray-600 mb-6">
@@ -179,12 +203,12 @@ export function MediaHubPage() {
                 href="https://facebook.com/share/1ZmkJ86wXN"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition"
+                className="inline-block bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition mt-auto"
               >
                 Follow on Facebook
               </a>
             </Card>
-            <Card className="p-8 text-center shadow-lg">
+            <Card className="p-8 text-center shadow-lg h-full flex flex-col">
               <div className="text-5xl mb-4">🎵</div>
               <h3 className="text-2xl font-bold mb-4 text-secondary">TikTok</h3>
               <p className="text-gray-600 mb-6">
@@ -194,9 +218,39 @@ export function MediaHubPage() {
                 href="https://www.tiktok.com/@pegasus_football_academy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block bg-secondary text-white px-6 py-3 rounded-lg font-semibold hover:bg-secondary/90 transition"
+                className="inline-block bg-secondary text-white px-6 py-3 rounded-lg font-semibold hover:bg-secondary/90 transition mt-auto"
               >
                 Follow on TikTok
+              </a>
+            </Card>
+            <Card className="p-8 text-center shadow-lg h-full flex flex-col">
+              <div className="text-5xl mb-4">📸</div>
+              <h3 className="text-2xl font-bold mb-4 text-secondary">Instagram</h3>
+              <p className="text-gray-600 mb-6">
+                Behind-the-scenes photos, training highlights, and academy moments
+              </p>
+              <a
+                href="https://www.instagram.com/pegasus_football_academy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition mt-auto"
+              >
+                Follow on Instagram
+              </a>
+            </Card>
+            <Card className="p-8 text-center shadow-lg h-full flex flex-col">
+              <div className="text-5xl mb-4">▶️</div>
+              <h3 className="text-2xl font-bold mb-4 text-secondary">YouTube</h3>
+              <p className="text-gray-600 mb-6">
+                Watch match clips, training sessions, and player development content
+              </p>
+              <a
+                href="https://www.youtube.com/@PegasuscfAcademy-om9wh"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-secondary text-white px-6 py-3 rounded-lg font-semibold hover:bg-secondary/90 transition mt-auto"
+              >
+                Subscribe on YouTube
               </a>
             </Card>
           </div>

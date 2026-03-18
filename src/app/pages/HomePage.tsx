@@ -3,8 +3,15 @@ import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 import { Trophy, Users, MapPin, GraduationCap, Target, Heart, Award, Calendar } from "lucide-react";
 import { motion } from "motion/react";
+import { usePublicContent } from "../content/useContent";
+import type { HomeHighlight, HomeTeam } from "../content/types";
 
 export function HomePage() {
+  const { data: homeTeams } = usePublicContent<HomeTeam>("homeTeam");
+  const { data: homeHighlights } = usePublicContent<HomeHighlight>("homeHighlight");
+
+  const placeholderPhotoUrl = `${import.meta.env.BASE_URL}placeholders/photo.svg`;
+
   const stats = [
     { label: "Players Trained", value: "150+", icon: Users },
     { label: "Age Categories", value: "6 Teams", icon: Trophy },
@@ -47,6 +54,30 @@ export function HomePage() {
     },
   ];
 
+  const programCards = (homeTeams.length ? homeTeams : programs.map((p) => ({
+    title: p.title,
+    subtitle: p.subtitle,
+    ages: p.ages,
+    focus: p.focus,
+    time: p.time,
+    days: "Friday & Saturday",
+    trainerName: "",
+    trainerTitle: "",
+    trainerPhotoUrl: "",
+    order: 0,
+  }))).map((p, index) => {
+    const colors = [
+      "from-orange-400 to-orange-600",
+      "from-orange-500 to-orange-700",
+      "from-orange-600 to-orange-800",
+      "from-orange-700 to-orange-900",
+    ];
+    return {
+      ...p,
+      color: colors[index % colors.length],
+    };
+  });
+
   const features = [
     {
       icon: Trophy,
@@ -74,19 +105,23 @@ export function HomePage() {
     {
       title: "U10 Champions",
       description: "Badore Community Cup Winners 2025",
-      image: "https://images.unsplash.com/photo-1764438344341-d4700ad674f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb2NjZXIlMjBnb2FsJTIwY2VsZWJyYXRpb24lMjB0ZWFtfGVufDF8fHx8MTc3MTUxMjAzNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      image: placeholderPhotoUrl,
     },
     {
       title: "200+ Active Players",
       description: "Growing community across all age groups",
-      image: "https://images.unsplash.com/photo-1731673092066-cff4ea887d57?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxraWRzJTIwc29jY2VyJTIwcHJhY3RpY2UlMjBkcmlsbHN8ZW58MXx8fHwxNzcxNTEyMDM2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      image: placeholderPhotoUrl,
     },
     {
       title: "Lagos State Trials",
       description: "5 players selected for U15 trials",
-      image: "https://images.unsplash.com/photo-1770237711414-e91a21755b4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3V0aCUyMHNvY2NlciUyMHRyYWluaW5nJTIwYWN0aW9ufGVufDF8fHx8MTc3MTUxMjAzNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      image: placeholderPhotoUrl,
     },
   ];
+
+  const highlightCards = homeHighlights.length
+    ? homeHighlights.map((h) => ({ title: h.title, description: h.description, image: h.image.url }))
+    : highlights;
 
   return (
     <div>
@@ -123,7 +158,7 @@ export function HomePage() {
                 </Button>
               </Link>
               <Link to="/recruitment">
-                <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2 border-white text-white hover:bg-white hover:text-black">
+                <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2 border-white text-white bg-transparent hover:bg-white hover:text-black">
                   Book a Trial
                 </Button>
               </Link>
@@ -209,7 +244,7 @@ export function HomePage() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {programs.map((program, index) => (
+            {programCards.map((program, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
@@ -283,7 +318,7 @@ export function HomePage() {
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {highlights.map((highlight, index) => (
+            {highlightCards.map((highlight, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
@@ -339,7 +374,7 @@ export function HomePage() {
                 </Button>
               </Link>
               <Link to="/contact">
-                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-primary px-8 py-6 text-lg">
+                <Button size="lg" variant="outline" className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-primary px-8 py-6 text-lg">
                   Contact Us
                 </Button>
               </Link>

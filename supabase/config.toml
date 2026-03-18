@@ -1,0 +1,7 @@
+project_id = "foqpycpsivjnborxqkhb"
+
+[functions.players]
+verify_jwt = false
+
+[functions.upload]
+verify_jwt = false

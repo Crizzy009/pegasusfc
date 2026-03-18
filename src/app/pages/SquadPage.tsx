@@ -5,8 +5,13 @@ import { Input } from "../components/ui/input";
 import { Badge } from "../components/ui/badge";
 import { motion } from "motion/react";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { usePublicContent } from "../content/useContent";
+import type { Player, SquadStarPlayers } from "../content/types";
 
 export function SquadPage() {
+  const { data: playersData } = usePublicContent<Player>("player");
+  const { data: starPlayersData } = usePublicContent<SquadStarPlayers>("squadStarPlayers");
+
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -28,10 +33,10 @@ export function SquadPage() {
     { id: "u14-u16", label: "U14-U16" },
   ];
 
-  // Mock player data
-  const players = [
+  const placeholderPlayerPhotoUrl = `${import.meta.env.BASE_URL}placeholders/player.svg`;
+
+  const defaultPlayers: Player[] = [
     {
-      id: 1,
       name: "David Okafor",
       jersey: 10,
       position: "Forward",
@@ -39,10 +44,13 @@ export function SquadPage() {
       category: "u14-u16",
       height: "5'8\"",
       goals: 12,
-      image: "https://images.unsplash.com/photo-1769383924825-44706af97281?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMHNvY2NlciUyMHBsYXllciUyMGFjdGlvbiUyMHNob3R8ZW58MXx8fHwxNzcxNTEyMjEzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      photo: {
+        url: placeholderPlayerPhotoUrl,
+        alt: "David Okafor",
+        caption: "",
+      },
     },
     {
-      id: 2,
       name: "Emmanuel Adebayo",
       jersey: 7,
       position: "Midfielder",
@@ -50,10 +58,13 @@ export function SquadPage() {
       category: "u14-u16",
       height: "5'7\"",
       goals: 8,
-      image: "https://images.unsplash.com/photo-1770237711414-e91a21755b4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3V0aCUyMHNvY2NlciUyMHRyYWluaW5nJTIwYWN0aW9ufGVufDF8fHx8MTc3MTUxMjAzNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      photo: {
+        url: placeholderPlayerPhotoUrl,
+        alt: "Emmanuel Adebayo",
+        caption: "",
+      },
     },
     {
-      id: 3,
       name: "Samuel Nwankwo",
       jersey: 1,
       position: "Goalkeeper",
@@ -61,10 +72,13 @@ export function SquadPage() {
       category: "u11-u13",
       height: "5'5\"",
       goals: 0,
-      image: "https://images.unsplash.com/photo-1762013315117-1c8005ad2b41?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb290YmFsbCUyMG1hdGNoJTIwYWN0aW9uJTIwc3RhZGl1bXxlbnwxfHx8fDE3NzE1MTIyMTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      photo: {
+        url: placeholderPlayerPhotoUrl,
+        alt: "Samuel Nwankwo",
+        caption: "",
+      },
     },
     {
-      id: 4,
       name: "Chukwuemeka Eze",
       jersey: 5,
       position: "Defender",
@@ -72,10 +86,13 @@ export function SquadPage() {
       category: "u11-u13",
       height: "5'4\"",
       goals: 3,
-      image: "https://images.unsplash.com/photo-1731673092066-cff4ea887d57?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxraWRzJTIwc29jY2VyJTIwcHJhY3RpY2UlMjBkcmlsbHN8ZW58MXx8fHwxNzcxNTEyMDM2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      photo: {
+        url: placeholderPlayerPhotoUrl,
+        alt: "Chukwuemeka Eze",
+        caption: "",
+      },
     },
     {
-      id: 5,
       name: "Joseph Musa",
       jersey: 9,
       position: "Forward",
@@ -83,10 +100,13 @@ export function SquadPage() {
       category: "u10",
       height: "4'9\"",
       goals: 15,
-      image: "https://images.unsplash.com/photo-1764438344341-d4700ad674f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb2NjZXIlMjBnb2FsJTIwY2VsZWJyYXRpb24lMjB0ZWFtfGVufDF8fHx8MTc3MTUxMjAzNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      photo: {
+        url: placeholderPlayerPhotoUrl,
+        alt: "Joseph Musa",
+        caption: "",
+      },
     },
     {
-      id: 6,
       name: "Tobenna Okeke",
       jersey: 11,
       position: "Midfielder",
@@ -94,14 +114,21 @@ export function SquadPage() {
       category: "u7-u9",
       height: "4'5\"",
       goals: 5,
-      image: "https://images.unsplash.com/photo-1762053275412-03726506562a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb2NjZXIlMjBjb2FjaGluZyUyMHNlc3Npb24lMjB5b3V0aHxlbnwxfHx8fDE3NzE1MTIwOTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      photo: {
+        url: placeholderPlayerPhotoUrl,
+        alt: "Tobenna Okeke",
+        caption: "",
+      },
     },
   ];
 
+  const players = playersData.length ? playersData : defaultPlayers;
+
   const filteredPlayers = players.filter((player) => {
     const matchesCategory = selectedCategory === "all" || player.category === selectedCategory;
-    const matchesSearch = player.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         player.jersey.toString().includes(searchQuery);
+    const matchesSearch =
+      player.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      player.jersey.toString().includes(searchQuery);
     return matchesCategory && matchesSearch;
   });
 
@@ -243,8 +270,14 @@ export function SquadPage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative py-20 md:py-32 bg-gradient-to-br from-secondary to-secondary/90 text-white">
-        <div className="container mx-auto px-4">
+      <section className="relative py-20 md:py-32 text-white overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.jpg')` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/90" />
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -255,6 +288,52 @@ export function SquadPage() {
               Meet the talented players of Pegasus Football Academy
             </p>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Star Players */}
+      <section className="py-16 md:py-24 bg-muted">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-secondary">Star Players</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Recognizing outstanding performance and dedication
+            </p>
+          </div>
+          {(() => {
+            const s =
+              starPlayersData[0] ??
+              ({
+                topScorerName: "Joseph Musa",
+                topScorerDetail: "15 goals - U10",
+                mostImprovedName: "Tobenna Okeke",
+                mostImprovedDetail: "U7-U9 Category",
+                bestGoalkeeperName: "Samuel Nwankwo",
+                bestGoalkeeperDetail: "10 clean sheets",
+              } as SquadStarPlayers);
+            return (
+              <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <Card className="p-6 text-center shadow-lg">
+                  <div className="text-5xl mb-2">🏆</div>
+                  <h3 className="text-xl font-bold mb-2 text-secondary">Top Scorer</h3>
+                  <p className="text-lg font-semibold text-primary">{s.topScorerName}</p>
+                  <p className="text-sm text-gray-600">{s.topScorerDetail}</p>
+                </Card>
+                <Card className="p-6 text-center shadow-lg">
+                  <div className="text-5xl mb-2">⭐</div>
+                  <h3 className="text-xl font-bold mb-2 text-secondary">Most Improved</h3>
+                  <p className="text-lg font-semibold text-primary">{s.mostImprovedName}</p>
+                  <p className="text-sm text-gray-600">{s.mostImprovedDetail}</p>
+                </Card>
+                <Card className="p-6 text-center shadow-lg">
+                  <div className="text-5xl mb-2">🧤</div>
+                  <h3 className="text-xl font-bold mb-2 text-secondary">Best Goalkeeper</h3>
+                  <p className="text-lg font-semibold text-primary">{s.bestGoalkeeperName}</p>
+                  <p className="text-sm text-gray-600">{s.bestGoalkeeperDetail}</p>
+                </Card>
+              </div>
+            );
+          })()}
         </div>
       </section>
 
@@ -314,14 +393,14 @@ export function SquadPage() {
                 <div className="absolute inset-0">
                   {filteredPlayers.map((player, i) => (
                     <div
-                      key={player.id}
+                      key={`${player.name}-${player.jersey}`}
                       className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
                       style={getCardStyle(i)}
                     >
                       <Card className="overflow-hidden rounded-[30px] bg-white">
                         <div className="relative aspect-[3/4] overflow-hidden">
                           <img
-                            src={player.image}
+                            src={player.photo.url}
                             alt={player.name}
                             className="w-full h-full object-cover"
                             style={{ willChange: "transform" }}
@@ -387,7 +466,7 @@ export function SquadPage() {
             <div className="hidden md:grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredPlayers.map((player, index) => (
                 <motion.div
-                  key={player.id}
+                  key={`${player.name}-${player.jersey}`}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
@@ -396,7 +475,7 @@ export function SquadPage() {
                   <Card className="overflow-hidden rounded-[30px] shadow-lg hover:shadow-2xl transition-shadow cursor-pointer">
                     <div className="relative aspect-[3/4] overflow-hidden">
                       <img
-                        src={player.image}
+                        src={player.photo.url}
                         alt={player.name}
                         className="w-full h-full object-cover transition-transform hover:scale-110 duration-500"
                       />
@@ -429,38 +508,6 @@ export function SquadPage() {
               ))}
             </div>
           )}
-        </div>
-      </section>
-
-      {/* Star Players */}
-      <section className="py-16 md:py-24 bg-muted">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-secondary">Star Players</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Recognizing outstanding performance and dedication
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <Card className="p-6 text-center shadow-lg">
-              <div className="text-5xl mb-2">🏆</div>
-              <h3 className="text-xl font-bold mb-2 text-secondary">Top Scorer</h3>
-              <p className="text-lg font-semibold text-primary">Joseph Musa</p>
-              <p className="text-sm text-gray-600">15 goals - U10</p>
-            </Card>
-            <Card className="p-6 text-center shadow-lg">
-              <div className="text-5xl mb-2">⭐</div>
-              <h3 className="text-xl font-bold mb-2 text-secondary">Most Improved</h3>
-              <p className="text-lg font-semibold text-primary">Tobenna Okeke</p>
-              <p className="text-sm text-gray-600">U7-U9 Category</p>
-            </Card>
-            <Card className="p-6 text-center shadow-lg">
-              <div className="text-5xl mb-2">🧤</div>
-              <h3 className="text-xl font-bold mb-2 text-secondary">Best Goalkeeper</h3>
-              <p className="text-lg font-semibold text-primary">Samuel Nwankwo</p>
-              <p className="text-sm text-gray-600">10 clean sheets</p>
-            </Card>
-          </div>
         </div>
       </section>
     </div>

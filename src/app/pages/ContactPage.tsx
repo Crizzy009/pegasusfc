@@ -7,6 +7,8 @@ import { Textarea } from "../components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { MapPin, Phone, Mail, Clock, Facebook } from "lucide-react";
 import { motion } from "motion/react";
+import type { ContactMessage } from "../content/types";
+import { createPublicContactMessage } from "../content/api";
 
 export function ContactPage() {
   const [formData, setFormData] = useState({
@@ -16,12 +18,32 @@ export function ContactPage() {
     subject: "",
     message: "",
   });
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(
-      `Message Sent!\n\nThank you ${formData.name}!\n\nWe've received your message and will respond within 24 hours via email or WhatsApp.`
-    );
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      const payload: ContactMessage = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || "",
+        subject: formData.subject,
+        message: formData.message,
+        status: "new",
+        notes: "",
+      };
+      await createPublicContactMessage(payload);
+      alert(
+        `Message Sent!\n\nThank you ${formData.name}!\n\nWe've received your message and will respond within 24 hours via email or WhatsApp.`
+      );
+    } catch (err: any) {
+      alert(err?.message ?? "Failed to send message");
+      return;
+    } finally {
+      setSubmitting(false);
+    }
     setFormData({
       name: "",
       email: "",
@@ -185,7 +207,7 @@ export function ContactPage() {
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     />
                   </div>
-                  <Button type="submit" className="w-full bg-primary hover:bg-primary/90" size="lg">
+                  <Button type="submit" className="w-full bg-primary hover:bg-primary/90" size="lg" disabled={submitting}>
                     Send Message
                   </Button>
                 </form>

@@ -7,15 +7,22 @@ import { Textarea } from "../components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Calendar, Clock, MapPin, Users, Target, TrendingUp, Award, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "motion/react";
+import { usePublicContent } from "../content/useContent";
+import type { Program, Registration } from "../content/types";
+import { createPublicRegistration } from "../content/api";
 
 export function ProgramsPage() {
-  const [selectedProgram, setSelectedProgram] = useState<string | null>(null);
+  const { data: programsData } = usePublicContent<Program>("program");
+
+  const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const cardWidthRef = useRef(280);
   const [containerHeight, setContainerHeight] = useState(640);
   const maxCardHRef = useRef(520);
+  const registrationRef = useRef<HTMLDivElement | null>(null);
   const draggingRef = useRef(false);
   const startXRef = useRef(0);
   const startProgressRef = useRef(0);
@@ -36,9 +43,8 @@ export function ProgramsPage() {
     emergencyContact: "",
   });
 
-  const programs = [
+  const defaultPrograms: Program[] = [
     {
-      id: "u7-u9",
       title: "U7 & U9",
       subtitle: "Foundation Program",
       ages: "6-9 years",
@@ -57,7 +63,6 @@ export function ProgramsPage() {
       ],
     },
     {
-      id: "u10",
       title: "U10",
       subtitle: "Development Squad",
       ages: "10 years",
@@ -76,7 +81,6 @@ export function ProgramsPage() {
       ],
     },
     {
-      id: "u11-u13",
       title: "U11-U13",
       subtitle: "Junior Academy",
       ages: "11-13 years",
@@ -95,7 +99,6 @@ export function ProgramsPage() {
       ],
     },
     {
-      id: "u14-u16",
       title: "U14-U16",
       subtitle: "Youth Elite",
       ages: "14-16 years",
@@ -115,36 +118,90 @@ export function ProgramsPage() {
     },
   ];
 
+  const programs: Array<Program & { color?: string }> = (programsData.length ? programsData : defaultPrograms).map(
+    (p, index) => {
+      const colors = [
+        "from-orange-400 to-orange-600",
+        "from-orange-500 to-orange-700",
+        "from-orange-600 to-orange-800",
+        "from-orange-700 to-orange-900",
+      ];
+      return { ...p, color: (p as any).color || colors[index % colors.length] };
+    }
+  );
+
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would send data to a server
-    const pegasusId = `PEG-2025-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
-    alert(`Registration Successful!\n\nYour Pegasus ID: ${pegasusId}\n\nYou will receive a confirmation via WhatsApp and email shortly.\n\nSee you on the pitch!`);
-    setSelectedProgram(null);
-    setFormData({
-      playerName: "",
-      dateOfBirth: "",
-      gender: "",
-      address: "",
-      school: "",
-      position: "",
-      experience: "",
-      medicalConditions: "",
-      guardianName: "",
-      phone: "",
-      email: "",
-      emergencyContact: "",
-    });
+  };
+
+  const submitRegistration = async () => {
+    if (!selectedProgram) return;
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      const payload: Registration = {
+        programTitle: selectedProgram.title,
+        playerName: formData.playerName,
+        dateOfBirth: formData.dateOfBirth,
+        gender: formData.gender,
+        address: formData.address,
+        school: formData.school || "",
+        position: formData.position || "",
+        experience: formData.experience || "",
+        medicalConditions: formData.medicalConditions || "",
+        guardianName: formData.guardianName,
+        phone: formData.phone,
+        email: formData.email,
+        emergencyContact: formData.emergencyContact,
+        status: "new",
+        notes: "",
+      };
+      await createPublicRegistration(payload);
+      alert(
+        `Registration Submitted!\n\nProgram: ${selectedProgram.title}\n\nWe will contact you via WhatsApp and email shortly.\n\nSee you on the pitch!`
+      );
+      setSelectedProgram(null);
+      setFormData({
+        playerName: "",
+        dateOfBirth: "",
+        gender: "",
+        address: "",
+        school: "",
+        position: "",
+        experience: "",
+        medicalConditions: "",
+        guardianName: "",
+        phone: "",
+        email: "",
+        emergencyContact: "",
+      });
+    } catch (err: any) {
+      alert(err?.message ?? "Failed to submit registration");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   useEffect(() => {
     setProgress(0);
     setCurrentIndex(0);
   }, []);
+
+  useEffect(() => {
+    if (!selectedProgram) return;
+    const reducedMotion =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const behavior: ScrollBehavior = reducedMotion ? "auto" : "smooth";
+    requestAnimationFrame(() => {
+      registrationRef.current?.scrollIntoView({ behavior, block: "start" });
+    });
+  }, [selectedProgram]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -309,7 +366,7 @@ export function ProgramsPage() {
               <div className="absolute inset-0">
                 {programs.map((program, i) => (
                   <div
-                    key={program.id}
+                    key={`${program.title}-${i}`}
                     className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
                     style={getCardStyle(i)}
                   >
@@ -362,7 +419,7 @@ export function ProgramsPage() {
                             <div className="text-xl font-bold text-primary">{program.fee}</div>
                           </div>
                           <Button
-                            onClick={() => setSelectedProgram(program.id)}
+                            onClick={() => setSelectedProgram(program)}
                             className="bg-primary hover:bg-primary/90"
                           >
                             Register Now
@@ -399,7 +456,7 @@ export function ProgramsPage() {
           <div className="hidden md:grid md:grid-cols-2 gap-8 mb-16">
             {programs.map((program, index) => (
               <motion.div
-                key={program.id}
+                key={`${program.title}-${index}`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
@@ -449,7 +506,7 @@ export function ProgramsPage() {
                         <div className="text-2xl font-bold text-primary">{program.fee}</div>
                       </div>
                       <Button
-                        onClick={() => setSelectedProgram(program.id)}
+                        onClick={() => setSelectedProgram(program)}
                         className="bg-primary hover:bg-primary/90"
                       >
                         Register Now
@@ -492,7 +549,7 @@ export function ProgramsPage() {
       {/* Registration Form */}
       {selectedProgram && (
         <section className="py-16 md:py-24 bg-white">
-          <div className="container mx-auto px-4">
+          <div ref={registrationRef} className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
               <Card className="p-8 shadow-xl">
                 <div className="mb-8">
@@ -500,12 +557,18 @@ export function ProgramsPage() {
                   <p className="text-gray-600">
                     Registering for:{" "}
                     <span className="font-semibold text-primary">
-                      {programs.find((p) => p.id === selectedProgram)?.title}
+                      {selectedProgram.title}
                     </span>
                   </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form
+                  onSubmit={(e) => {
+                    handleSubmit(e);
+                    void submitRegistration();
+                  }}
+                  className="space-y-6"
+                >
                   {/* Player Information */}
                   <div>
                     <h3 className="text-xl font-semibold mb-4 text-secondary">Player Information</h3>
@@ -643,7 +706,7 @@ export function ProgramsPage() {
                   </div>
 
                   <div className="flex gap-4 pt-6">
-                    <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90" size="lg">
+                    <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90" size="lg" disabled={submitting}>
                       Complete Registration
                     </Button>
                     <Button

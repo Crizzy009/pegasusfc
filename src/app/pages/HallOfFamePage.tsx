@@ -1,31 +1,82 @@
 import { Card } from "../components/ui/card";
 import { Trophy, Award, Star, TrendingUp, Users, Target } from "lucide-react";
 import { motion } from "motion/react";
+import { usePublicContent } from "../content/useContent";
+import type { Achievement as AchievementType } from "../content/types";
 
 export function HallOfFamePage() {
-  const achievements2023 = [
-    { icon: Star, text: "Academy successfully launched in Badore, Ajah" },
-    { icon: Users, text: "Enrolled 150+ players across 6 age categories" },
-    { icon: Target, text: "Established training facility in Lekki axis" },
-    { icon: TrendingUp, text: "Partnered with local schools for talent identification" },
-    { icon: Trophy, text: "Hosted inaugural Pegasus Open Day with 300+ attendees" },
+  const { data: achievementsData } = usePublicContent<AchievementType>("achievement");
+  const placeholderPhotoUrl = `${import.meta.env.BASE_URL}placeholders/photo.svg`;
+
+  const defaultAchievements: AchievementType[] = [
+    { season: "2023", title: "Academy Launch", description: "Academy successfully launched in Badore, Ajah", category: "milestone", order: 10 },
+    { season: "2023", title: "Enrollment Growth", description: "Enrolled 150+ players across 6 age categories", category: "growth", order: 20 },
+    { season: "2023", title: "Training Facility", description: "Established training facility in Lekki axis", category: "facility", order: 30 },
+    { season: "2023", title: "School Partnerships", description: "Partnered with local schools for talent identification", category: "partner", order: 40 },
+    { season: "2023", title: "Pegasus Open Day", description: "Hosted inaugural Pegasus Open Day with 300+ attendees", category: "event", order: 50 },
+    { season: "2024", title: "League Participation", description: "Participated in Lagos Junior Football League", category: "league", order: 10 },
+    { season: "2024", title: "Ajah District Cup", description: "U11 team reached semi-finals of Ajah District Cup", category: "tournament", order: 20 },
+    { season: "2024", title: "Lekki Tournament", description: "U14 team won 3rd place in Lekki Inter-Academy Tournament", category: "tournament", order: 30 },
+    { season: "2024", title: "State Trials", description: "5 players selected for Lagos State U15 trials", category: "trials", order: 40 },
+    { season: "2024", title: "Star Clinic", description: "Hosted Nigerian football star clinic", category: "event", order: 50 },
+    { season: "2024", title: "Development Program", description: "Established U7 & U9 development program", category: "program", order: 60 },
+    { season: "2025", title: "Badore Community Cup", description: "U10 team - Champions, Badore Community Cup", category: "trophy", highlight: true, order: 10 },
+    { season: "2025", title: "Youth Championship", description: "U13 team - Runners-up, Lagos Elite Youth Championship", category: "trophy", highlight: true, order: 20 },
+    { season: "2025", title: "Academy Growth", description: "200+ active players enrolled", category: "growth", order: 30 },
+    { season: "2025", title: "Player Pathway", description: "Partnership with local clubs for player pathway", category: "partner", order: 40 },
   ];
 
-  const achievements2024 = [
-    { icon: Trophy, text: "Participated in Lagos Junior Football League" },
-    { icon: Award, text: "U11 team reached semi-finals of Ajah District Cup" },
-    { icon: Trophy, text: "U14 team won 3rd place in Lekki Inter-Academy Tournament" },
-    { icon: Star, text: "5 players selected for Lagos State U15 trials" },
-    { icon: Users, text: "Hosted Nigerian football star clinic" },
-    { icon: TrendingUp, text: "Established U7 & U9 development program" },
-  ];
+  const achievements = achievementsData.length ? achievementsData : defaultAchievements;
 
-  const achievements2025 = [
-    { icon: Trophy, text: "U10 team - Champions, Badore Community Cup", highlight: true },
-    { icon: Award, text: "U13 team - Runners-up, Lagos Elite Youth Championship", highlight: true },
-    { icon: Users, text: "200+ active players enrolled" },
-    { icon: TrendingUp, text: "Partnership with local clubs for player pathway" },
-  ];
+  const seasons = Array.from(new Set(achievements.map((a) => a.season))).sort((a, b) => Number(b) - Number(a));
+  seasons[0] || "";
+
+  const iconFor = (a: AchievementType) => {
+    const c = (a.category || "").toLowerCase();
+    if (c.includes("trophy") || c.includes("tournament")) return Trophy;
+    if (c.includes("growth")) return Users;
+    if (c.includes("facility")) return Target;
+    if (c.includes("partner")) return TrendingUp;
+    if (c.includes("event")) return Star;
+    if (c.includes("trials")) return Award;
+    return Award;
+  };
+
+  achievements.find((a) => a.image?.url)?.image?.url ||
+    placeholderPhotoUrl;
+
+  const normalizeCardText = (a: AchievementType) => {
+    const t = String(a.title ?? "").trim();
+    const d = String(a.description ?? "").trim();
+    if (t && d) return `${t}: ${d}`;
+    return t || d || "Achievement";
+  };
+
+  const achievements2025 = achievements
+    .filter((a) => String(a.season) === "2025")
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .slice(0, 4)
+    .map((a) => ({
+      icon: iconFor(a),
+      text: normalizeCardText(a),
+      highlight: Boolean(a.highlight),
+    }));
+
+  const achievements2024 = achievements
+    .filter((a) => String(a.season) === "2024")
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .map((a) => ({
+      icon: iconFor(a),
+      text: normalizeCardText(a),
+    }));
+
+  const achievements2023 = achievements
+    .filter((a) => String(a.season) === "2023")
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .map((a) => ({
+      icon: iconFor(a),
+      text: normalizeCardText(a),
+    }));
 
   const records = [
     {
@@ -85,7 +136,7 @@ export function HallOfFamePage() {
               className="rounded-lg overflow-hidden shadow-2xl"
             >
               <img
-                src="https://images.unsplash.com/photo-1764408721535-2dcb912db83e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cm9waHklMjBmb290YmFsbCUyMGNoYW1waW9uc2hpcHxlbnwxfHx8fDE3NzE1MTIyMTR8MA&ixlib=rb-4.1.0&q=80&w=1080"
+                src={placeholderPhotoUrl}
                 alt="Trophy Cabinet"
                 className="w-full aspect-video object-cover"
               />
@@ -205,46 +256,6 @@ export function HallOfFamePage() {
         </div>
       </section>
 
-      {/* Alumni Success Stories */}
-      <section className="py-16 md:py-24 bg-muted">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-secondary">
-              Alumni Tracker
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Where are they now? Following the progress of our graduates
-            </p>
-          </div>
-          <div className="max-w-3xl mx-auto">
-            <Card className="p-8 text-center shadow-lg">
-              <Star className="w-16 h-16 text-primary mx-auto mb-4" />
-              <h3 className="text-2xl font-bold mb-4 text-secondary">
-                5 Players in Lagos State Trials
-              </h3>
-              <p className="text-gray-700 mb-6">
-                Five of our talented players have been selected to participate in Lagos State U15
-                trials, representing the first wave of Pegasus graduates moving up the football
-                pathway. We're incredibly proud of their progress and dedication.
-              </p>
-              <div className="flex flex-wrap gap-3 justify-center">
-                <div className="bg-primary/10 px-4 py-2 rounded-full text-sm font-medium text-primary">
-                  Emmanuel Adebayo
-                </div>
-                <div className="bg-primary/10 px-4 py-2 rounded-full text-sm font-medium text-primary">
-                  David Okafor
-                </div>
-                <div className="bg-primary/10 px-4 py-2 rounded-full text-sm font-medium text-primary">
-                  Samuel Nwankwo
-                </div>
-                <div className="bg-primary/10 px-4 py-2 rounded-full text-sm font-medium text-primary">
-                  + 2 more
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

@@ -6,8 +6,14 @@ import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Calendar, Clock, MapPin, CheckCircle2, Users, Target } from "lucide-react";
 import { motion } from "motion/react";
+import { usePublicContent } from "../content/useContent";
+import type { Trial, TrialBooking } from "../content/types";
+import { createPublicTrialBooking } from "../content/api";
 
 export function RecruitmentPage() {
+  const { data: trialsData } = usePublicContent<Trial>("trial");
+  const [submitting, setSubmitting] = useState(false);
+
   const [formData, setFormData] = useState({
     playerName: "",
     age: "",
@@ -17,7 +23,7 @@ export function RecruitmentPage() {
     ageGroup: "",
   });
 
-  const trialDates = [
+  const defaultTrialDates = [
     {
       date: "Saturday, March 2, 2026",
       ageGroups: "U7, U9, U10",
@@ -37,6 +43,15 @@ export function RecruitmentPage() {
       status: "Available",
     },
   ];
+
+  const trialDates = trialsData.length
+    ? trialsData.map((t) => ({
+        date: t.dateLabel,
+        ageGroups: t.ageGroups,
+        time: t.time,
+        status: t.status === "full" ? "Full" : t.status === "closed" ? "Closed" : "Available",
+      }))
+    : defaultTrialDates;
 
   const whatToExpect = [
     {
@@ -89,11 +104,31 @@ export function RecruitmentPage() {
     { icon: CheckCircle2, text: "Positive attitude and discipline" },
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(
-      `Trial Registration Successful!\n\nThank you ${formData.playerName}!\n\nYou will receive confirmation via WhatsApp and email with:\n- Trial date and time\n- Venue details\n- What to bring\n\nSee you on the pitch!`
-    );
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      const payload: TrialBooking = {
+        playerName: formData.playerName,
+        age: formData.age,
+        ageGroup: formData.ageGroup,
+        guardianName: formData.guardianName,
+        phone: formData.phone,
+        email: formData.email,
+        status: "new",
+        notes: "",
+      };
+      await createPublicTrialBooking(payload);
+      alert(
+        `Trial Registration Submitted!\n\nThank you ${formData.playerName}!\n\nYou will receive confirmation via WhatsApp and email with:\n- Trial date and time\n- Venue details\n- What to bring\n\nSee you on the pitch!`
+      );
+    } catch (err: any) {
+      alert(err?.message ?? "Failed to submit trial registration");
+      return;
+    } finally {
+      setSubmitting(false);
+    }
     setFormData({
       playerName: "",
       age: "",
@@ -182,7 +217,15 @@ export function RecruitmentPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+                  <div
+                    className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
+                      trial.status === "Full"
+                        ? "bg-red-100 text-red-800"
+                        : trial.status === "Closed"
+                          ? "bg-gray-200 text-gray-800"
+                          : "bg-green-100 text-green-800"
+                    }`}
+                  >
                     {trial.status}
                   </div>
                 </Card>
@@ -279,7 +322,7 @@ export function RecruitmentPage() {
                   />
                 </div>
 
-                <Button type="submit" className="w-full bg-primary hover:bg-primary/90" size="lg">
+                <Button type="submit" className="w-full bg-primary hover:bg-primary/90" size="lg" disabled={submitting}>
                   Book Free Trial
                 </Button>
               </form>
