@@ -2,6 +2,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { 
   fetchAdminContent, 
+  bulkAdminContent,
   createAdminContent, 
   updateAdminContent, 
   deleteAdminContent, 
@@ -133,6 +134,10 @@ export function useAdminCRUD<T>(type: ContentType) {
         void loadItems({ silent: true });
         return;
       }
+      if (String(err?.message) === "request_timeout") {
+        void loadItems({ silent: true });
+        return;
+      }
       setItems(prev);
       throw new Error(err.message || "Failed to delete item");
     }
@@ -143,15 +148,30 @@ export function useAdminCRUD<T>(type: ContentType) {
     const setIds = new Set(ids);
     setItems((cur) => cur.filter((it) => !setIds.has(it.id)));
     try {
-      const results = await Promise.allSettled(ids.map((id) => deleteAdminContent(id)));
-      const failures = results
-        .map((r) => (r.status === "rejected" ? r.reason : null))
-        .filter(Boolean)
-        .map((e: any) => String(e?.message ?? e));
-      const nonNotFound = failures.filter((m) => m !== "not_found");
-      if (nonNotFound.length) throw new Error(nonNotFound[0] || "delete_failed");
+      const canBulk =
+        type !== "player" &&
+        ids.length > 1 &&
+        ids.every((id) => id.startsWith(`${type}_`));
+
+      if (canBulk) {
+        await bulkAdminContent(ids, "delete");
+      } else {
+        const results = await Promise.allSettled(ids.map((id) => deleteAdminContent(id)));
+        const failures = results
+          .map((r) => (r.status === "rejected" ? r.reason : null))
+          .filter(Boolean)
+          .map((e: any) => String(e?.message ?? e));
+        const nonIgnorable = failures.filter((m) => m !== "not_found" && m !== "request_timeout");
+        if (nonIgnorable.length) throw new Error(nonIgnorable[0] || "delete_failed");
+      void loadItems({ silent: true });
+        return;
+      }
       void loadItems({ silent: true });
     } catch (err: any) {
+      if (String(err?.message) === "request_timeout") {
+        void loadItems({ silent: true });
+        return;
+      }
       setItems(prev);
       throw new Error(err.message || "Failed to delete items");
     }

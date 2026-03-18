@@ -1,5 +1,5 @@
 
-import { createHashRouter } from "react-router";
+import { createBrowserRouter } from "react-router";
 import { Navigate } from "react-router";
 import { RootLayout } from "./components/RootLayout";
 import { HomePage } from "./pages/HomePage";
@@ -39,7 +39,7 @@ import { HomePageTeams } from "./admin/pages/HomePageTeams";
 import { StarsPartnersHome } from "./admin/pages/StarsPartnersHome";
 import { TrialsHome } from "./admin/pages/TrialsHome";
 
-export const router = createHashRouter([
+export const router = createBrowserRouter([
   { path: "/admin/login", element: <AdminLoginPage /> },
   {
     path: "/admin",
