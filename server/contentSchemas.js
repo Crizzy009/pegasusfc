@@ -205,6 +205,14 @@ const newsPostSchema = z.object({
   order: z.number().int().min(0).max(9999).optional().default(0),
 });
 
+const coachSchema = z.object({
+  name: z.string().min(1).max(80),
+  title: z.string().min(1).max(120),
+  bio: z.string().max(1200).optional().default(""),
+  photo: imageSchema,
+  order: z.number().int().min(0).max(9999).optional().default(0),
+});
+
 const trialSchema = z.object({
   dateLabel: z.string().min(1).max(80),
   isoDate: z.string().min(1).max(40),
@@ -267,6 +275,7 @@ const schemaByType = {
   homeHighlight: homeHighlightSchema,
   facility: facilitySchema,
   program: programSchema,
+  coach: coachSchema,
   player: playerSchema,
   squadStarPlayers: squadStarPlayersSchema,
   partner: partnerSchema,

@@ -9,6 +9,12 @@ function playersFunctionBaseUrl() {
   return new URL("/functions/v1/players", url).toString();
 }
 
+function contentFunctionBaseUrl() {
+  const { url } = getSupabaseConfig();
+  if (!url) return null;
+  return new URL("/functions/v1/content", url).toString();
+}
+
 function supabaseAdminHeaders() {
   const token = getAccessToken();
   if (!token) throw new Error("missing_token");
@@ -24,6 +30,15 @@ export async function fetchPublicContent<T>(type: ContentType): Promise<ContentI
     }
     try {
       const res = await apiJson(`/api/public/players`);
+      return res.items as ContentItem<T>[];
+    } catch (e: any) {
+      if (String(e?.message) !== "supabase_not_configured") throw e;
+    }
+  }
+  const contentFn = contentFunctionBaseUrl();
+  if (contentFn) {
+    try {
+      const res = await apiJson(`${contentFn}?type=${encodeURIComponent(type)}&status=published`);
       return res.items as ContentItem<T>[];
     } catch (e: any) {
       if (String(e?.message) !== "supabase_not_configured") throw e;
@@ -75,6 +90,15 @@ export async function fetchAdminContent<T>(params: {
       if (String(e?.message) !== "supabase_not_configured") throw e;
     }
   }
+  const contentFn = contentFunctionBaseUrl();
+  if (contentFn) {
+    const qs = new URLSearchParams();
+    if (params.type) qs.set("type", params.type);
+    if (params.status) qs.set("status", params.status);
+    if (params.q) qs.set("q", params.q);
+    const res = await apiJson(`${contentFn}?${qs.toString()}`, { headers: supabaseAdminHeaders() });
+    return res.items as AdminContentItem<T>[];
+  }
   const qs = new URLSearchParams();
   if (params.type) qs.set("type", params.type);
   if (params.status) qs.set("status", params.status);
@@ -106,6 +130,17 @@ export async function createAdminContent<T>(type: ContentType, data: T, status: 
       if (String(e?.message) !== "supabase_not_configured") throw e;
     }
   }
+  const contentFn = contentFunctionBaseUrl();
+  if (contentFn) {
+    const res = await apiJson(contentFn, {
+      method: "POST",
+      headers: supabaseAdminHeaders(),
+      body: JSON.stringify({ type, data, status }),
+    });
+    const id = (res?.id as string | undefined) || (Array.isArray(res?.ids) ? res.ids[0] : undefined);
+    if (!id) throw new Error("create_failed");
+    return id;
+  }
   const res = await apiJson("/api/admin/content", {
     method: "POST",
     body: JSON.stringify({ type, data, status }),
@@ -134,6 +169,15 @@ export async function updateAdminContent<T>(id: string, data: T, status?: Conten
       if (String(e?.message) !== "supabase_not_configured") throw e;
     }
   }
+  const contentFn = contentFunctionBaseUrl();
+  if (contentFn) {
+    await apiJson(`${contentFn}/${encodeURIComponent(id)}`, {
+      method: "PUT",
+      headers: supabaseAdminHeaders(),
+      body: JSON.stringify({ data, status }),
+    });
+    return;
+  }
   await apiJson(`/api/admin/content/${encodeURIComponent(id)}`, {
     method: "PUT",
     body: JSON.stringify({ data, status }),
@@ -154,14 +198,28 @@ export async function deleteAdminContent(id: string) {
       if (String(e?.message) !== "supabase_not_configured") throw e;
     }
   }
+  const contentFn = contentFunctionBaseUrl();
+  if (contentFn) {
+    await apiJson(`${contentFn}/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: supabaseAdminHeaders(),
+    });
+    return;
+  }
   await apiJson(`/api/admin/content/${encodeURIComponent(id)}`, { method: "DELETE" });
 }
 
 export async function bulkAdminContent(ids: string[], action: "publish" | "unpublish" | "delete") {
-  await apiJson(`/api/admin/content/bulk`, {
-    method: "POST",
-    body: JSON.stringify({ ids, action }),
-  });
+  const contentFn = contentFunctionBaseUrl();
+  if (contentFn) {
+    await apiJson(`${contentFn}/bulk`, {
+      method: "POST",
+      headers: supabaseAdminHeaders(),
+      body: JSON.stringify({ ids, action }),
+    });
+    return;
+  }
+  await apiJson(`/api/admin/content/bulk`, { method: "POST", body: JSON.stringify({ ids, action }) });
 }
 
 export async function login(username: string, password: string) {

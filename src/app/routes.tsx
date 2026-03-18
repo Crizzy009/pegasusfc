@@ -38,6 +38,7 @@ import { HomePageHighlights } from "./admin/pages/HomePageHighlights";
 import { HomePageTeams } from "./admin/pages/HomePageTeams";
 import { StarsPartnersHome } from "./admin/pages/StarsPartnersHome";
 import { TrialsHome } from "./admin/pages/TrialsHome";
+import { CoachesPageAdmin } from "./admin/pages/CoachesPage";
 
 export const router = createBrowserRouter([
   { path: "/admin/login", element: <AdminLoginPage /> },
@@ -54,6 +55,7 @@ export const router = createBrowserRouter([
       { path: "programs", element: <ProgramsHome /> },
       { path: "squad", element: <SquadHome /> },
       { path: "media", element: <MediaHubPageAdmin /> },
+      { path: "coaches", element: <CoachesPageAdmin /> },
       { path: "stars-partners", element: <StarsPartnersHome /> },
       { path: "trials", element: <TrialsHome /> },
       { path: "hall-of-fame", element: <HallOfFameHome /> },

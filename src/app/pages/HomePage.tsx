@@ -4,11 +4,12 @@ import { Card } from "../components/ui/card";
 import { Trophy, Users, MapPin, GraduationCap, Target, Heart, Award, Calendar } from "lucide-react";
 import { motion } from "motion/react";
 import { usePublicContent } from "../content/useContent";
-import type { HomeHighlight, HomeTeam } from "../content/types";
+import type { Coach, HomeHighlight, HomeTeam } from "../content/types";
 
 export function HomePage() {
   const { data: homeTeams } = usePublicContent<HomeTeam>("homeTeam");
   const { data: homeHighlights } = usePublicContent<HomeHighlight>("homeHighlight");
+  const { data: coachesData } = usePublicContent<Coach>("coach");
 
   const placeholderPhotoUrl = `${import.meta.env.BASE_URL}placeholders/photo.svg`;
 
@@ -231,6 +232,78 @@ export function HomePage() {
               </Link>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-20 bg-white border-t">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <div className="text-sm uppercase tracking-wide text-primary font-semibold mb-2">
+              Our Coaches
+            </div>
+            <h2 className="text-4xl font-bold text-secondary">Meet the Team</h2>
+          </div>
+          {(() => {
+            const fallback: Coach[] = [
+              {
+                name: "Coach Emeka",
+                title: "Head Coach",
+                bio: "Player development and match readiness.",
+                photo: { url: placeholderPhotoUrl, alt: "Coach Emeka" },
+                order: 10,
+              },
+              {
+                name: "Coach Aisha",
+                title: "Technical Coach",
+                bio: "Ball mastery, first touch, and finishing.",
+                photo: { url: placeholderPhotoUrl, alt: "Coach Aisha" },
+                order: 20,
+              },
+              {
+                name: "Coach Tunde",
+                title: "Fitness Coach",
+                bio: "Strength, conditioning, and injury prevention.",
+                photo: { url: placeholderPhotoUrl, alt: "Coach Tunde" },
+                order: 30,
+              },
+              {
+                name: "Coach Samuel",
+                title: "Goalkeeper Coach",
+                bio: "Shot-stopping, footwork, and positioning.",
+                photo: { url: placeholderPhotoUrl, alt: "Coach Samuel" },
+                order: 40,
+              },
+            ];
+            const list = coachesData.length ? coachesData : fallback;
+            const sorted = [...list].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).slice(0, 4);
+            return (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                {sorted.map((c, i) => (
+                  <motion.div
+                    key={`${c.name}-${i}`}
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.08 }}
+                  >
+                    <Card className="p-5 h-full shadow-lg hover:shadow-2xl transition-shadow">
+                      <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-full overflow-hidden bg-muted border shrink-0">
+                          <img src={c.photo?.url || placeholderPhotoUrl} alt={c.photo?.alt || c.name} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-bold text-secondary leading-tight truncate">{c.name}</div>
+                          <div className="text-sm text-primary font-semibold truncate">{c.title}</div>
+                        </div>
+                      </div>
+                      {c.bio ? (
+                        <div className="mt-4 text-sm text-gray-600 line-clamp-3">{c.bio}</div>
+                      ) : null}
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            );
+          })()}
         </div>
       </section>
 

@@ -1,5 +1,6 @@
 import { Card } from "../components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../components/ui/carousel";
 import { Calendar, Eye } from "lucide-react";
 import { motion } from "motion/react";
 import { usePublicContent } from "../content/useContent";
@@ -116,7 +117,31 @@ export function MediaHubPage() {
             </TabsList>
 
             <TabsContent value="photos" className="space-y-8">
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="sm:hidden">
+                <Carousel opts={{ align: "start", loop: false }} className="px-2">
+                  <CarouselContent className="-ml-3">
+                    {photoItems.map((photo, index) => (
+                      <CarouselItem key={index} className="pl-3 basis-[85%]">
+                        <Card className="overflow-hidden shadow-lg cursor-pointer">
+                          <div className="aspect-square overflow-hidden relative">
+                            <img src={photo.src} alt={photo.title} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
+                              <div className="text-white">
+                                <div className="text-xs font-semibold mb-1">{photo.category}</div>
+                                <div className="text-sm">{photo.title}</div>
+                              </div>
+                            </div>
+                          </div>
+                        </Card>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="left-2 top-1/2 -translate-y-1/2 bg-white/80 text-secondary shadow-lg backdrop-blur-md" />
+                  <CarouselNext className="right-2 top-1/2 -translate-y-1/2 bg-white/80 text-secondary shadow-lg backdrop-blur-md" />
+                </Carousel>
+              </div>
+
+              <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {photoItems.map((photo, index) => (
                   <motion.div
                     key={index}

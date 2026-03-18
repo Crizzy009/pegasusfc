@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.upload]
 verify_jwt = false
+
+[functions.content]
+verify_jwt = false

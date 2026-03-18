@@ -56,6 +56,14 @@ export type Program = {
   order?: number;
 };
 
+export type Coach = {
+  name: string;
+  title: string;
+  bio?: string;
+  photo: ImageAsset;
+  order?: number;
+};
+
 export type Player = {
   name: string;
   jersey: number;
@@ -197,6 +205,7 @@ export type ContentType =
   | "homeHighlight"
   | "facility"
   | "program"
+  | "coach"
   | "player"
   | "squadStarPlayers"
   | "partner"

@@ -159,7 +159,7 @@ export function SquadPage() {
       const w = el.getBoundingClientRect().width;
       cardWidthRef.current = Math.max(240, Math.min(360, Math.floor(w * 0.8)));
       const imgH = Math.floor(cardWidthRef.current * (4 / 3));
-      const contentH = 200;
+      const contentH = 280;
       setContainerHeight(imgH + contentH);
     };
     resize();
@@ -235,23 +235,20 @@ export function SquadPage() {
   const getCardStyle = (i: number) => {
     const d = i - progress;
     const w = cardWidthRef.current || 300;
-    const x = d * (w * 0.72);
-    const z = -Math.min(3, Math.abs(d)) * 140 + (Math.abs(d) < 0.3 ? 80 : 0);
-    const s = 1 - Math.min(0.45, Math.abs(d) * 0.1) + (Math.abs(d) < 0.3 ? 0.05 : 0);
-    const o = 1 - Math.min(0.6, Math.abs(d) * 0.18);
-    const bl = Math.min(6, Math.abs(d) * 2);
-    const zi = 100 - Math.abs(Math.round(d)) * 10 + (Math.abs(d) < 0.5 ? 50 : 0);
+    const x = d * (w * 0.62);
+    const s = 1 - Math.min(0.2, Math.abs(d) * 0.05) + (Math.abs(d) < 0.3 ? 0.05 : 0);
+    const o = 1 - Math.min(0.35, Math.abs(d) * 0.12);
+    const zi = 200 - Math.abs(Math.round(d)) * 10 + (Math.abs(d) < 0.5 ? 200 : 0);
     return {
       width: `${w}px`,
-      transform: `translate3d(${x}px, 0, ${z}px) scale(${s})`,
+      transform: `translate3d(${x}px, 0, 0) scale(${s})`,
       opacity: o,
-      filter: `blur(${bl}px)`,
       zIndex: zi,
-      willChange: "transform, opacity, filter",
+      willChange: "transform, opacity",
       transition: draggingRef.current
         ? "none"
-        : "transform 360ms cubic-bezier(.22,.61,.36,1), opacity 360ms, filter 360ms",
-      pointerEvents: Math.abs(d) < 0.7 ? "auto" : "none",
+        : "transform 360ms cubic-bezier(.22,.61,.36,1), opacity 360ms",
+      pointerEvents: Math.abs(d) < 0.9 ? "auto" : "none",
       boxShadow:
         Math.abs(d) < 0.3
           ? "0 25px 50px -12px rgba(0,0,0,0.5)"
@@ -376,7 +373,7 @@ export function SquadPage() {
             ) : (
               <div
                 ref={containerRef}
-                className="relative mx-auto w-full"
+                className="relative mx-auto w-full z-50"
                 style={{
                   perspective: "1000px",
                   touchAction: "pan-y",

@@ -351,6 +351,14 @@ export function AdminLayout() {
                 Media
               </NavLink>
               <NavLink
+                to="/admin/coaches"
+                className={desktopNavClass}
+                end
+              >
+                <Users className="h-4 w-4" />
+                Coaches
+              </NavLink>
+              <NavLink
                 to="/admin/stars-partners"
                 className={desktopNavClass}
                 end
@@ -483,6 +491,14 @@ export function AdminLayout() {
                 >
                   <Image className="h-5 w-5" />
                   Media
+                </NavLink>
+                <NavLink
+                  to="/admin/coaches"
+                  className={mobileNavClass}
+                  end
+                >
+                  <Users className="h-5 w-5" />
+                  Coaches
                 </NavLink>
                 <NavLink
                   to="/admin/stars-partners"
