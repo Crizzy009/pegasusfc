@@ -7,7 +7,7 @@ export function NotFoundPage() {
     <div className="relative min-h-[600px] flex items-center justify-center text-white overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.jpg')` }}
+        style={{ backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.PNG')` }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/90" />
       </div>

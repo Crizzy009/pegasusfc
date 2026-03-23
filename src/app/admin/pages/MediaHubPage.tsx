@@ -43,6 +43,15 @@ export function MediaHubPageAdmin() {
     order: 0,
   });
 
+  const [bulkPhotosOpen, setBulkPhotosOpen] = useState(false);
+  const [bulkPhotosUploading, setBulkPhotosUploading] = useState(false);
+  const [bulkPhotoCategory, setBulkPhotoCategory] = useState("Training");
+  const [bulkPhotoDate, setBulkPhotoDate] = useState(new Date().toISOString().slice(0, 10));
+  const [bulkPhotoCaption, setBulkPhotoCaption] = useState("");
+
+  const [bulkNewsOpen, setBulkNewsOpen] = useState(false);
+  const [bulkNewsText, setBulkNewsText] = useState("");
+
   const sortedPhotos = useMemo(
     () => [...photosCRUD.items].sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0)),
     [photosCRUD.items]
@@ -194,48 +203,122 @@ export function MediaHubPageAdmin() {
     }
   };
 
-  const importDefaultNews = async () => {
+  const normalizeTitleFromFileName = (name: string) =>
+    name
+      .replace(/\.[^.]+$/, "")
+      .replace(/[_-]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const runPool = async <T, R>(items: T[], concurrency: number, worker: (item: T, index: number) => Promise<R>) => {
+    const results: R[] = new Array(items.length) as any;
+    let nextIndex = 0;
+    const runners = new Array(Math.max(1, concurrency)).fill(null).map(async () => {
+      while (nextIndex < items.length) {
+        const i = nextIndex++;
+        results[i] = await worker(items[i], i);
+      }
+    });
+    await Promise.all(runners);
+    return results;
+  };
+
+  const bulkUploadPhotos = async (files: FileList | null) => {
+    const list = files ? Array.from(files) : [];
+    if (list.length === 0) return;
+    setBulkPhotosUploading(true);
     try {
-      if (newsCRUD.items.length > 0) {
-        toast.message("News posts already exist");
+      const startOrder = Math.max(0, ...photosCRUD.items.map((i) => i.data.order ?? 0)) + 10;
+      const uploaded = await runPool(list, 3, async (file) => {
+        const img = await photosCRUD.upload(file);
+        return { file, img };
+      });
+      const rows = uploaded.map(({ file, img }, idx) => {
+        const title = normalizeTitleFromFileName(file.name);
+        const photo: MediaPhoto = {
+          title,
+          category: bulkPhotoCategory || "Training",
+          date: bulkPhotoDate || new Date().toISOString().slice(0, 10),
+          image: {
+            originalUrl: img.originalUrl,
+            largeUrl: img.largeUrl,
+            mediumUrl: img.mediumUrl,
+            thumbUrl: img.thumbUrl,
+          },
+          caption: bulkPhotoCaption || "",
+          order: startOrder + idx * 10,
+        };
+        return { data: photo, status: "published" as const };
+      });
+      await photosCRUD.createMany(rows);
+      toast.success(`Uploaded ${rows.length} photo${rows.length === 1 ? "" : "s"}`);
+      setBulkPhotosOpen(false);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Bulk upload failed");
+    } finally {
+      setBulkPhotosUploading(false);
+    }
+  };
+
+  const parseBulkNews = (text: string): NewsPost[] => {
+    const trimmed = text.trim();
+    if (!trimmed) return [];
+    if (trimmed.startsWith("[") || trimmed.startsWith("{")) {
+      const parsed = JSON.parse(trimmed);
+      const arr = Array.isArray(parsed) ? parsed : [parsed];
+      return arr.map((x: any, idx: number) => ({
+        title: String(x.title ?? ""),
+        excerpt: String(x.excerpt ?? ""),
+        bodyHtml: String(x.bodyHtml ?? x.body ?? ""),
+        date: String(x.date ?? new Date().toISOString().slice(0, 10)),
+        image: {
+          url: String(x.imageUrl ?? x.image?.url ?? placeholderPhotoUrl),
+          alt: String(x.imageAlt ?? x.image?.alt ?? String(x.title ?? "")),
+          caption: String(x.imageCaption ?? x.image?.caption ?? ""),
+        },
+        scheduledAt: String(x.scheduledAt ?? ""),
+        order: Number(x.order ?? (idx + 1) * 10),
+      }));
+    }
+    const lines = trimmed.split(/\r?\n/).filter((l) => l.trim().length);
+    if (lines.length < 2) return [];
+    const headers = lines[0].split(",").map((h) => h.trim());
+    return lines.slice(1).map((line, idx) => {
+      const cells = line.split(",").map((c) => c.trim());
+      const row: Record<string, string> = {};
+      headers.forEach((h, i) => (row[h] = cells[i] ?? ""));
+      const title = row.title ?? "";
+      return {
+        title,
+        excerpt: row.excerpt ?? "",
+        bodyHtml: row.bodyHtml ?? row.body ?? "",
+        date: row.date ?? new Date().toISOString().slice(0, 10),
+        image: {
+          url: row.imageUrl ?? placeholderPhotoUrl,
+          alt: row.imageAlt ?? title,
+          caption: row.imageCaption ?? "",
+        },
+        scheduledAt: row.scheduledAt ?? "",
+        order: Number(row.order ?? (idx + 1) * 10),
+      };
+    });
+  };
+
+  const bulkImportNews = async () => {
+    try {
+      const rows = parseBulkNews(bulkNewsText)
+        .filter((n) => n.title.trim().length > 0)
+        .map((n) => ({ data: n, status: "published" as const }));
+      if (rows.length === 0) {
+        toast.error("No valid news rows found");
         return;
       }
-      const defaults: NewsPost[] = [
-        {
-          date: "Feb 15, 2026",
-          title: "U10 Squad Wins Badore Community Cup",
-          excerpt: "In an exciting final, our U10 team secured a 3-1 victory to claim the championship trophy.",
-          bodyHtml:
-            "<p>Congratulations to our U10 team on an outstanding performance and a well-deserved win. Thank you to our coaches, parents, and supporters.</p>",
-          image: { url: placeholderPhotoUrl, alt: "U10 Squad Wins Badore Community Cup", caption: "" },
-          scheduledAt: "",
-          order: 10,
-        },
-        {
-          date: "Feb 10, 2026",
-          title: "Registration Open for New Term",
-          excerpt: "We're accepting new registrations for all age categories. Limited spaces available!",
-          bodyHtml:
-            "<p>Registration is open for a new term across all age groups. Spaces are limited, so please register early to secure a spot.</p>",
-          image: { url: placeholderPhotoUrl, alt: "Registration Open for New Term", caption: "" },
-          scheduledAt: "",
-          order: 20,
-        },
-        {
-          date: "Jan 28, 2026",
-          title: "5 Players Selected for State Trials",
-          excerpt: "Congratulations to our talented athletes chosen to represent Lagos State at U15 level.",
-          bodyHtml:
-            "<p>We are proud of our players selected for Lagos State U15 trials. Keep working hard and representing Pegasus with excellence.</p>",
-          image: { url: placeholderPhotoUrl, alt: "5 Players Selected for State Trials", caption: "" },
-          scheduledAt: "",
-          order: 30,
-        },
-      ];
-      await newsCRUD.createMany(defaults.map((d) => ({ data: d, status: "published" })));
-      toast.success("Default news imported");
+      await newsCRUD.createMany(rows);
+      toast.success(`Imported ${rows.length} news post${rows.length === 1 ? "" : "s"}`);
+      setBulkNewsText("");
+      setBulkNewsOpen(false);
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to import news");
+      toast.error(err?.message ?? "Bulk import failed");
     }
   };
 
@@ -252,10 +335,15 @@ export function MediaHubPageAdmin() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Photo Gallery</CardTitle>
-              <Button onClick={() => openPhoto()}>
-                <Plus className="w-4 h-4 mr-2" />
-                Upload Photo
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setBulkPhotosOpen(true)}>
+                  Bulk Upload
+                </Button>
+                <Button onClick={() => openPhoto()}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Upload Photo
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               {photosCRUD.loading && photosCRUD.items.length === 0 ? (
@@ -324,11 +412,9 @@ export function MediaHubPageAdmin() {
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>News Posts</CardTitle>
               <div className="flex gap-2">
-                {newsCRUD.items.length === 0 ? (
-                  <Button variant="outline" onClick={importDefaultNews}>
-                    Import Default News
-                  </Button>
-                ) : null}
+                <Button variant="outline" onClick={() => setBulkNewsOpen(true)}>
+                  Bulk Import
+                </Button>
                 <Button onClick={() => openNews()}>
                   <Plus className="w-4 h-4 mr-2" />
                   Add News Post
@@ -558,6 +644,85 @@ export function MediaHubPageAdmin() {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={bulkPhotosOpen} onOpenChange={setBulkPhotosOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Bulk Upload Photos</DialogTitle>
+            <DialogDescription>Upload multiple images at once. Titles are generated from filenames.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-2">
+            <div className="grid gap-2">
+              <Label htmlFor="bulkPhotoFiles">Images</Label>
+              <Input
+                id="bulkPhotoFiles"
+                type="file"
+                accept="image/*"
+                multiple
+                disabled={bulkPhotosUploading}
+                onChange={(e) => void bulkUploadPhotos(e.target.files)}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="bulkPhotoCategory">Category</Label>
+                <Input
+                  id="bulkPhotoCategory"
+                  value={bulkPhotoCategory}
+                  onChange={(e) => setBulkPhotoCategory(e.target.value)}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="bulkPhotoDate">Date</Label>
+                <Input
+                  id="bulkPhotoDate"
+                  value={bulkPhotoDate}
+                  onChange={(e) => setBulkPhotoDate(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="bulkPhotoCaption">Caption (optional)</Label>
+              <Textarea
+                id="bulkPhotoCaption"
+                value={bulkPhotoCaption}
+                onChange={(e) => setBulkPhotoCaption(e.target.value)}
+              />
+            </div>
+            {bulkPhotosUploading ? (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Uploading...
+              </div>
+            ) : null}
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setBulkPhotosOpen(false)} disabled={bulkPhotosUploading}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={bulkNewsOpen} onOpenChange={setBulkNewsOpen}>
+        <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Bulk Import News</DialogTitle>
+            <DialogDescription>Paste JSON array or CSV with headers: title,excerpt,bodyHtml,date,imageUrl,order</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-3 py-2">
+            <Textarea value={bulkNewsText} onChange={(e) => setBulkNewsText(e.target.value)} rows={12} />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setBulkNewsOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button" className="bg-primary hover:bg-primary/90" onClick={() => void bulkImportNews()}>
+              Import
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

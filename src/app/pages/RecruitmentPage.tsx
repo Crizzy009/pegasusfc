@@ -23,35 +23,32 @@ export function RecruitmentPage() {
     ageGroup: "",
   });
 
-  const defaultTrialDates = [
-    {
-      date: "Saturday, March 2, 2026",
-      ageGroups: "U7, U9, U10",
-      time: "9:00 AM - 12:00 PM",
-      status: "Available",
-    },
-    {
-      date: "Saturday, March 9, 2026",
-      ageGroups: "U11, U12, U13",
-      time: "9:00 AM - 12:00 PM",
-      status: "Available",
-    },
-    {
-      date: "Saturday, March 16, 2026",
-      ageGroups: "U14, U15, U16",
-      time: "9:00 AM - 12:00 PM",
-      status: "Available",
-    },
-  ];
+  const now = Date.now();
+  const todayIso = new Date().toISOString().slice(0, 10);
 
-  const trialDates = trialsData.length
-    ? trialsData.map((t) => ({
-        date: t.dateLabel,
-        ageGroups: t.ageGroups,
-        time: t.time,
-        status: t.status === "full" ? "Full" : t.status === "closed" ? "Closed" : "Available",
-      }))
-    : defaultTrialDates;
+  const isUpcoming = (t: Trial) => {
+    if (t.status === "closed") return false;
+    if (t.expiresAtIso) {
+      const exp = Date.parse(t.expiresAtIso);
+      if (!Number.isNaN(exp) && exp <= now) return false;
+    }
+    if (t.isoDate) {
+      const d = String(t.isoDate).slice(0, 10);
+      if (d < todayIso) return false;
+    }
+    return true;
+  };
+
+  const upcomingTrials = [...trialsData]
+    .filter(isUpcoming)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+  const trialDates = upcomingTrials.map((t) => ({
+    date: t.dateLabel,
+    ageGroups: t.ageGroups,
+    time: t.time,
+    status: t.status === "full" ? "Full" : "Available",
+  }));
 
   const whatToExpect = [
     {
@@ -106,6 +103,10 @@ export function RecruitmentPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (trialDates.length === 0) {
+      alert("No upcoming trials are available right now. Please check back later.");
+      return;
+    }
     if (submitting) return;
     setSubmitting(true);
     try {
@@ -145,7 +146,7 @@ export function RecruitmentPage() {
       <section className="relative py-20 md:py-32 text-white overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.jpg')` }}
+          style={{ backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.PNG')` }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/90" />
         </div>
@@ -188,50 +189,56 @@ export function RecruitmentPage() {
               Select a date that works for your age group
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {trialDates.map((trial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow h-full">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Calendar className="w-5 h-5 text-primary" />
-                    <span className="font-bold text-lg text-secondary">{trial.date}</span>
-                  </div>
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-start gap-2">
-                      <Users className="w-4 h-4 text-gray-600 mt-1 flex-shrink-0" />
-                      <div>
-                        <div className="text-xs text-gray-500">Age Groups</div>
-                        <div className="font-semibold">{trial.ageGroups}</div>
+          {trialDates.length === 0 ? (
+            <div className="text-center py-12 text-gray-600">
+              No upcoming trials yet.
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {trialDates.map((trial, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow h-full">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Calendar className="w-5 h-5 text-primary" />
+                      <span className="font-bold text-lg text-secondary">{trial.date}</span>
+                    </div>
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-start gap-2">
+                        <Users className="w-4 h-4 text-gray-600 mt-1 flex-shrink-0" />
+                        <div>
+                          <div className="text-xs text-gray-500">Age Groups</div>
+                          <div className="font-semibold">{trial.ageGroups}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Clock className="w-4 h-4 text-gray-600 mt-1 flex-shrink-0" />
+                        <div>
+                          <div className="text-xs text-gray-500">Time</div>
+                          <div className="font-semibold">{trial.time}</div>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-start gap-2">
-                      <Clock className="w-4 h-4 text-gray-600 mt-1 flex-shrink-0" />
-                      <div>
-                        <div className="text-xs text-gray-500">Time</div>
-                        <div className="font-semibold">{trial.time}</div>
-                      </div>
+                    <div
+                      className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
+                        trial.status === "Full"
+                          ? "bg-red-100 text-red-800"
+                          : trial.status === "Closed"
+                            ? "bg-gray-200 text-gray-800"
+                            : "bg-green-100 text-green-800"
+                      }`}
+                    >
+                      {trial.status}
                     </div>
-                  </div>
-                  <div
-                    className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-                      trial.status === "Full"
-                        ? "bg-red-100 text-red-800"
-                        : trial.status === "Closed"
-                          ? "bg-gray-200 text-gray-800"
-                          : "bg-green-100 text-green-800"
-                    }`}
-                  >
-                    {trial.status}
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -239,7 +246,7 @@ export function RecruitmentPage() {
       <section className="py-16 md:py-24 bg-muted">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
-            <Card className="p-8 shadow-xl">
+            <Card className={`p-8 shadow-xl ${trialDates.length === 0 ? "opacity-60 pointer-events-none" : ""}`}>
               <div className="mb-8 text-center">
                 <h2 className="text-3xl font-bold mb-2 text-secondary">Book Your Free Trial</h2>
                 <p className="text-gray-600">Fill out the form below to register</p>
@@ -327,6 +334,11 @@ export function RecruitmentPage() {
                 </Button>
               </form>
             </Card>
+            {trialDates.length === 0 ? (
+              <div className="text-center mt-6 text-sm text-gray-600">
+                Trial booking is currently unavailable.
+              </div>
+            ) : null}
           </div>
         </div>
       </section>

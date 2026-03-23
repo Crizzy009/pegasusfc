@@ -21,8 +21,7 @@ import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
 import { HomePageHighlights } from "./HomePageHighlights";
 
 export function HomePageTeams() {
-  const { items, loading, createItem, createMany, updateItem, deleteItem, deleteMany } =
-    useAdminCRUD<HomeTeam>("homeTeam");
+  const { items, loading, createItem, updateItem, deleteItem } = useAdminCRUD<HomeTeam>("homeTeam");
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<HomeTeam>({
@@ -89,49 +88,6 @@ export function HomePageTeams() {
     );
   }
 
-  const fallbackPrograms: Array<HomeTeam & { color: string }> = [
-    {
-      title: "U7 & U9",
-      subtitle: "Foundation Program",
-      ages: "6-9 years",
-      focus: "Fun & Fundamentals",
-      time: "4:00 PM - 5:00 PM",
-      days: "Friday & Saturday",
-      order: 0,
-      color: "from-orange-400 to-orange-600",
-    },
-    {
-      title: "U10",
-      subtitle: "Development Squad",
-      ages: "10 years",
-      focus: "Skill Development",
-      time: "5:00 PM - 6:00 PM",
-      days: "Friday & Saturday",
-      order: 1,
-      color: "from-orange-500 to-orange-700",
-    },
-    {
-      title: "U11-U13",
-      subtitle: "Junior Academy",
-      ages: "11-13 years",
-      focus: "Tactical Awareness",
-      time: "5:00 PM - 6:30 PM",
-      days: "Friday & Saturday",
-      order: 2,
-      color: "from-orange-600 to-orange-800",
-    },
-    {
-      title: "U14-U16",
-      subtitle: "Youth Elite",
-      ages: "14-16 years",
-      focus: "Elite Performance",
-      time: "6:00 PM - 7:30 PM",
-      days: "Friday & Saturday",
-      order: 3,
-      color: "from-orange-700 to-orange-900",
-    },
-  ];
-
   const colors = [
     "from-orange-400 to-orange-600",
     "from-orange-500 to-orange-700",
@@ -140,122 +96,62 @@ export function HomePageTeams() {
   ];
 
   const sortedItems = [...items].sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
-  const previewCards =
-    sortedItems.length > 0
-      ? sortedItems.map((item, index) => ({
-          id: item.id,
-          ...item.data,
-          color: colors[index % colors.length],
-        }))
-      : fallbackPrograms.map((p, index) => ({ id: `fallback_${index}`, ...p }));
-
-  const importDefaults = async () => {
-    try {
-      if (items.length > 0) {
-        toast.message("Teams already exist");
-        return;
-      }
-      await createMany(
-        fallbackPrograms.map((p) => ({
-          data: {
-            title: p.title,
-            subtitle: p.subtitle,
-            ages: p.ages,
-            focus: p.focus,
-            time: p.time,
-            days: p.days,
-            order: p.order,
-          },
-          status: "published",
-        }))
-      );
-      toast.success("Default teams imported");
-    } catch (err: any) {
-      toast.error(err?.message ?? "Failed to import teams");
-    }
-  };
-
-  const resetToDefaults = async () => {
-    const ok = confirm("Delete all teams and restore the default 4?");
-    if (!ok) return;
-    try {
-      const ids = items.map((i) => i.id);
-      if (ids.length) await deleteMany(ids);
-      await createMany(
-        fallbackPrograms.map((p) => ({
-          data: {
-            title: p.title,
-            subtitle: p.subtitle,
-            ages: p.ages,
-            focus: p.focus,
-            time: p.time,
-            days: p.days,
-            order: p.order,
-          },
-          status: "published",
-        }))
-      );
-      toast.success("Restored default teams");
-    } catch (err: any) {
-      toast.error(err?.message ?? "Failed to restore default teams");
-    }
-  };
+  const previewCards = sortedItems.map((item, index) => ({
+    id: item.id,
+    ...item.data,
+    color: colors[index % colors.length],
+  }));
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Our Teams Management</CardTitle>
-          <div className="flex gap-2">
-            {items.length === 0 ? (
-              <Button variant="outline" onClick={importDefaults}>
-                Import Default Teams
-              </Button>
-            ) : (
-              <Button variant="outline" onClick={resetToDefaults}>
-                Reset to Default 4
-              </Button>
-            )}
-            <Button onClick={() => handleOpen()}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Team
-            </Button>
-          </div>
+          <Button onClick={() => handleOpen()}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Team
+          </Button>
         </CardHeader>
         <CardContent>
           <div className="mb-8">
             <div className="text-sm font-semibold text-secondary mb-3">Preview (same as website)</div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {previewCards.map((program, index) => (
-                <Card
-                  key={program.id}
-                  className={`p-6 bg-gradient-to-br ${program.color} text-white h-full shadow-lg hover:shadow-2xl transition-shadow cursor-pointer`}
-                  onClick={() => {
-                    const real = sortedItems[index];
-                    if (real) handleOpen(real);
-                  }}
-                >
-                  <div className="text-3xl font-bold mb-2">{program.title}</div>
-                  <div className="text-lg mb-4 opacity-90">{program.subtitle}</div>
-                  <div className="space-y-2 text-sm">
-                    <div>
-                      <strong>Ages:</strong> {program.ages}
-                    </div>
-                    <div>
-                      <strong>Focus:</strong> {program.focus}
-                    </div>
-                    <div>
-                      <strong>Time:</strong> {program.time}
-                    </div>
-                    <div className="pt-2">
-                      <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-xs">
-                        Fri - Sat
+            {previewCards.length === 0 ? (
+              <div className="text-center py-10 text-muted-foreground">
+                No teams yet. Add your first team to show on the homepage.
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {previewCards.map((program, index) => (
+                  <Card
+                    key={program.id}
+                    className={`p-6 bg-gradient-to-br ${program.color} text-white h-full shadow-lg hover:shadow-2xl transition-shadow cursor-pointer`}
+                    onClick={() => {
+                      const real = sortedItems[index];
+                      if (real) handleOpen(real);
+                    }}
+                  >
+                    <div className="text-3xl font-bold mb-2">{program.title}</div>
+                    <div className="text-lg mb-4 opacity-90">{program.subtitle}</div>
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <strong>Ages:</strong> {program.ages}
+                      </div>
+                      <div>
+                        <strong>Focus:</strong> {program.focus}
+                      </div>
+                      <div>
+                        <strong>Time:</strong> {program.time}
+                      </div>
+                      <div className="pt-2">
+                        <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-xs">
+                          Fri - Sat
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
 
           <Table>

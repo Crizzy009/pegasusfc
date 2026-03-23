@@ -26,10 +26,12 @@ export function SquadPageAdmin({
   editId?: string | null;
   createPrefill?: Player | null;
 }) {
-  const { items, loading, createItem, updateItem, deleteItem, upload } = useAdminCRUD<Player>("player");
+  const { items, loading, createItem, createMany, updateItem, deleteItem, upload } = useAdminCRUD<Player>("player");
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [bulkText, setBulkText] = useState("");
   const [formData, setFormData] = useState<Player>({
     name: "",
     jersey: 0,
@@ -40,6 +42,7 @@ export function SquadPageAdmin({
     goals: 0,
     photo: { url: "", alt: "" },
   });
+  const placeholderPlayerUrl = `${import.meta.env.BASE_URL}placeholders/player.svg`;
 
   const itemById = useMemo(() => {
     const map = new Map<string, any>();
@@ -131,6 +134,110 @@ export function SquadPageAdmin({
     }
   };
 
+  const parseCsvLine = (line: string) => {
+    const out: string[] = [];
+    let cur = "";
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === "\"") {
+        const next = line[i + 1];
+        if (inQuotes && next === "\"") {
+          cur += "\"";
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+        continue;
+      }
+      if (ch === "," && !inQuotes) {
+        out.push(cur);
+        cur = "";
+        continue;
+      }
+      cur += ch;
+    }
+    out.push(cur);
+    return out.map((s) => s.trim());
+  };
+
+  const parseBulkPlayers = (text: string): Player[] => {
+    const trimmed = text.trim();
+    if (!trimmed) return [];
+    if (trimmed.startsWith("[") || trimmed.startsWith("{")) {
+      const parsed = JSON.parse(trimmed);
+      const arr = Array.isArray(parsed) ? parsed : [parsed];
+      return arr.map((x: any) => ({
+        name: String(x.name ?? ""),
+        jersey: Number(x.jersey ?? 0),
+        position: String(x.position ?? "Forward"),
+        age: Number(x.age ?? 0),
+        category: String(x.category ?? "u14-u16"),
+        height: String(x.height ?? ""),
+        goals: Number(x.goals ?? 0),
+        photo: {
+          url: String(x.photoUrl ?? x.photo?.url ?? placeholderPlayerUrl),
+          alt: String(x.photoAlt ?? x.photo?.alt ?? String(x.name ?? "")),
+        },
+      }));
+    }
+    const lines = trimmed.split(/\r?\n/).filter((l) => l.trim().length);
+    if (lines.length < 2) return [];
+    const headers = parseCsvLine(lines[0]).map((h) => h.toLowerCase());
+    return lines.slice(1).map((line) => {
+      const cells = parseCsvLine(line);
+      const row: Record<string, string> = {};
+      headers.forEach((h, i) => (row[h] = cells[i] ?? ""));
+      const name = row.name ?? "";
+      return {
+        name,
+        jersey: Number(row.jersey ?? row.number ?? 0),
+        position: String(row.position ?? "Forward"),
+        age: Number(row.age ?? 0),
+        category: String(row.category ?? "u14-u16"),
+        height: String(row.height ?? ""),
+        goals: Number(row.goals ?? 0),
+        photo: {
+          url: String(row.photourl ?? row.imageurl ?? placeholderPlayerUrl),
+          alt: String(row.photoalt ?? name),
+        },
+      };
+    });
+  };
+
+  const bulkImport = async () => {
+    try {
+      const rows = parseBulkPlayers(bulkText)
+        .filter((p) => p.name.trim().length > 0)
+        .map((p) => ({
+          data: {
+            ...p,
+            photo: { url: p.photo?.url || placeholderPlayerUrl, alt: p.photo?.alt || p.name },
+            height: p.height ?? "",
+            goals: p.goals ?? 0,
+          },
+          status: "published" as const,
+        }));
+      if (rows.length === 0) {
+        toast.error("No valid player rows found");
+        return;
+      }
+      await createMany(rows);
+      toast.success(`Imported ${rows.length} player${rows.length === 1 ? "" : "s"}`);
+      setBulkText("");
+      setBulkOpen(false);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Bulk import failed");
+    }
+  };
+
+  const onBulkFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const txt = await file.text().catch(() => "");
+    setBulkText(txt);
+  };
+
   if (loading && items.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -143,10 +250,15 @@ export function SquadPageAdmin({
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Squad Management</CardTitle>
-        <Button onClick={() => handleOpen()}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Player
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setBulkOpen(true)}>
+            Bulk Import
+          </Button>
+          <Button onClick={() => handleOpen()}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Player
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <Table>
@@ -163,8 +275,8 @@ export function SquadPageAdmin({
             {items.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>
-                  <div className="w-10 h-10 rounded-full overflow-hidden bg-muted border">
-                    <img src={item.data.photo.url} alt={item.data.name} className="w-full h-full object-cover" />
+                  <div className="w-12 h-[56px] rounded-md overflow-hidden bg-muted border">
+                    <img src={item.data.photo.url} alt={item.data.name} className="w-full h-full object-contain" />
                   </div>
                 </TableCell>
                 <TableCell className="font-medium">{item.data.name}</TableCell>
@@ -180,6 +292,13 @@ export function SquadPageAdmin({
                 </TableCell>
               </TableRow>
             ))}
+            {items.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
+                  No players yet. Add your first player!
+                </TableCell>
+              </TableRow>
+            ) : null}
           </TableBody>
         </Table>
 
@@ -196,9 +315,9 @@ export function SquadPageAdmin({
                 <div className="grid gap-2">
                   <Label>Player Photo</Label>
                   <div className="flex items-center gap-4">
-                    <div className="w-20 h-20 rounded-full bg-muted border flex items-center justify-center overflow-hidden">
+                    <div className="w-[120px] h-[138px] rounded-lg bg-muted border flex items-center justify-center overflow-hidden">
                       {formData.photo.url ? (
-                        <img src={formData.photo.url} alt="Preview" className="w-full h-full object-cover" />
+                        <img src={formData.photo.url} alt="Preview" className="w-full h-full object-contain" />
                       ) : (
                         <ImageIcon className="w-6 h-6 text-muted-foreground" />
                       )}
@@ -302,6 +421,32 @@ export function SquadPageAdmin({
                 <Button type="submit" disabled={uploading}>Save Changes</Button>
               </DialogFooter>
             </form>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={bulkOpen} onOpenChange={setBulkOpen}>
+          <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Bulk Import Players</DialogTitle>
+              <DialogDescription>
+                Paste JSON array or CSV with headers: name,jersey,position,age,category,height,goals,photoUrl
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-3 py-2">
+              <div className="grid gap-2">
+                <Label htmlFor="bulkFile">CSV File (optional)</Label>
+                <Input id="bulkFile" type="file" accept=".csv,text/csv" onChange={onBulkFileChange} />
+              </div>
+              <Textarea value={bulkText} onChange={(e) => setBulkText(e.target.value)} rows={12} />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setBulkOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="button" className="bg-primary hover:bg-primary/90" onClick={() => void bulkImport()}>
+                Import
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </CardContent>

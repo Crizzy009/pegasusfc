@@ -45,26 +45,6 @@ export function MediaHubPage() {
     },
   ];
 
-  const news = [
-    {
-      date: "Feb 15, 2026",
-      title: "U10 Squad Wins Badore Community Cup",
-      excerpt: "In an exciting final, our U10 team secured a 3-1 victory to claim the championship trophy.",
-      image: placeholderPhotoUrl,
-    },
-    {
-      date: "Feb 10, 2026",
-      title: "Registration Open for New Term",
-      excerpt: "We're accepting new registrations for all age categories. Limited spaces available!",
-      image: placeholderPhotoUrl,
-    },
-    {
-      date: "Jan 28, 2026",
-      title: "5 Players Selected for State Trials",
-      excerpt: "Congratulations to our talented athletes chosen to represent Lagos State at U15 level.",
-      image: placeholderPhotoUrl,
-    },
-  ];
 
   const photoItems = photosData.length
     ? photosData.map((p) => ({
@@ -74,14 +54,12 @@ export function MediaHubPage() {
       }))
     : photos;
 
-  const newsItems = newsData.length
-    ? newsData.map((n) => ({
-        date: n.date,
-        title: n.title,
-        excerpt: n.excerpt,
-        image: n.image.url,
-      }))
-    : news;
+  const newsItems = newsData.map((n) => ({
+    date: n.date,
+    title: n.title,
+    excerpt: n.excerpt,
+    image: n.image.url,
+  }));
 
   return (
     <div>
@@ -89,7 +67,7 @@ export function MediaHubPage() {
       <section className="relative py-20 md:py-32 text-white overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.jpg')` }}
+          style={{ backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.PNG')` }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/90" />
         </div>
@@ -171,38 +149,44 @@ export function MediaHubPage() {
             </TabsContent>
 
             <TabsContent value="news" className="space-y-8">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {newsItems.map((article, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <Card className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow cursor-pointer">
-                      <div className="aspect-video overflow-hidden">
-                        <img
-                          src={article.image}
-                          alt={article.title}
-                          className="w-full h-full object-cover transition-transform hover:scale-110 duration-500"
-                        />
-                      </div>
-                      <div className="p-6">
-                        <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
-                          <Calendar className="w-4 h-4" />
-                          {article.date}
+              {newsItems.length === 0 ? (
+                <div className="text-center py-12 text-gray-600">
+                  No news updates yet.
+                </div>
+              ) : (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {newsItems.map((article, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Card className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow cursor-pointer">
+                        <div className="aspect-video overflow-hidden">
+                          <img
+                            src={article.image}
+                            alt={article.title}
+                            className="w-full h-full object-cover transition-transform hover:scale-110 duration-500"
+                          />
                         </div>
-                        <h3 className="text-xl font-bold mb-2 text-secondary">{article.title}</h3>
-                        <p className="text-gray-600 mb-4">{article.excerpt}</p>
-                        <button className="text-primary font-semibold hover:underline flex items-center gap-1">
-                          <Eye className="w-4 h-4" />
-                          Read More
-                        </button>
-                      </div>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
+                        <div className="p-6">
+                          <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                            <Calendar className="w-4 h-4" />
+                            {article.date}
+                          </div>
+                          <h3 className="text-xl font-bold mb-2 text-secondary">{article.title}</h3>
+                          <p className="text-gray-600 mb-4">{article.excerpt}</p>
+                          <button className="text-primary font-semibold hover:underline flex items-center gap-1">
+                            <Eye className="w-4 h-4" />
+                            Read More
+                          </button>
+                        </div>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>

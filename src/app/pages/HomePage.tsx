@@ -4,12 +4,13 @@ import { Card } from "../components/ui/card";
 import { Trophy, Users, MapPin, GraduationCap, Target, Heart, Award, Calendar } from "lucide-react";
 import { motion } from "motion/react";
 import { usePublicContent } from "../content/useContent";
-import type { Coach, HomeHighlight, HomeTeam } from "../content/types";
+import type { Coach, HomeHighlight, HomeTeam, Manager } from "../content/types";
 
 export function HomePage() {
   const { data: homeTeams } = usePublicContent<HomeTeam>("homeTeam");
   const { data: homeHighlights } = usePublicContent<HomeHighlight>("homeHighlight");
   const { data: coachesData } = usePublicContent<Coach>("coach");
+  const { data: managersData } = usePublicContent<Manager>("manager");
 
   const placeholderPhotoUrl = `${import.meta.env.BASE_URL}placeholders/photo.svg`;
 
@@ -102,27 +103,10 @@ export function HomePage() {
     },
   ];
 
-  const highlights = [
-    {
-      title: "U10 Champions",
-      description: "Badore Community Cup Winners 2025",
-      image: placeholderPhotoUrl,
-    },
-    {
-      title: "200+ Active Players",
-      description: "Growing community across all age groups",
-      image: placeholderPhotoUrl,
-    },
-    {
-      title: "Lagos State Trials",
-      description: "5 players selected for U15 trials",
-      image: placeholderPhotoUrl,
-    },
-  ];
-
-  const highlightCards = homeHighlights.length
-    ? homeHighlights.map((h) => ({ title: h.title, description: h.description, image: h.image.url }))
-    : highlights;
+  const highlightCards = [...homeHighlights]
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .slice(0, 3)
+    .map((h) => ({ title: h.title, description: h.description, image: h.image.url }));
 
   return (
     <div>
@@ -131,7 +115,7 @@ export function HomePage() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.jpg')`,
+            backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.PNG')`,
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/90" />
@@ -199,12 +183,17 @@ export function HomePage() {
               transition={{ duration: 0.6 }}
             >
               <img
-                src={`${import.meta.env.BASE_URL}president.jpg`}
+                src={`${import.meta.env.BASE_URL}president.jpeg`}
                 onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).src = `${import.meta.env.BASE_URL}president-photo.svg`;
+                  const img = e.currentTarget as HTMLImageElement;
+                  if (img.src.endsWith("/president.jpeg")) {
+                    img.src = `${import.meta.env.BASE_URL}president.jpg`;
+                  } else {
+                    img.src = `${import.meta.env.BASE_URL}president-photo.svg`;
+                  }
                 }}
                 alt="Martins Imabeh - President"
-                className="rounded-lg shadow-2xl w-full object-cover aspect-[4/5]"
+                className="rounded-lg shadow-2xl w-full max-w-[460px] h-[531px] object-cover"
               />
             </motion.div>
             <motion.div
@@ -222,8 +211,8 @@ export function HomePage() {
                 nurturing raw talent in Badore and beyond."
               </blockquote>
               <div className="mb-6">
-                <div className="font-bold text-xl text-secondary">Martins Imabeh</div>
-                <div className="text-primary font-semibold">President, Pegasus Football Academy</div>
+                <div className="font-bold text-xl text-secondary">Martins Charming Imabeh</div>
+                <div className="text-primary font-semibold">President/Founder, Pegasus Football Academy</div>
               </div>
               <Link to="/about">
                 <Button variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-white">
@@ -286,17 +275,89 @@ export function HomePage() {
                     transition={{ delay: i * 0.08 }}
                   >
                     <Card className="p-5 h-full shadow-lg hover:shadow-2xl transition-shadow">
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-full overflow-hidden bg-muted border shrink-0">
+                      <div className="flex flex-col items-center gap-3 md:flex-row md:items-center md:gap-4">
+                        <div className="w-16 h-20 rounded-md overflow-hidden bg-muted border shrink-0">
                           <img src={c.photo?.url || placeholderPhotoUrl} alt={c.photo?.alt || c.name} className="w-full h-full object-cover" />
                         </div>
-                        <div className="min-w-0">
-                          <div className="font-bold text-secondary leading-tight truncate">{c.name}</div>
-                          <div className="text-sm text-primary font-semibold truncate">{c.title}</div>
+                        <div className="min-w-0 text-center md:text-left">
+                          <div className="font-bold text-secondary leading-tight break-words line-clamp-2">{c.name}</div>
+                          <div className="text-sm text-primary font-semibold break-words line-clamp-2">{c.title}</div>
                         </div>
                       </div>
                       {c.bio ? (
-                        <div className="mt-4 text-sm text-gray-600 line-clamp-3">{c.bio}</div>
+                        <div className="mt-4 text-sm text-gray-600 line-clamp-3 hidden lg:block">{c.bio}</div>
+                      ) : null}
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            );
+          })()}
+        </div>
+      </section>
+
+      <section className="py-16 md:py-20 bg-white border-t">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <div className="text-sm uppercase tracking-wide text-primary font-semibold mb-2">
+              Our Managers
+            </div>
+            <h2 className="text-4xl font-bold text-secondary">Management Team</h2>
+          </div>
+          {(() => {
+            const fallback: Manager[] = [
+              {
+                name: "Team Manager 1",
+                title: "General Manager",
+                bio: "Operations, scheduling, and team coordination.",
+                photo: { url: placeholderPhotoUrl, alt: "General Manager" },
+                order: 10,
+              },
+              {
+                name: "Team Manager 2",
+                title: "Academy Secretary",
+                bio: "Administration, registration, and communication.",
+                photo: { url: placeholderPhotoUrl, alt: "Academy Secretary" },
+                order: 20,
+              },
+              {
+                name: "Team Manager 3",
+                title: "Welfare Officer",
+                bio: "Player welfare, support, and safeguarding.",
+                photo: { url: placeholderPhotoUrl, alt: "Welfare Officer" },
+                order: 30,
+              },
+              {
+                name: "Team Manager 4",
+                title: "Match Coordinator",
+                bio: "Fixtures, logistics, and matchday support.",
+                photo: { url: placeholderPhotoUrl, alt: "Match Coordinator" },
+                order: 40,
+              },
+            ];
+            const list = managersData.length ? managersData : fallback;
+            const sorted = [...list].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).slice(0, 4);
+            return (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                {sorted.map((m, i) => (
+                  <motion.div
+                    key={`${m.name}-${i}`}
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.08 }}
+                  >
+                    <Card className="p-5 h-full shadow-lg hover:shadow-2xl transition-shadow">
+                      <div className="flex flex-col items-center gap-3 md:flex-row md:items-center md:gap-4">
+                        <div className="w-16 h-20 rounded-md overflow-hidden bg-muted border shrink-0">
+                          <img src={m.photo?.url || placeholderPhotoUrl} alt={m.photo?.alt || m.name} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="min-w-0 text-center md:text-left">
+                          <div className="font-bold text-secondary leading-tight break-words line-clamp-2">{m.name}</div>
+                          <div className="text-sm text-primary font-semibold break-words line-clamp-2">{m.title}</div>
+                        </div>
+                      </div>
+                      {m.bio ? (
+                        <div className="mt-4 text-sm text-gray-600 line-clamp-3 hidden lg:block">{m.bio}</div>
                       ) : null}
                     </Card>
                   </motion.div>
@@ -390,31 +451,37 @@ export function HomePage() {
               Celebrating our achievements and milestones
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {highlightCards.map((highlight, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.15 }}
-                whileHover={{ y: -5 }}
-              >
-                <Card className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow">
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={highlight.image}
-                      alt={highlight.title}
-                      className="w-full h-full object-cover transition-transform hover:scale-110 duration-500"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2 text-secondary">{highlight.title}</h3>
-                    <p className="text-gray-600">{highlight.description}</p>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+          {highlightCards.length === 0 ? (
+            <div className="text-center py-12 text-gray-600">
+              No highlights yet.
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-8">
+              {highlightCards.map((highlight, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.15 }}
+                  whileHover={{ y: -5 }}
+                >
+                  <Card className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow">
+                    <div className="aspect-video overflow-hidden">
+                      <img
+                        src={highlight.image}
+                        alt={highlight.title}
+                        className="w-full h-full object-cover transition-transform hover:scale-110 duration-500"
+                      />
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl font-bold mb-2 text-secondary">{highlight.title}</h3>
+                      <p className="text-gray-600">{highlight.description}</p>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          )}
           <div className="text-center mt-10">
             <Link to="/hall-of-fame">
               <Button size="lg" variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-white">

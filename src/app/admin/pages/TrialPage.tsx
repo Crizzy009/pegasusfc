@@ -21,10 +21,8 @@ import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
 
 export function TrialPageAdmin({
   editId,
-  createPrefill,
 }: {
   editId?: string | null;
-  createPrefill?: Trial | null;
 }) {
   const { items, loading, createItem, updateItem, deleteItem } = useAdminCRUD<Trial>("trial");
   const [isOpen, setIsOpen] = useState(false);
@@ -55,13 +53,6 @@ export function TrialPageAdmin({
     setFormData(it.data);
     setIsOpen(true);
   }, [editId, itemById]);
-
-  useEffect(() => {
-    if (!createPrefill) return;
-    setEditingId(null);
-    setFormData(createPrefill);
-    setIsOpen(true);
-  }, [createPrefill]);
 
   const handleOpen = (item?: any) => {
     if (item) {
@@ -160,6 +151,13 @@ export function TrialPageAdmin({
                 </TableCell>
               </TableRow>
             ))}
+            {items.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
+                  No trial sessions yet. Add your first one.
+                </TableCell>
+              </TableRow>
+            ) : null}
           </TableBody>
         </Table>
 

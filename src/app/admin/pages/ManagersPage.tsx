@@ -7,17 +7,17 @@ import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
 import { useAdminCRUD } from "../hooks/useAdminCRUD";
-import type { Coach } from "../../content/types";
+import type { Manager } from "../../content/types";
 import { toast } from "sonner";
 import { Image as ImageIcon, Plus, Trash2 } from "lucide-react";
 
-export function CoachesPageAdmin() {
-  const { items, createItem, updateItem, deleteItem, upload } = useAdminCRUD<Coach>("coach");
+export function ManagersPageAdmin() {
+  const { items, createItem, updateItem, deleteItem, upload } = useAdminCRUD<Manager>("manager");
 
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [form, setForm] = useState<Coach>({
+  const [form, setForm] = useState<Manager>({
     name: "",
     title: "",
     bio: "",
@@ -65,16 +65,16 @@ export function CoachesPageAdmin() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.photo?.url) {
-      toast.error("Please upload a coach photo");
+      toast.error("Please upload a manager photo");
       return;
     }
     try {
       if (editingId) {
         await updateItem(editingId, form);
-        toast.success("Coach updated");
+        toast.success("Manager updated");
       } else {
         await createItem(form, "published");
-        toast.success("Coach added");
+        toast.success("Manager added");
       }
       setOpen(false);
     } catch (err: any) {
@@ -83,10 +83,10 @@ export function CoachesPageAdmin() {
   };
 
   const remove = async (id: string) => {
-    if (!confirm("Delete this coach?")) return;
+    if (!confirm("Delete this manager?")) return;
     try {
       await deleteItem(id);
-      toast.success("Coach deleted");
+      toast.success("Manager deleted");
     } catch (err: any) {
       toast.error(err?.message ?? "Delete failed");
     }
@@ -96,10 +96,10 @@ export function CoachesPageAdmin() {
     <div className="space-y-6">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Coaches</CardTitle>
+          <CardTitle>Managers</CardTitle>
           <Button onClick={() => openDialog()}>
             <Plus className="w-4 h-4 mr-2" />
-            Add Coach
+            Add Manager
           </Button>
         </CardHeader>
         <CardContent>
@@ -141,7 +141,7 @@ export function CoachesPageAdmin() {
               {items.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
-                    No coaches found. Add your first coach!
+                    No managers found. Add your first manager!
                   </TableCell>
                 </TableRow>
               ) : null}
@@ -154,12 +154,12 @@ export function CoachesPageAdmin() {
         <DialogContent className="sm:max-w-[520px]">
           <form onSubmit={submit}>
             <DialogHeader>
-              <DialogTitle>{editingId ? "Edit Coach" : "Add Coach"}</DialogTitle>
-              <DialogDescription>Manage coaching staff details shown on the homepage.</DialogDescription>
+              <DialogTitle>{editingId ? "Edit Manager" : "Add Manager"}</DialogTitle>
+              <DialogDescription>Manage management staff details shown on the homepage.</DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="photo">Coach Photo</Label>
+                <Label htmlFor="photo">Manager Photo</Label>
                 <div className="flex items-center gap-3">
                   <div className="w-[120px] h-[138px] rounded-lg overflow-hidden bg-muted border flex items-center justify-center">
                     {form.photo?.url ? (

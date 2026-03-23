@@ -64,6 +64,14 @@ export type Coach = {
   order?: number;
 };
 
+export type Manager = {
+  name: string;
+  title: string;
+  bio?: string;
+  photo: ImageAsset;
+  order?: number;
+};
+
 export type Player = {
   name: string;
   jersey: number;
@@ -206,6 +214,7 @@ export type ContentType =
   | "facility"
   | "program"
   | "coach"
+  | "manager"
   | "player"
   | "squadStarPlayers"
   | "partner"

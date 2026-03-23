@@ -126,39 +126,8 @@ export function AboutPageFacilities() {
     );
   }
 
-  const placeholderPhotoUrl = `${import.meta.env.BASE_URL}placeholders/photo.svg`;
-
-  const fallbackFacilities: Facility[] = [
-    {
-      name: "Training Pitch",
-      descriptionHtml: "Quality grass pitch with proper markings and goals for authentic match experience",
-      amenities: [],
-      images: [
-        {
-          url: placeholderPhotoUrl,
-          alt: "Training Pitch",
-          caption: "",
-        },
-      ],
-      order: 10,
-    },
-    {
-      name: "Modern Equipment",
-      descriptionHtml: "Professional-grade training equipment including cones, bibs, and balls",
-      amenities: [],
-      images: [
-        {
-          url: placeholderPhotoUrl,
-          alt: "Training Equipment",
-          caption: "",
-        },
-      ],
-      order: 20,
-    },
-  ];
-
   const sortedItems = [...items].sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
-  const previewCards = sortedItems.length > 0 ? sortedItems : null;
+  const previewCards = sortedItems;
 
   return (
     <Card>
@@ -172,29 +141,30 @@ export function AboutPageFacilities() {
       <CardContent>
         <div className="mb-8">
           <div className="text-sm font-semibold text-secondary mb-3">Preview (same as website)</div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl">
-            {(previewCards ? previewCards.map((i) => ({ id: i.id, facility: i.data })) : fallbackFacilities.map((f, idx) => ({ id: `fallback_${idx}`, facility: f }))).map(
-              ({ id, facility }, index) => (
+          {previewCards.length === 0 ? (
+            <div className="text-center py-10 text-muted-foreground">
+              No facilities yet. Add your first facility to show on the About page.
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-8 max-w-5xl">
+              {previewCards.map((i) => (
                 <Card
-                  key={id}
+                  key={i.id}
                   className="overflow-hidden shadow-lg cursor-pointer"
-                  onClick={() => {
-                    const real = previewCards?.[index];
-                    if (real) handleOpen(real);
-                  }}
+                  onClick={() => handleOpen(i)}
                 >
                   <img
-                    src={facility.images?.[0]?.url}
-                    alt={facility.images?.[0]?.alt || facility.name}
+                    src={i.data.images?.[0]?.url}
+                    alt={i.data.images?.[0]?.alt || i.data.name}
                     className="w-full aspect-video object-cover"
                   />
                   <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2 text-secondary">{facility.name}</h3>
-                    <div className="text-gray-600" dangerouslySetInnerHTML={{ __html: facility.descriptionHtml }} />
-                    {facility.amenities?.length ? (
+                    <h3 className="text-xl font-bold mb-2 text-secondary">{i.data.name}</h3>
+                    <div className="text-gray-600" dangerouslySetInnerHTML={{ __html: i.data.descriptionHtml }} />
+                    {i.data.amenities?.length ? (
                       <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-700">
-                        {facility.amenities.map((a, i) => (
-                          <li key={i} className="flex items-center gap-2">
+                        {i.data.amenities.map((a, idx) => (
+                          <li key={idx} className="flex items-center gap-2">
                             <span className="w-2 h-2 bg-primary rounded-full" />
                             {a}
                           </li>
@@ -203,9 +173,9 @@ export function AboutPageFacilities() {
                     ) : null}
                   </div>
                 </Card>
-              )
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <Table>

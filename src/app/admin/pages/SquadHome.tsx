@@ -6,9 +6,6 @@ import { toast } from "sonner";
 import type { Player, SquadStarPlayers } from "../../content/types";
 import { useAdminCRUD } from "../hooks/useAdminCRUD";
 import { SquadPageAdmin } from "./SquadPage";
-import { apiJson } from "../../lib/http";
-import { getSupabaseConfig } from "../../supabase/config";
-import { getAccessToken } from "../../supabase/auth";
 import {
   Dialog,
   DialogContent,
@@ -21,14 +18,12 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 
 export function SquadHome() {
-  const { items, refresh } = useAdminCRUD<Player>("player");
+  const { items } = useAdminCRUD<Player>("player");
   const { items: starItems, createItem: createStarItem, updateItem: updateStarItem } =
     useAdminCRUD<SquadStarPlayers>("squadStarPlayers");
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
-  const [createPrefill, setCreatePrefill] = useState<Player | null>(null);
   const [playerQuery, setPlayerQuery] = useState("");
   const [starOpen, setStarOpen] = useState(false);
-  const [importing, setImporting] = useState(false);
   const [starForm, setStarForm] = useState<SquadStarPlayers>({
     topScorerName: "Joseph Musa",
     topScorerDetail: "15 goals - U10",
@@ -59,109 +54,9 @@ export function SquadHome() {
     }
   };
 
-  const placeholderPlayerPhotoUrl = `${import.meta.env.BASE_URL}placeholders/player.svg`;
-
-  const fallbackPlayers: Player[] = [
-    {
-      name: "David Okafor",
-      jersey: 10,
-      position: "Forward",
-      age: 15,
-      category: "u14-u16",
-      height: `5'8"`,
-      goals: 12,
-      photo: {
-        url: placeholderPlayerPhotoUrl,
-        alt: "David Okafor",
-        caption: "",
-      },
-      order: 10,
-    },
-    {
-      name: "Emmanuel Adebayo",
-      jersey: 7,
-      position: "Midfielder",
-      age: 14,
-      category: "u14-u16",
-      height: `5'7"`,
-      goals: 8,
-      photo: {
-        url: placeholderPlayerPhotoUrl,
-        alt: "Emmanuel Adebayo",
-        caption: "",
-      },
-      order: 20,
-    },
-    {
-      name: "Samuel Nwankwo",
-      jersey: 1,
-      position: "Goalkeeper",
-      age: 13,
-      category: "u11-u13",
-      height: `5'5"`,
-      goals: 0,
-      photo: {
-        url: placeholderPlayerPhotoUrl,
-        alt: "Samuel Nwankwo",
-        caption: "",
-      },
-      order: 30,
-    },
-    {
-      name: "Chukwuemeka Eze",
-      jersey: 5,
-      position: "Defender",
-      age: 12,
-      category: "u11-u13",
-      height: `5'4"`,
-      goals: 3,
-      photo: {
-        url: placeholderPlayerPhotoUrl,
-        alt: "Chukwuemeka Eze",
-        caption: "",
-      },
-      order: 40,
-    },
-    {
-      name: "Joseph Musa",
-      jersey: 9,
-      position: "Forward",
-      age: 10,
-      category: "u10",
-      height: `4'9"`,
-      goals: 15,
-      photo: {
-        url: placeholderPlayerPhotoUrl,
-        alt: "Joseph Musa",
-        caption: "",
-      },
-      order: 50,
-    },
-    {
-      name: "Tobenna Okeke",
-      jersey: 11,
-      position: "Midfielder",
-      age: 9,
-      category: "u7-u9",
-      height: `4'5"`,
-      goals: 5,
-      photo: {
-        url: placeholderPlayerPhotoUrl,
-        alt: "Tobenna Okeke",
-        caption: "",
-      },
-      order: 60,
-    },
-  ];
-
-  const showFallback = sorted.length === 0;
-
   const preview = useMemo(() => {
-    if (showFallback) {
-      return fallbackPlayers.map((p, index) => ({ id: `fallback_${index}`, data: p }));
-    }
     return sorted.map((p) => ({ id: p.id, data: p.data }));
-  }, [showFallback, fallbackPlayers, sorted]);
+  }, [sorted]);
 
   const filteredPreview = useMemo(() => {
     const q = playerQuery.trim().toLowerCase();
@@ -172,50 +67,6 @@ export function SquadHome() {
       return name.includes(q) || jersey.includes(q);
     });
   }, [preview, playerQuery]);
-
-  const importDefaults = async () => {
-    if (importing) return;
-    setImporting(true);
-    try {
-      const token = getAccessToken();
-      if (!token) {
-        toast.error("Not logged in. Please logout and login again.");
-        return;
-      }
-
-      const existingKeys = new Set(
-        items.map((it) => `${String(it.data?.name ?? "").toLowerCase()}|${it.data?.jersey ?? ""}|${it.data?.category ?? ""}`)
-      );
-      const toImport = fallbackPlayers.filter(
-        (p) => !existingKeys.has(`${p.name.toLowerCase()}|${p.jersey}|${p.category}`)
-      );
-
-      if (toImport.length === 0) {
-        toast.message("Default squad already imported");
-        return;
-      }
-
-      const { url } = getSupabaseConfig();
-      if (!url) {
-        toast.error("Supabase is not configured in the client");
-        return;
-      }
-
-      const fn = new URL("/functions/v1/players", url).toString();
-      const res = await apiJson(fn, {
-        method: "POST",
-        headers: { "x-admin": "1", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ data: toImport }),
-      });
-
-      await refresh();
-      toast.success(`Imported ${res.inserted ?? toImport.length} player(s)`);
-    } catch (err: any) {
-      toast.error(err?.message ?? "Failed to import squad");
-    } finally {
-      setImporting(false);
-    }
-  };
 
   const starCurrent = starItems[0] ?? null;
   const starData: SquadStarPlayers =
@@ -286,11 +137,6 @@ export function SquadHome() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Preview (same as website)</CardTitle>
-          {showFallback ? (
-            <Button variant="outline" onClick={importDefaults} disabled={importing}>
-              Import Default Squad
-            </Button>
-          ) : null}
         </CardHeader>
         <CardContent>
           <div className="mb-4">
@@ -300,54 +146,54 @@ export function SquadHome() {
               placeholder="Search player name or jersey number..."
             />
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredPreview.map(({ id, data }) => (
-              <Card
-                key={id}
-                className="overflow-hidden rounded-[30px] shadow-lg hover:shadow-2xl transition-shadow cursor-pointer"
-                onClick={() => {
-                  if (showFallback) {
-                    setSelectedPlayerId(null);
-                    setCreatePrefill(data);
-                    return;
-                  }
-                  setCreatePrefill(null);
-                  setSelectedPlayerId(id);
-                }}
-              >
-                <div className="relative aspect-[3/4] overflow-hidden">
-                  <img
-                    src={data.photo.url}
-                    alt={data.name}
-                    className="w-full h-full object-cover transition-transform hover:scale-110 duration-500"
-                  />
-                  <div className="absolute top-4 right-4 w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg">
-                    {data.jersey}
+          {items.length === 0 ? (
+            <div className="text-center py-10 text-muted-foreground">
+              No players yet. Add your first player below.
+            </div>
+          ) : filteredPreview.length === 0 ? (
+            <div className="text-center py-10 text-muted-foreground">No players found.</div>
+          ) : (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredPreview.map(({ id, data }) => (
+                <Card
+                  key={id}
+                  className="overflow-hidden rounded-[30px] shadow-lg hover:shadow-2xl transition-shadow cursor-pointer"
+                  onClick={() => setSelectedPlayerId(id)}
+                >
+                  <div className="relative aspect-[460/531] overflow-hidden">
+                    <img
+                      src={data.photo.url}
+                      alt={data.name}
+                      className="w-full h-full object-cover transition-transform hover:scale-110 duration-500"
+                    />
+                    <div className="absolute top-4 right-4 w-16 h-16 bg-primary rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+                      {data.jersey}
+                    </div>
+                    <Badge className={`absolute top-4 left-4 ${getPositionColor(data.position)}`}>
+                      {data.position}
+                    </Badge>
                   </div>
-                  <Badge className={`absolute top-4 left-4 ${getPositionColor(data.position)}`}>
-                    {data.position}
-                  </Badge>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-2xl font-bold mb-2 text-secondary">{data.name}</h3>
-                  <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
-                    <div>
-                      <div className="text-xs text-gray-500">Age</div>
-                      <div className="font-semibold">{data.age} years</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-500">Height</div>
-                      <div className="font-semibold">{data.height}</div>
-                    </div>
-                    <div className="col-span-2">
-                      <div className="text-xs text-gray-500">Goals This Season</div>
-                      <div className="font-semibold text-primary text-lg">{data.goals}</div>
+                  <div className="p-6">
+                    <h3 className="text-2xl font-bold mb-2 text-secondary">{data.name}</h3>
+                    <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                      <div>
+                        <div className="text-xs text-gray-500">Age</div>
+                        <div className="font-semibold">{data.age} years</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500">Height</div>
+                        <div className="font-semibold">{data.height}</div>
+                      </div>
+                      <div className="col-span-2">
+                        <div className="text-xs text-gray-500">Goals This Season</div>
+                        <div className="font-semibold text-primary text-lg">{data.goals}</div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Card>
-            ))}
-          </div>
+                </Card>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -430,7 +276,7 @@ export function SquadHome() {
         </DialogContent>
       </Dialog>
 
-      <SquadPageAdmin editId={selectedPlayerId} createPrefill={createPrefill} />
+      <SquadPageAdmin editId={selectedPlayerId} createPrefill={null} />
     </div>
   );
 }

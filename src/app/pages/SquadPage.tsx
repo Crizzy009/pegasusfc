@@ -270,7 +270,7 @@ export function SquadPage() {
       <section className="relative py-20 md:py-32 text-white overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.jpg')` }}
+          style={{ backgroundImage: `url('${import.meta.env.BASE_URL}squad-hero-bg.jpeg')` }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/90" />
         </div>
@@ -395,7 +395,7 @@ export function SquadPage() {
                       style={getCardStyle(i)}
                     >
                       <Card className="overflow-hidden rounded-[30px] bg-white">
-                        <div className="relative aspect-[3/4] overflow-hidden">
+                        <div className="relative aspect-[460/531] overflow-hidden">
                           <img
                             src={player.photo.url}
                             alt={player.name}
@@ -470,7 +470,7 @@ export function SquadPage() {
                   whileHover={{ y: -10 }}
                 >
                   <Card className="overflow-hidden rounded-[30px] shadow-lg hover:shadow-2xl transition-shadow cursor-pointer">
-                    <div className="relative aspect-[3/4] overflow-hidden">
+                    <div className="relative aspect-[460/531] overflow-hidden">
                       <img
                         src={player.photo.url}
                         alt={player.name}

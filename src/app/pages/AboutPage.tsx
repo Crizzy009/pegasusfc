@@ -65,7 +65,7 @@ export function AboutPage() {
       <section className="relative py-20 md:py-32 text-white overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.jpg')` }}
+          style={{ backgroundImage: `url('${import.meta.env.BASE_URL}hero-bg.PNG')` }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/90" />
         </div>
@@ -218,12 +218,17 @@ export function AboutPage() {
               <div className="grid md:grid-cols-5 gap-8 p-8">
                 <div className="md:col-span-2">
                   <img
-                    src={`${import.meta.env.BASE_URL}president.jpg`}
+                    src={`${import.meta.env.BASE_URL}president.jpeg`}
                     onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src = `${import.meta.env.BASE_URL}president-photo.svg`;
+                      const img = e.currentTarget as HTMLImageElement;
+                      if (img.src.endsWith("/president.jpeg")) {
+                        img.src = `${import.meta.env.BASE_URL}president.jpg`;
+                      } else {
+                        img.src = `${import.meta.env.BASE_URL}president-photo.svg`;
+                      }
                     }}
                     alt="Martins Imabeh"
-                    className="rounded-lg w-full aspect-square object-cover"
+                    className="rounded-lg w-full max-w-[460px] h-[531px] object-cover"
                   />
                 </div>
                 <div className="md:col-span-3">
