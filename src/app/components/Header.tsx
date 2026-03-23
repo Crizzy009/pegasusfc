@@ -1,19 +1,25 @@
 import { Link, useLocation } from "react-router";
-import { Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
-  const navLinks = [
+  const navLinksPrimary = [
     { path: "/", label: "Home" },
     { path: "/about", label: "About" },
     { path: "/programs", label: "Programs" },
-    { path: "/basketball", label: "Basketball" },
-    { path: "/tennis", label: "Lawn Tennis" },
-    { path: "/swimming", label: "Swimming" },
+  ];
+
+  const navLinksSecondary = [
     { path: "/squad", label: "Squad" },
     { path: "/hall-of-fame", label: "Hall of Fame" },
     { path: "/media", label: "Media" },
@@ -49,18 +55,63 @@ export function Header() {
               <div className="text-[10px] text-primary italic leading-none mt-1">Sports Academy</div>
             </div>
             <div className="hidden md:block">
-              <div className="font-bold text-xl">Pegasus Sports Academy</div>
+              <div className="font-bold text-lg xl:text-xl leading-tight">Pegasus Sports Academy</div>
               <div className="text-xs text-primary italic">Conquer Our Opponents</div>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex space-x-1">
-            {navLinks.map((link) => (
+          <nav className="hidden lg:flex items-center gap-1 whitespace-nowrap">
+            {navLinksPrimary.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`px-3 py-2 rounded transition-colors ${
+                className={`px-2 py-2 rounded transition-colors text-sm whitespace-nowrap ${
+                  isActive(link.path)
+                    ? "bg-primary text-white"
+                    : "hover:bg-primary/20"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className={`px-2 py-2 h-auto rounded text-sm whitespace-nowrap ${
+                    ["/basketball", "/tennis", "/swimming"].includes(location.pathname)
+                      ? "bg-primary text-white hover:bg-primary/90 hover:text-white"
+                      : "hover:bg-primary/20"
+                  }`}
+                >
+                  Sports
+                  <ChevronDown className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link to="/basketball" className="w-full">
+                    Basketball
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/tennis" className="w-full">
+                    Lawn Tennis
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/swimming" className="w-full">
+                    Swimming
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            {navLinksSecondary.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`px-2 py-2 rounded transition-colors text-sm whitespace-nowrap ${
                   isActive(link.path)
                     ? "bg-primary text-white"
                     : "hover:bg-primary/20"
@@ -92,7 +143,28 @@ export function Header() {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <nav className="lg:hidden pb-4 space-y-2">
-            {navLinks.map((link) => (
+            {[...navLinksPrimary, ...navLinksSecondary].map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block px-4 py-2 rounded transition-colors ${
+                  isActive(link.path)
+                    ? "bg-primary text-white"
+                    : "hover:bg-primary/20"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <div className="px-4 pt-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              Sports
+            </div>
+            {[
+              { path: "/basketball", label: "Basketball" },
+              { path: "/tennis", label: "Lawn Tennis" },
+              { path: "/swimming", label: "Swimming" },
+            ].map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
