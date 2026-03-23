@@ -11,6 +11,9 @@ export function Header() {
     { path: "/", label: "Home" },
     { path: "/about", label: "About" },
     { path: "/programs", label: "Programs" },
+    { path: "/basketball", label: "Basketball" },
+    { path: "/tennis", label: "Lawn Tennis" },
+    { path: "/swimming", label: "Swimming" },
     { path: "/squad", label: "Squad" },
     { path: "/hall-of-fame", label: "Hall of Fame" },
     { path: "/media", label: "Media" },
@@ -24,7 +27,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-secondary text-white shadow-lg">
+    <header className="sticky top-0 z-50 bg-white text-secondary shadow-lg border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center space-x-3">
@@ -41,8 +44,12 @@ export function Header() {
               }}
               className="w-12 h-12 object-contain"
             />
+            <div className="md:hidden">
+              <div className="font-bold text-lg leading-none">Pegasus</div>
+              <div className="text-[10px] text-primary italic leading-none mt-1">Sports Academy</div>
+            </div>
             <div className="hidden md:block">
-              <div className="font-bold text-xl">PEGASUS FC</div>
+              <div className="font-bold text-xl">Pegasus Sports Academy</div>
               <div className="text-xs text-primary italic">Conquer Our Opponents</div>
             </div>
           </Link>

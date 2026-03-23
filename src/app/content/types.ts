@@ -72,6 +72,36 @@ export type Manager = {
   order?: number;
 };
 
+export type SportKey = "football" | "basketball" | "tennis" | "swimming";
+
+export type SportPage = {
+  sport: SportKey;
+  heroTitle: string;
+  heroSubtitle?: string;
+  heroImage?: ImageAsset;
+  overviewHtml?: string;
+  trainingHtml?: string;
+  galleryTitle?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  order?: number;
+};
+
+export type SportGalleryPhoto = {
+  sport: SportKey;
+  title: string;
+  category: string;
+  date: string;
+  image: {
+    originalUrl: string;
+    largeUrl?: string;
+    mediumUrl?: string;
+    thumbUrl?: string;
+  };
+  caption?: string;
+  order?: number;
+};
+
 export type Player = {
   name: string;
   jersey: number;
@@ -215,6 +245,8 @@ export type ContentType =
   | "program"
   | "coach"
   | "manager"
+  | "sportPage"
+  | "sportGalleryPhoto"
   | "player"
   | "squadStarPlayers"
   | "partner"

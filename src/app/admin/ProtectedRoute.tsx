@@ -19,6 +19,16 @@ export function ProtectedRoute({ children }) {
   if (!user) {
     return <Navigate to="/admin/login" />;
   }
+  if (user.role === "viewer") {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-2xl font-bold text-secondary mb-2">Not authorized</div>
+          <div className="text-muted-foreground">Your account does not have admin access.</div>
+        </div>
+      </div>
+    );
+  }
 
   return children;
 }

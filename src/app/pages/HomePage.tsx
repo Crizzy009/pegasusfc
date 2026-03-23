@@ -131,10 +131,10 @@ export function HomePage() {
               Conquer Our Opponents
             </h1>
             <div className="text-xl md:text-3xl mb-6 text-primary italic font-semibold">
-              Pegasus Football Academy
+              Pegasus Sports Academy
             </div>
             <p className="text-lg md:text-2xl mb-8 max-w-3xl mx-auto text-gray-200">
-              Forging Lagos' Next Football Champions Since 2023
+              Forging Lagos' Next Sports Champions Since 2023
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/programs">
@@ -212,7 +212,7 @@ export function HomePage() {
               </blockquote>
               <div className="mb-6">
                 <div className="font-bold text-xl text-secondary">Martins Charming Imabeh</div>
-                <div className="text-primary font-semibold">President/Founder, Pegasus Football Academy</div>
+                <div className="text-primary font-semibold">President/Founder, Pegasus Sports Academy</div>
               </div>
               <Link to="/about">
                 <Button variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-white">
@@ -409,6 +409,46 @@ export function HomePage() {
                 View All Programs
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-24 bg-white border-t">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <div className="text-sm uppercase tracking-wide text-primary font-semibold mb-2">
+              More Sports
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-secondary">Beyond Football</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Basketball, lawn tennis, and swimming sections with the same Pegasus standards.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {[
+              { title: "Basketball", href: "/basketball", description: "Skill development, drills, and team play.", color: "from-orange-500 to-orange-700" },
+              { title: "Lawn Tennis", href: "/tennis", description: "Footwork, technique, and match readiness.", color: "from-orange-600 to-orange-800" },
+              { title: "Swimming", href: "/swimming", description: "Technique, endurance, and water confidence.", color: "from-orange-700 to-orange-900" },
+            ].map((s, index) => (
+              <motion.div
+                key={s.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -8 }}
+              >
+                <Link to={s.href}>
+                  <Card className="p-8 shadow-lg hover:shadow-2xl transition-shadow h-full">
+                    <div className={`h-14 w-14 rounded-xl bg-gradient-to-br ${s.color} mb-6`} />
+                    <div className="text-2xl font-bold text-secondary mb-2">{s.title}</div>
+                    <div className="text-gray-600 mb-6">{s.description}</div>
+                    <Button variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-white w-full">
+                      View {s.title}
+                    </Button>
+                  </Card>
+                </Link>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>

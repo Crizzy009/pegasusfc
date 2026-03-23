@@ -35,9 +35,17 @@ function supabaseEnv() {
     .split(",")
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean);
+  const editorEmails = (
+    Deno.env.get("SUPABASE_EDITOR_EMAILS") ??
+    Deno.env.get("EDITOR_EMAILS") ??
+    ""
+  )
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
 
   if (!url || !anonKey) throw new Error("supabase_not_configured");
-  return { url, anonKey, serviceKey, adminEmails };
+  return { url, anonKey, serviceKey, adminEmails, editorEmails };
 }
 
 function clientAdminFlag(req: Request) {
@@ -45,7 +53,7 @@ function clientAdminFlag(req: Request) {
 }
 
 async function requireAdmin(req: Request) {
-  const { url, anonKey, adminEmails } = supabaseEnv();
+  const { url, anonKey, adminEmails, editorEmails } = supabaseEnv();
   const auth = req.headers.get("authorization") ?? "";
   const token = auth.toLowerCase().startsWith("bearer ") ? auth.slice(7).trim() : "";
   if (!token) throw new Error("missing_token");
@@ -56,8 +64,10 @@ async function requireAdmin(req: Request) {
 
   const email = (data.user.email ?? "").toLowerCase();
   if (!email) throw new Error("invalid_token");
-  if (adminEmails.length && !adminEmails.includes(email)) throw new Error("not_admin");
-  return { email };
+  if (!adminEmails.length && !editorEmails.length) return { email, role: "admin" as const };
+  if (adminEmails.includes(email)) return { email, role: "admin" as const };
+  if (editorEmails.includes(email)) return { email, role: "editor" as const };
+  throw new Error("not_admin");
 }
 
 function createId(type: string) {
@@ -148,7 +158,7 @@ Deno.serve(async (req) => {
     }
 
     if (!isAdmin) return json({ error: "unauthorized" }, { status: 401 });
-    await requireAdmin(req);
+    const who = await requireAdmin(req);
 
     if (req.method === "POST" && parts[0] === "bulk") {
       const body = (await req.json().catch(() => null)) as any;
@@ -159,6 +169,7 @@ Deno.serve(async (req) => {
       }
 
       if (action === "delete") {
+        if (who.role !== "admin") return json({ error: "forbidden" }, { status: 403 });
         const { error } = await service.from("content").delete().in("id", ids);
         if (error) {
           const msg = String(error.message ?? "");
@@ -259,6 +270,7 @@ Deno.serve(async (req) => {
     }
 
     if (req.method === "DELETE" && parts.length === 1) {
+      if (who.role !== "admin") return json({ error: "forbidden" }, { status: 403 });
       const id = parts[0];
       const { error } = await service.from("content").delete().eq("id", id);
       if (error) {

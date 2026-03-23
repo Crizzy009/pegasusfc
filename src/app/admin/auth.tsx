@@ -1,7 +1,27 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { getAccessToken, supabaseGetUser, supabaseLogin, supabaseLogout, supabaseRefresh } from "../supabase/auth";
 
-type AdminUser = { id: string; email?: string; role: string };
+type AdminRole = "admin" | "editor" | "viewer";
+
+type AdminUser = { id: string; email?: string; role: AdminRole };
+
+function parseEmailList(value: unknown) {
+  if (typeof value !== "string") return [];
+  return value
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function resolveRole(email?: string | null): AdminRole {
+  const adminEmails = parseEmailList((import.meta as any)?.env?.VITE_ADMIN_EMAILS);
+  const editorEmails = parseEmailList((import.meta as any)?.env?.VITE_EDITOR_EMAILS);
+  if (!adminEmails.length && !editorEmails.length) return "admin";
+  const e = (email ?? "").toLowerCase();
+  if (e && adminEmails.includes(e)) return "admin";
+  if (e && editorEmails.includes(e)) return "editor";
+  return "viewer";
+}
 
 type AdminAuthState = {
   user: AdminUser | null;
@@ -28,7 +48,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
       if (!u) {
         setUser(null);
       } else {
-        setUser({ id: u.id, email: u.email, role: "admin" });
+        setUser({ id: u.id, email: u.email, role: resolveRole(u.email) });
       }
     } catch (e: any) {
       setUser(null);
@@ -42,7 +62,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     const token = getAccessToken();
     if (token) {
       const email = localStorage.getItem("supabase_user_email") || undefined;
-      setUser({ id: "", email, role: "admin" });
+      setUser({ id: "", email, role: resolveRole(email) });
       setLoading(false);
       void refresh({ silent: true });
     } else {
@@ -54,7 +74,7 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     setError(null);
     const u = await supabaseLogin(usernameOrEmail, password);
     if (u.email) localStorage.setItem("supabase_user_email", u.email);
-    setUser({ id: u.id, email: u.email, role: "admin" });
+    setUser({ id: u.id, email: u.email, role: resolveRole(u.email) });
   }, [refresh]);
 
   const logout = useCallback(async () => {

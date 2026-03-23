@@ -367,6 +367,14 @@ export function AdminLayout() {
                 Managers
               </NavLink>
               <NavLink
+                to="/admin/sports"
+                className={desktopNavClass}
+                end
+              >
+                <Trophy className="h-4 w-4" />
+                Sports
+              </NavLink>
+              <NavLink
                 to="/admin/stars-partners"
                 className={desktopNavClass}
                 end
@@ -515,6 +523,14 @@ export function AdminLayout() {
                 >
                   <Users className="h-5 w-5" />
                   Managers
+                </NavLink>
+                <NavLink
+                  to="/admin/sports"
+                  className={mobileNavClass}
+                  end
+                >
+                  <Trophy className="h-5 w-5" />
+                  Sports
                 </NavLink>
                 <NavLink
                   to="/admin/stars-partners"

@@ -238,6 +238,12 @@ export async function me() {
 }
 
 export async function uploadImage(file: File) {
+  const maxMbRaw = (import.meta as any)?.env?.VITE_MAX_UPLOAD_MB;
+  const maxMb = Number.isFinite(Number(maxMbRaw)) ? Number(maxMbRaw) : 5;
+  const maxBytes = Math.max(1, maxMb) * 1024 * 1024;
+  if (file.size > maxBytes) {
+    throw new Error(`file_too_large_max_${maxMb}mb`);
+  }
   const fd = new FormData();
   fd.append("file", file);
   const { url } = getSupabaseConfig();

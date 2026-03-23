@@ -221,6 +221,36 @@ const managerSchema = z.object({
   order: z.number().int().min(0).max(9999).optional().default(0),
 });
 
+const sportKeySchema = z.enum(["football", "basketball", "tennis", "swimming"]);
+
+const sportPageSchema = z.object({
+  sport: sportKeySchema,
+  heroTitle: z.string().min(1).max(120),
+  heroSubtitle: z.string().max(160).optional().default(""),
+  heroImage: imageSchema.optional(),
+  overviewHtml: z.string().max(8000).optional().default(""),
+  trainingHtml: z.string().max(8000).optional().default(""),
+  galleryTitle: z.string().max(120).optional().default(""),
+  ctaLabel: z.string().max(60).optional().default(""),
+  ctaHref: z.string().max(240).optional().default(""),
+  order: z.number().int().min(0).max(9999).optional().default(0),
+});
+
+const sportGalleryPhotoSchema = z.object({
+  sport: sportKeySchema,
+  title: z.string().min(1).max(120),
+  category: z.string().min(1).max(80),
+  date: z.string().min(1).max(40),
+  image: z.object({
+    originalUrl: assetUrlSchema,
+    largeUrl: assetUrlSchema.optional().default(""),
+    mediumUrl: assetUrlSchema.optional().default(""),
+    thumbUrl: assetUrlSchema.optional().default(""),
+  }),
+  caption: z.string().max(800).optional().default(""),
+  order: z.number().int().min(0).max(9999).optional().default(0),
+});
+
 const trialSchema = z.object({
   dateLabel: z.string().min(1).max(80),
   isoDate: z.string().min(1).max(40),
@@ -285,6 +315,8 @@ const schemaByType = {
   program: programSchema,
   coach: coachSchema,
   manager: managerSchema,
+  sportPage: sportPageSchema,
+  sportGalleryPhoto: sportGalleryPhotoSchema,
   player: playerSchema,
   squadStarPlayers: squadStarPlayersSchema,
   partner: partnerSchema,

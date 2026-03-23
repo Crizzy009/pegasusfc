@@ -35,11 +35,20 @@ function supabaseEnv() {
     .split(",")
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean);
+  const editorEmails = (
+    Deno.env.get("SUPABASE_EDITOR_EMAILS") ??
+    Deno.env.get("EDITOR_EMAILS") ??
+    ""
+  )
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
 
   const bucket = Deno.env.get("UPLOADS_BUCKET") ?? "uploads";
+  const maxUploadBytes = Number(Deno.env.get("MAX_UPLOAD_BYTES") ?? "0");
 
   if (!url || !anonKey) throw new Error("supabase_not_configured");
-  return { url, anonKey, serviceKey, adminEmails, bucket };
+  return { url, anonKey, serviceKey, adminEmails, editorEmails, bucket, maxUploadBytes };
 }
 
 function clientAdminFlag(req: Request) {
@@ -47,7 +56,7 @@ function clientAdminFlag(req: Request) {
 }
 
 async function requireAdmin(req: Request) {
-  const { url, anonKey, adminEmails } = supabaseEnv();
+  const { url, anonKey, adminEmails, editorEmails } = supabaseEnv();
   const auth = req.headers.get("authorization") ?? "";
   const token = auth.toLowerCase().startsWith("bearer ") ? auth.slice(7).trim() : "";
   if (!token) throw new Error("missing_token");
@@ -58,8 +67,10 @@ async function requireAdmin(req: Request) {
 
   const email = (data.user.email ?? "").toLowerCase();
   if (!email) throw new Error("invalid_token");
-  if (adminEmails.length && !adminEmails.includes(email)) throw new Error("not_admin");
-  return { email };
+  if (!adminEmails.length && !editorEmails.length) return { email, role: "admin" as const };
+  if (adminEmails.includes(email)) return { email, role: "admin" as const };
+  if (editorEmails.includes(email)) return { email, role: "editor" as const };
+  throw new Error("not_admin");
 }
 
 function safeFileName(name: string) {
@@ -76,7 +87,7 @@ Deno.serve(async (req) => {
 
     await requireAdmin(req);
 
-    const { url, serviceKey, bucket } = supabaseEnv();
+    const { url, serviceKey, bucket, maxUploadBytes } = supabaseEnv();
     if (!serviceKey) return json({ error: "supabase_not_configured" }, { status: 500 });
     const service = createClient(url, serviceKey);
 
@@ -84,6 +95,7 @@ Deno.serve(async (req) => {
     if (!form) return json({ error: "invalid_request" }, { status: 400 });
     const file = form.get("file");
     if (!(file instanceof File)) return json({ error: "invalid_request" }, { status: 400 });
+    if (maxUploadBytes > 0 && file.size > maxUploadBytes) return json({ error: "file_too_large" }, { status: 413 });
 
     const now = Date.now();
     const ext = safeFileName(file.name).split(".").pop() || "bin";
@@ -115,4 +127,3 @@ Deno.serve(async (req) => {
     return json({ error: msg }, { status });
   }
 });
-

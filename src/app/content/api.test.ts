@@ -21,7 +21,7 @@ vi.mock("../supabase/auth", () => {
 });
 
 import { apiJson } from "../lib/http";
-import { createAdminContent } from "./api";
+import { createAdminContent, uploadImage } from "./api";
 
 describe("createAdminContent", () => {
   it("returns id for players when edge function responds with ids[]", async () => {
@@ -44,3 +44,10 @@ describe("createAdminContent", () => {
   });
 });
 
+describe("uploadImage", () => {
+  it("rejects files larger than the configured max size", async () => {
+    const bytes = new Uint8Array(6 * 1024 * 1024);
+    const f = new File([bytes], "big.png", { type: "image/png" });
+    await expect(uploadImage(f)).rejects.toThrow("file_too_large_max_5mb");
+  });
+});

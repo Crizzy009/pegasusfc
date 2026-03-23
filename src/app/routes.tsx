@@ -11,6 +11,9 @@ import { MediaHubPage } from "./pages/MediaHubPage";
 import { StarsPartnersPage } from "./pages/StarsPartnersPage";
 import { RecruitmentPage } from "./pages/RecruitmentPage";
 import { ContactPage } from "./pages/ContactPage";
+import { BasketballPage } from "./pages/BasketballPage";
+import { TennisPage } from "./pages/TennisPage";
+import { SwimmingPage } from "./pages/SwimmingPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { AdminLayout } from "./admin/AdminLayout";
 import { AdminLoginPage } from "./admin/AdminLoginPage";
@@ -40,6 +43,7 @@ import { StarsPartnersHome } from "./admin/pages/StarsPartnersHome";
 import { TrialsHome } from "./admin/pages/TrialsHome";
 import { CoachesPageAdmin } from "./admin/pages/CoachesPage";
 import { ManagersPageAdmin } from "./admin/pages/ManagersPage";
+import { SportsPageAdmin } from "./admin/pages/SportsPage";
 
 export const router = createBrowserRouter([
   { path: "/admin/login", element: <AdminLoginPage /> },
@@ -58,6 +62,7 @@ export const router = createBrowserRouter([
       { path: "media", element: <MediaHubPageAdmin /> },
       { path: "coaches", element: <CoachesPageAdmin /> },
       { path: "managers", element: <ManagersPageAdmin /> },
+      { path: "sports", element: <SportsPageAdmin /> },
       { path: "stars-partners", element: <StarsPartnersHome /> },
       { path: "trials", element: <TrialsHome /> },
       { path: "hall-of-fame", element: <HallOfFameHome /> },
@@ -90,6 +95,9 @@ export const router = createBrowserRouter([
       { path: "hall-of-fame", element: <HallOfFamePage /> },
       { path: "media", element: <MediaHubPage /> },
       { path: "stars-partners", element: <StarsPartnersPage /> },
+      { path: "basketball", element: <BasketballPage /> },
+      { path: "tennis", element: <TennisPage /> },
+      { path: "swimming", element: <SwimmingPage /> },
       { path: "recruitment", element: <RecruitmentPage /> },
       { path: "contact", element: <ContactPage /> },
       { path: "*", element: <NotFoundPage /> },

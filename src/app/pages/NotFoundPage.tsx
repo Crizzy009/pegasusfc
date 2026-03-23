@@ -29,7 +29,7 @@ export function NotFoundPage() {
               size="lg"
               variant="outline"
               onClick={() => window.history.back()}
-              className="border-white text-white hover:bg-white hover:text-secondary"
+              className="bg-transparent border-white text-white hover:bg-white hover:text-secondary"
             >
               <ArrowLeft className="w-5 h-5 mr-2" />
               Go Back
