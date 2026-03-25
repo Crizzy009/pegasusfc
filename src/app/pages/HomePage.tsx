@@ -206,9 +206,7 @@ export function HomePage() {
               </div>
               <h2 className="text-4xl font-bold mb-6 text-secondary">Welcome to Pegasus</h2>
               <blockquote className="text-lg text-gray-700 italic mb-6 border-l-4 border-primary pl-6">
-                "At Pegasus Football Academy, we don't just train players; we build champions who
-                conquer on and off the pitch. Since 2023, we've been committed to discovering and
-                nurturing raw talent in Badore and beyond."
+                "At Pegasus Sports Academy, our vision is to redefine youth development through sport. We create structured opportunities, nurture talent, instill leadership, and build platforms that empower the next generation of African athletes. Sport is more than competition—it’s education, character, and global exposure. In just over two and a half years, we’ve combined academic support with competitive sport to impact 1,000+ young people across Nigeria. Looking ahead, our mission is clear: engage one million youths by 2040. With the right support, every child can thrive—this belief drives everything we do."
               </blockquote>
               <div className="mb-6">
                 <div className="font-bold text-xl text-secondary">Martins Charming Imabeh</div>
