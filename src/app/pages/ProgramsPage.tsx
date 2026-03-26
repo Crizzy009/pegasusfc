@@ -51,7 +51,6 @@ export function ProgramsPage() {
       focus: "Introduction to Football",
       time: "2:45 PM - 7:00 PM",
       days: "Friday & Saturday",
-      fee: "₦15,000/month",
       color: "from-orange-400 to-orange-600",
       description: "Focus on basic motor skills, coordination, and having fun with the ball.",
       curriculum: [
@@ -69,7 +68,6 @@ export function ProgramsPage() {
       focus: "Fun & Fundamentals",
       time: "2:45 PM - 7:00 PM",
       days: "Friday & Saturday",
-      fee: "₦15,000/month",
       color: "from-orange-500 to-orange-700",
       description: "Introduction to football through fun games and basic skills development",
       curriculum: [
@@ -87,7 +85,6 @@ export function ProgramsPage() {
       focus: "Skill Development",
       time: "2:45 PM - 7:00 PM",
       days: "Friday & Saturday",
-      fee: "₦18,000/month",
       color: "from-orange-600 to-orange-800",
       description: "Building technical skills and introducing tactical concepts",
       curriculum: [
@@ -105,7 +102,6 @@ export function ProgramsPage() {
       focus: "Elite Performance",
       time: "2:45 PM - 7:00 PM",
       days: "Friday & Saturday",
-      fee: "₦25,000/month",
       color: "from-orange-700 to-orange-900",
       description: "High-performance training for competitive football and talent pathway",
       curriculum: [
@@ -164,8 +160,16 @@ export function ProgramsPage() {
         notes: "",
       };
       await createPublicRegistration(payload);
+      
+      // WhatsApp Redirection
+      const phoneNumber = "2349034630407"; // Pegasus Academy Official WhatsApp
+      const message = `Hello Pegasus Academy, I am registering for the ${selectedProgram.title} program.\n\nPlayer Name: ${formData.playerName}\nGuardian Name: ${formData.guardianName}\n\nI have already submitted the registration form on the website. Please guide me on the next steps.`;
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      
+      window.open(whatsappUrl, "_blank");
+
       alert(
-        `Registration Submitted!\n\nProgram: ${selectedProgram.title}\n\nWe will contact you via WhatsApp and email shortly.\n\nSee you on the pitch!`
+        `Registration Submitted Successfully!\n\nProgram: ${selectedProgram.title}\n\nYou are now being redirected to our official WhatsApp chat to finalize your registration.`
       );
       setSelectedProgram(null);
       setFormData({
@@ -416,11 +420,7 @@ export function ProgramsPage() {
                           </ul>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between px-4 pt-3 pb-4 border-t flex-shrink-0 bg-white">
-                          <div>
-                            <div className="text-xs text-gray-600">Monthly Fee</div>
-                            <div className="text-xl font-bold text-primary">{program.fee}</div>
-                          </div>
+                      <div className="flex items-center justify-end px-4 pt-3 pb-4 border-t flex-shrink-0 bg-white">
                           <Button
                             onClick={() => setSelectedProgram(program)}
                             className="bg-primary hover:bg-primary/90"
@@ -503,11 +503,7 @@ export function ProgramsPage() {
                         ))}
                       </ul>
                     </div>
-                    <div className="flex items-center justify-between pt-4 border-t">
-                      <div>
-                        <div className="text-sm text-gray-600">Monthly Fee</div>
-                        <div className="text-2xl font-bold text-primary">{program.fee}</div>
-                      </div>
+                    <div className="flex items-center justify-end pt-4 border-t">
                       <Button
                         onClick={() => setSelectedProgram(program)}
                         className="bg-primary hover:bg-primary/90"
