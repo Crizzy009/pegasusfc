@@ -45,14 +45,32 @@ export function ProgramsPage() {
 
   const defaultPrograms: Program[] = [
     {
-      title: "U7 & U9",
-      subtitle: "Foundation Program",
-      ages: "6-9 years",
-      focus: "Fun & Fundamentals",
-      time: "4:00 PM - 5:00 PM",
+      title: "U5-U2",
+      subtitle: "Early Stars",
+      ages: "2-5 years",
+      focus: "Introduction to Football",
+      time: "2:45 PM - 7:00 PM",
       days: "Friday & Saturday",
       fee: "₦15,000/month",
       color: "from-orange-400 to-orange-600",
+      description: "Focus on basic motor skills, coordination, and having fun with the ball.",
+      curriculum: [
+        "Basic motor skills and coordination",
+        "Introduction to ball handling",
+        "Fun-based learning games",
+        "Social interaction with peers",
+        "Confidence building",
+      ],
+    },
+    {
+      title: "U9-U6",
+      subtitle: "Foundation Program",
+      ages: "6-9 years",
+      focus: "Fun & Fundamentals",
+      time: "2:45 PM - 7:00 PM",
+      days: "Friday & Saturday",
+      fee: "₦15,000/month",
+      color: "from-orange-500 to-orange-700",
       description: "Introduction to football through fun games and basic skills development",
       curriculum: [
         "Basic ball control and dribbling",
@@ -63,14 +81,14 @@ export function ProgramsPage() {
       ],
     },
     {
-      title: "U10",
+      title: "U12-U9",
       subtitle: "Development Squad",
-      ages: "10 years",
+      ages: "9-12 years",
       focus: "Skill Development",
-      time: "5:00 PM - 6:00 PM",
+      time: "2:45 PM - 7:00 PM",
       days: "Friday & Saturday",
       fee: "₦18,000/month",
-      color: "from-orange-500 to-orange-700",
+      color: "from-orange-600 to-orange-800",
       description: "Building technical skills and introducing tactical concepts",
       curriculum: [
         "Advanced dribbling techniques",
@@ -81,29 +99,11 @@ export function ProgramsPage() {
       ],
     },
     {
-      title: "U11-U13",
-      subtitle: "Junior Academy",
-      ages: "11-13 years",
-      focus: "Tactical Awareness",
-      time: "5:00 PM - 6:30 PM",
-      days: "Friday & Saturday",
-      fee: "₦20,000/month",
-      color: "from-orange-600 to-orange-800",
-      description: "Developing tactical understanding and competitive match experience",
-      curriculum: [
-        "Tactical formations and positioning",
-        "Team play and communication",
-        "Speed and agility training",
-        "Match strategy",
-        "Regular competitive matches",
-      ],
-    },
-    {
-      title: "U14-U16",
+      title: "U18-U14",
       subtitle: "Youth Elite",
-      ages: "14-16 years",
+      ages: "14-18 years",
       focus: "Elite Performance",
-      time: "6:00 PM - 7:30 PM",
+      time: "2:45 PM - 7:00 PM",
       days: "Friday & Saturday",
       fee: "₦25,000/month",
       color: "from-orange-700 to-orange-900",
@@ -118,8 +118,11 @@ export function ProgramsPage() {
     },
   ];
 
-  const programs: Array<Program & { color?: string }> = (programsData.length ? programsData : defaultPrograms).map(
-    (p, index) => {
+  const programs: Array<Program & { color?: string }> = (
+    programsData.length > 0 && programsData.some((p) => p.title === "U5-U2")
+      ? programsData
+      : defaultPrograms
+  ).map((p, index) => {
       const colors = [
         "from-orange-400 to-orange-600",
         "from-orange-500 to-orange-700",
@@ -453,7 +456,7 @@ export function ProgramsPage() {
               </button>
             </div>
           </div>
-          <div className="hidden md:grid md:grid-cols-2 gap-8 mb-16">
+          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
             {programs.map((program, index) => (
               <motion.div
                 key={`${program.title}-${index}`}
@@ -461,7 +464,7 @@ export function ProgramsPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="overflow-hidden rounded-[30px] shadow-lg hover:shadow-2xl transition-shadow h-full">
+                <Card className="overflow-hidden rounded-[30px] shadow-lg hover:shadow-2xl transition-shadow h-full flex flex-col">
                   <div className={`bg-gradient-to-br ${program.color} text-white p-6`}>
                     <h2 className="text-3xl font-bold mb-2">{program.title}</h2>
                     <p className="text-lg opacity-90 mb-4">{program.subtitle}</p>
@@ -480,7 +483,7 @@ export function ProgramsPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="p-6">
+                  <div className="p-6 flex-1 flex flex-col">
                     <div className="mb-4">
                       <div className="text-sm text-gray-600 mb-1">Focus Area</div>
                       <div className="text-lg font-semibold text-secondary flex items-center gap-2">
@@ -488,13 +491,13 @@ export function ProgramsPage() {
                         {program.focus}
                       </div>
                     </div>
-                    <p className="text-gray-700 mb-4">{program.description}</p>
-                    <div className="mb-4">
+                    <p className="text-gray-700 mb-4 text-sm">{program.description}</p>
+                    <div className="mb-4 flex-1">
                       <div className="text-sm font-semibold text-secondary mb-2">Training Curriculum:</div>
                       <ul className="space-y-2">
                         {program.curriculum.map((item, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                            <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                          <li key={i} className="flex items-start gap-2 text-xs text-gray-600">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5" />
                             <span>{item}</span>
                           </li>
                         ))}

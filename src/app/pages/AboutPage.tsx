@@ -8,26 +8,56 @@ export function AboutPage() {
   const { data: facilitiesData } = usePublicContent<Facility>("facility");
   const placeholderPhotoUrl = `${import.meta.env.BASE_URL}placeholders/photo.svg`;
 
+  const defaultFacilities: Facility[] = [
+    {
+      name: "Professional Pitch",
+      descriptionHtml: "High-quality training surface for optimal play",
+      amenities: ["All-weather turf", "Standard markings", "Professional goalposts"],
+      images: [{ url: `${import.meta.env.BASE_URL}pitch.jpg`, alt: "Professional Pitch" }],
+      order: 10,
+    },
+    {
+      name: "Modern Equipment",
+      descriptionHtml: "Balls, hurdles, cones, agility ladders, and rings",
+      amenities: ["Size 3, 4, 5 balls", "Speed hurdles", "Agility ladders"],
+      images: [{ url: `${import.meta.env.BASE_URL}facilities.jpg`, alt: "Modern Equipment" }],
+      order: 20,
+    },
+    {
+      name: "Fitness Center",
+      descriptionHtml: "Treadmills, spinning bikes, and strength training gear",
+      amenities: ["Cardio zone", "Strength training", "Flexibility area"],
+      images: [{ url: placeholderPhotoUrl, alt: "Fitness Center" }],
+      order: 30,
+    },
+  ];
+
+  const facilities = (
+    facilitiesData.length > 0 && facilitiesData.some((f) => f.name === "Professional Pitch")
+      ? facilitiesData
+      : defaultFacilities
+  );
+
   const timeline = [
     {
       year: "2023",
       title: "Foundation",
-      description: "Pegasus Football Academy founded by Martins Imabeh in Badore, Ajah",
+      description: "Pegasus Football Academy founded to redefine youth development through sports in Badore, Ajah",
     },
     {
       year: "2023",
       title: "First Enrollment",
-      description: "Successfully enrolled 150+ players across 6 age categories",
+      description: "Successfully enrolled 150+ players across 4 age categories",
     },
     {
       year: "2024",
-      title: "Competitive Entry",
-      description: "Participated in Lagos Junior Football League and local tournaments",
+      title: "Championship Glory",
+      description: "Youth Fun League 2024 Champions and Cooperative Tournament Badore 2024 Champions",
     },
     {
       year: "2025",
-      title: "Championship Success",
-      description: "U10 team won Badore Community Cup, expanding to 200+ players",
+      title: "Elite Success",
+      description: "2nd place in NFE Youth Cup 2025 with MVP and Top Scorer awards",
     },
   ];
 
@@ -101,7 +131,7 @@ export function AboutPage() {
                 </p>
                 <p>
                   What started as a single team has grown into a thriving academy with six age
-                  categories (U7 to U16) and over 200 active players. Our mission has always been clear:
+                  categories (U2 to U18) and over 300 active players. Our mission has always been clear:
                   to discover, nurture, and develop raw football talent while building strong character
                   and discipline in our young athletes.
                 </p>
@@ -152,8 +182,7 @@ export function AboutPage() {
                 <Eye className="w-12 h-12 text-primary mb-4" />
                 <h3 className="text-2xl font-bold mb-4 text-secondary">Our Vision</h3>
                 <p className="text-lg text-gray-700">
-                  To be Lagos' premier football academy producing world-class players who excel in
-                  professional football and serve as role models in their communities.
+                  At Pegasus sports academy, our vision is to redefine the future of youth development through sports. We are committed to creating access to structured opportunities, nurturing young talent, instilling leadership qualities, and building platforms that empower the next generation of African athletes.
                 </p>
               </Card>
             </motion.div>
@@ -242,7 +271,7 @@ export function AboutPage() {
                     communities in Lagos.
                   </p>
                   <p className="text-gray-700 mb-4">
-                    Under his leadership, the academy has grown from a single team to six age
+                    Under his leadership, the academy has grown from a single team to five age
                     categories, serving over 200 young athletes. His commitment to excellence and
                     character development has made Pegasus a respected name in Lagos youth football.
                   </p>
@@ -266,59 +295,49 @@ export function AboutPage() {
               Modern training facilities in the heart of Badore, Ajah
             </p>
           </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {(facilitiesData.length
-              ? facilitiesData
-              : [
-                  {
-                    name: "Training Pitch",
-                    descriptionHtml: "Quality grass pitch with proper markings and goals for authentic match experience",
-                    amenities: [],
-                    images: [
-                      {
-                        url: placeholderPhotoUrl,
-                        alt: "Training Pitch",
-                        caption: "",
-                      },
-                    ],
-                    order: 10,
-                  },
-                  {
-                    name: "Modern Equipment",
-                    descriptionHtml: "Professional-grade training equipment including cones, bibs, and balls",
-                    amenities: [],
-                    images: [
-                      {
-                        url: placeholderPhotoUrl,
-                        alt: "Training Equipment",
-                        caption: "",
-                      },
-                    ],
-                    order: 20,
-                  },
-                ]
-            ).map((facility, index) => (
-              <Card key={index} className="overflow-hidden shadow-lg">
-                <img
-                  src={facility.images?.[0]?.url}
-                  alt={facility.images?.[0]?.alt || facility.name}
-                  className="w-full aspect-video object-cover"
-                />
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2 text-secondary">{facility.name}</h3>
-                  <div className="text-gray-600" dangerouslySetInnerHTML={{ __html: facility.descriptionHtml }} />
-                  {facility.amenities?.length ? (
-                    <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-700">
-                      {facility.amenities.map((a, i) => (
-                        <li key={i} className="flex items-center gap-2">
-                          <span className="w-2 h-2 bg-primary rounded-full" />
-                          {a}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </div>
-              </Card>
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {facilities.map((facility, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="overflow-hidden h-full shadow-lg hover:shadow-xl transition-shadow group flex flex-col">
+                  <div className="aspect-[4/3] relative overflow-hidden bg-muted">
+                    <img
+                      src={facility.images?.[0]?.url || placeholderPhotoUrl}
+                      alt={facility.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute top-4 left-4 bg-primary text-white p-2 rounded-full shadow-lg z-10">
+                      {facility.name === "Professional Pitch" && <Target className="w-5 h-5" />}
+                      {facility.name === "Modern Equipment" && <Award className="w-5 h-5" />}
+                      {facility.name === "Fitness Center" && <TrendingUp className="w-5 h-5" />}
+                    </div>
+                  </div>
+                  <div className="p-6 flex-1 flex flex-col">
+                    <h3 className="text-xl font-bold mb-3 text-secondary">{facility.name}</h3>
+                    <div
+                      className="text-gray-600 text-sm leading-relaxed mb-4"
+                      dangerouslySetInnerHTML={{ __html: facility.descriptionHtml }}
+                    />
+                    {facility.amenities?.length ? (
+                      <div className="mt-auto pt-4 border-t border-gray-100">
+                        <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Features</div>
+                        <ul className="grid grid-cols-1 gap-1">
+                          {facility.amenities.map((amenity, i) => (
+                            <li key={i} className="text-xs text-gray-600 flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 bg-primary/40 rounded-full" />
+                              {amenity}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+                  </div>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>

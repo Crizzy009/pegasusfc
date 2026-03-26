@@ -25,8 +25,8 @@ export function SquadHome() {
   const [playerQuery, setPlayerQuery] = useState("");
   const [starOpen, setStarOpen] = useState(false);
   const [starForm, setStarForm] = useState<SquadStarPlayers>({
-    topScorerName: "Joseph Musa",
-    topScorerDetail: "15 goals - U10",
+    topScorerName: "Inas Opeke",
+    topScorerDetail: "50 goals (Academy Record)",
     mostImprovedName: "Tobenna Okeke",
     mostImprovedDetail: "U7-U9 Category",
     bestGoalkeeperName: "Samuel Nwankwo",
@@ -71,8 +71,8 @@ export function SquadHome() {
   const starCurrent = starItems[0] ?? null;
   const starData: SquadStarPlayers =
     starCurrent?.data ?? {
-      topScorerName: "Joseph Musa",
-      topScorerDetail: "15 goals - U10",
+      topScorerName: "Inas Opeke",
+      topScorerDetail: "50 goals (Academy Record)",
       mostImprovedName: "Tobenna Okeke",
       mostImprovedDetail: "U7-U9 Category",
       bestGoalkeeperName: "Samuel Nwankwo",

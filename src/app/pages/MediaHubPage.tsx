@@ -4,15 +4,192 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Calendar, Eye } from "lucide-react";
 import { motion } from "motion/react";
 import { usePublicContent } from "../content/useContent";
-import type { MediaPhoto, NewsPost } from "../content/types";
+import type { MediaPhoto, NewsPost, MediaVideo } from "../content/types";
+import { getVideoEmbedUrl } from "../lib/video";
 
 export function MediaHubPage() {
   const { data: photosData } = usePublicContent<MediaPhoto>("mediaPhoto");
   const { data: newsData } = usePublicContent<NewsPost>("newsPost");
+  const { data: videosData } = usePublicContent<MediaVideo>("mediaVideo");
 
   const placeholderPhotoUrl = `${import.meta.env.BASE_URL}placeholders/photo.svg`;
 
+  const videos: MediaVideo[] = [
+    {
+      title: "Superscreen Interview",
+      category: "Media",
+      date: "2025",
+      videoUrl: "https://youtu.be/GNJ5U_m6Cc4?si=EGKaFJ7AAtMWXhqe",
+      platform: "youtube",
+    },
+    {
+      title: "Osinachi Ohale's Visit",
+      category: "Event",
+      date: "2025",
+      videoUrl: "https://youtu.be/RUeGKwCz27s?si=c2QlXhwWVG59sW7m",
+      platform: "youtube",
+    },
+    {
+      title: "Superstar Agent Visit",
+      category: "Event",
+      date: "2025",
+      videoUrl: "https://youtube.com/shorts/Krr3bYqsNZw?si=e8b0IYrrNFrfV7gF",
+      platform: "youtube",
+    },
+    {
+      title: "Pegasus Chat",
+      category: "Media",
+      date: "2025",
+      videoUrl: "https://youtu.be/V1GH7l8tp_4?si=g5f-5ERaKAvS32XW",
+      platform: "youtube",
+    },
+    {
+      title: "Interview with Mrs Maya",
+      category: "Media",
+      date: "2025",
+      videoUrl: "https://youtu.be/aiJAIJtytAQ?si=nIQTGvNpRLVtIubK",
+      platform: "youtube",
+    },
+    {
+      title: "Interview with Dolapo on Superscreen",
+      category: "Media",
+      date: "2025",
+      videoUrl: "https://youtu.be/YxtpG5ISyzg?si=vRjOsp3m5AypPoEL",
+      platform: "youtube",
+    },
+    {
+      title: "Pegasus Chat",
+      category: "Media",
+      date: "2025",
+      videoUrl: "https://youtu.be/8woEnstXwY4?si=MwY7aBF6V2vognyJ",
+      platform: "youtube",
+    },
+    {
+      title: "Match Players Feedback",
+      category: "Match",
+      date: "2025",
+      videoUrl: "https://youtu.be/vETfZy-fHCA?si=Gv6DDbENZGMEU5s7",
+      platform: "youtube",
+    },
+    {
+      title: "Team Arrival at Onikan Stadium",
+      category: "Event",
+      date: "2025",
+      videoUrl: "https://youtu.be/WDHsJ6MyBUA?si=xkpkMiI74TjVHnoX",
+      platform: "youtube",
+    },
+    {
+      title: "Live Match Replay",
+      category: "Match",
+      date: "2025",
+      videoUrl: "https://youtu.be/LNOVbLvXIEY?si=mfGkEl7B0JFdhAIm",
+      platform: "youtube",
+    },
+    {
+      title: "Instagram Live Chat",
+      category: "Media",
+      date: "2025",
+      videoUrl: "https://youtu.be/Uzw7Nu4g08s?si=-LGWsTI80n0ofIQz",
+      platform: "youtube",
+    },
+    {
+      title: "Star Player Melvin Highlight",
+      category: "Match",
+      date: "2024",
+      videoUrl: "https://youtu.be/8-wO0XVIFBA?si=PvQ1rS-yefVSGmUc",
+      platform: "youtube",
+    },
+    {
+      title: "TVC Television Interview with our President",
+      category: "Media",
+      date: "2025",
+      videoUrl: "https://youtu.be/CsVtq0kQ3SM?si=vVu5QpT2BS3irEql",
+      platform: "youtube",
+    },
+    {
+      title: "Facebook Academy Moments",
+      category: "Community",
+      date: "2025",
+      videoUrl: "https://www.facebook.com/share/v/1C2YyiynnA/?mibextid=WC7FNe",
+      platform: "facebook",
+    },
+    {
+      title: "Match Day Atmosphere",
+      category: "Community",
+      date: "2025",
+      videoUrl: "https://www.facebook.com/share/v/1aYtbUrmEb/?mibextid=WC7FNe",
+      platform: "facebook",
+    },
+  ];
+
+  const videoItems = videosData.length > 0 ? videosData : videos;
+
   const photos = [
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/ogeneyi.jpeg`,
+      category: "Special Guest",
+      title: "Ogenyi Onazi with Academy Players",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/ogeneyi 1.jpeg`,
+      category: "Special Guest",
+      title: "Super Eagle Ogenyi Onazi Visit",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/ogeneyi 3.jpeg`,
+      category: "Special Guest",
+      title: "Ogenyi Onazi Inspiring Young Talents",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/rising stars project .jpeg`,
+      category: "Launch",
+      title: "The Rising Stars Project NGO Launch",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}placeholders/pegasus archive/WhatsApp Image 2026-03-24 at 10.13.39 AM.jpeg`,
+      category: "Special Guest",
+      title: "Osinachi Ohale Visit with Academy",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}placeholders/pegasus archive/WhatsApp Image 2026-03-24 at 10.13.41 AM.jpeg`,
+      category: "Special Guest",
+      title: "Osinachi Ohale with Young Stars",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}placeholders/pegasus archive/WhatsApp Image 2026-03-24 at 10.13.41 AM (1).jpeg`,
+      category: "Special Guest",
+      title: "Osinachi Ohale at Pegasus",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/youth fun league 2024.jpeg`,
+      category: "Champions",
+      title: "Youth Fun League 2024 - Term 2 Champions",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/youth fun league 2024 1.jpeg`,
+      category: "Match Day",
+      title: "YFL 2024 Squad Photo",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/youth fun league 4.jpeg`,
+      category: "Trophy",
+      title: "Lifting the YFL 2024 Trophy",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/youth .jpeg`,
+      category: "Tournament",
+      title: "NFE Youth Cup 2025 Squad",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/infifity.jpeg`,
+      category: "Expansion",
+      title: "New Branch: Infinity Estate",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}basketball flyer .jpeg`,
+      category: "Launch",
+      title: "Basketball Academy Ajah",
+    },
     {
       src: placeholderPhotoUrl,
       category: "Training",
@@ -46,20 +223,68 @@ export function MediaHubPage() {
   ];
 
 
-  const photoItems = photosData.length
-    ? photosData.map((p) => ({
-        src: p.image.mediumUrl || p.image.largeUrl || p.image.originalUrl,
-        category: p.category,
-        title: p.title,
-      }))
-    : photos;
+  const photoItems = (
+    photosData.length > 0 && photosData.some((p) => p.title === "Osinachi Ohale Visit")
+      ? photosData.map((p) => ({
+          src: p.image.mediumUrl || p.image.largeUrl || p.image.originalUrl,
+          category: p.category,
+          title: p.title,
+        }))
+      : photos
+  );
 
-  const newsItems = newsData.map((n) => ({
-    date: n.date,
-    title: n.title,
-    excerpt: n.excerpt,
-    image: n.image.url,
-  }));
+  const newsItems = (
+    newsData.length > 0 && newsData.some((n) => n.title.includes("Osinachi Ohale"))
+      ? newsData.map((n) => ({
+          date: n.date,
+          title: n.title,
+          excerpt: n.excerpt,
+          image: n.image.url,
+        }))
+      : [
+          {
+            date: "2025",
+            title: "Super Eagle Ogenyi Onazi Visits Pegasus",
+            excerpt:
+              "We were thrilled to welcome Super Eagles midfielder Ogenyi Onazi to our academy for a special training and inspiration session.",
+            image: `${import.meta.env.BASE_URL}pegasus archive/ogeneyi 1.jpeg`,
+          },
+          {
+            date: "2025",
+            title: "The Rising Stars Project Launch with Pegasus",
+            excerpt:
+              "A huge thank you to The Rising Stars Project for traveling from the USA to officially launch their NGO with Pegasus Football Academy!",
+            image: `${import.meta.env.BASE_URL}pegasus archive/rising star projects.jpeg`,
+          },
+          {
+            date: "March 2026",
+            title: "Super Falcon Osinachi Ohale Visits Pegasus Academy",
+            excerpt:
+              "Professional defender Osinachi Ohale visited our academy to inspire the next generation of football stars.",
+            image: `${import.meta.env.BASE_URL}placeholders/pegasus archive/WhatsApp Image 2026-03-24 at 10.13.39 AM.jpeg`,
+          },
+          {
+            date: "March 2026",
+            title: "Expanding the Legacy: New Branch at Infinity Estate",
+            excerpt:
+              "Pegasus Football Academy is coming to Infinity Estate, Addo Road, Ajah! Expanding our mission to nurture young talent.",
+            image: `${import.meta.env.BASE_URL}pegasus archive/infifity.jpeg`,
+          },
+          {
+            date: "March 2026",
+            title: "Basketball Academy Launch in Ajah",
+            excerpt:
+              "Pegasus Academy is thrilled to announce the launch of its Basketball Academy at Ajah! Training commences April 2026 for boys and girls aged 7-17.",
+            image: `${import.meta.env.BASE_URL}basketball flyer .jpeg`,
+          },
+          ...newsData.map((n) => ({
+            date: n.date,
+            title: n.title,
+            excerpt: n.excerpt,
+            image: n.image.url,
+          })),
+        ]
+  );
 
   return (
     <div>
@@ -89,10 +314,44 @@ export function MediaHubPage() {
       <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4">
           <Tabs defaultValue="photos" className="max-w-7xl mx-auto">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-12">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-12">
               <TabsTrigger value="photos">Photo Gallery</TabsTrigger>
+              <TabsTrigger value="videos">Video Gallery</TabsTrigger>
               <TabsTrigger value="news">News & Updates</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="videos" className="space-y-8">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {videoItems.map((video, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Card className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow">
+                      <div className="aspect-video relative group">
+                        <iframe
+                          src={getVideoEmbedUrl(video.videoUrl)}
+                          className="w-full h-full"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                        />
+                      </div>
+                      <div className="p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-semibold text-primary uppercase">
+                            {video.category}
+                          </span>
+                          <span className="text-xs text-gray-500">{video.date}</span>
+                        </div>
+                        <h3 className="text-lg font-bold text-secondary">{video.title}</h3>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </TabsContent>
 
             <TabsContent value="photos" className="space-y-8">
               <div className="sm:hidden">

@@ -47,11 +47,20 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
       const u = refreshed ?? (await supabaseGetUser());
       if (!u) {
         setUser(null);
+        if (getAccessToken()) {
+          // If we had a token but it's no longer valid
+          const { clearTokens } = await import("../supabase/auth");
+          clearTokens();
+          localStorage.removeItem("supabase_user_email");
+        }
       } else {
         setUser({ id: u.id, email: u.email, role: resolveRole(u.email) });
       }
     } catch (e: any) {
       setUser(null);
+      const { clearTokens } = await import("../supabase/auth");
+      clearTokens();
+      localStorage.removeItem("supabase_user_email");
       setError(e?.message || "auth_failed");
     } finally {
       if (!opts?.silent) setLoading(false);
@@ -72,10 +81,15 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (usernameOrEmail: string, password: string) => {
     setError(null);
-    const u = await supabaseLogin(usernameOrEmail, password);
-    if (u.email) localStorage.setItem("supabase_user_email", u.email);
-    setUser({ id: u.id, email: u.email, role: resolveRole(u.email) });
-  }, [refresh]);
+    try {
+      const u = await supabaseLogin(usernameOrEmail, password);
+      if (u.email) localStorage.setItem("supabase_user_email", u.email);
+      setUser({ id: u.id, email: u.email, role: resolveRole(u.email) });
+    } catch (e: any) {
+      setError(e?.message || "login_failed");
+      throw e;
+    }
+  }, [resolveRole]);
 
   const logout = useCallback(async () => {
     setError(null);

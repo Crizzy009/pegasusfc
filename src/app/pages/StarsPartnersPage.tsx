@@ -11,23 +11,77 @@ export function StarsPartnersPage() {
 
   const stars = [
     {
-      name: "Guest Star Visits",
-      achievement: "Nigerian Football Legend",
-      quote: "Pegasus is doing great work in developing young talent in Lagos. Keep up the excellent work!",
-      image: placeholderPhotoUrl,
-      visitDate: "2024",
+      name: "Ogenyi Onazi",
+      achievement: "Super Eagle's Midfielder",
+      quote: "The future of Nigerian football is bright with academies like Pegasus. It was great to see such passion and discipline from the young players.",
+      image: `${import.meta.env.BASE_URL}pegasus archive/ogeneyi.jpeg`,
+      visitDate: "2025",
+    },
+    {
+      name: "Osinachi Ohale",
+      achievement: "Super Falcon Defender",
+      quote: "It was a pleasure visiting Pegasus Academy. The energy and potential of these young athletes are truly inspiring!",
+      image: `${import.meta.env.BASE_URL}placeholders/pegasus archive/WhatsApp Image 2026-03-24 at 10.13.39 AM.jpeg`,
+      visitDate: "March 2026",
     },
   ];
 
-  const starItems = starsData.length
-    ? starsData.map((s) => ({
-        name: s.name,
-        achievement: s.achievement,
-        quote: s.quote,
-        image: s.image.url,
-        visitDate: s.visitDate,
-      }))
-    : stars;
+  const starItems = (
+    starsData.length > 0 && starsData.some((s) => s.name === "Ogenyi Onazi")
+      ? starsData.map((s) => ({
+          name: s.name,
+          achievement: s.achievement,
+          quote: s.quote,
+          image: s.image.url,
+          visitDate: s.visitDate,
+        }))
+      : stars
+  );
+
+  const partners = [
+    {
+      name: "The Rising Stars Project",
+      tier: "global",
+      descriptionHtml:
+        "A US-based NGO dedicated to developing young talents and uplifting grassroots football. Officially launched with Pegasus in 2025.",
+      logo: {
+        url: `${import.meta.env.BASE_URL}pegasus archive/rising stars project .jpeg`,
+        alt: "The Rising Stars Project",
+        caption: "",
+      },
+      websiteUrl: "",
+      order: 5,
+    },
+    {
+      name: "Peninsula Youth Football League",
+      tier: "community",
+      descriptionHtml: "Official league participation and competition partner",
+      logo: { url: "", alt: "Peninsula Youth Football League", caption: "" },
+      websiteUrl: "",
+      order: 10,
+    },
+    {
+      name: "Local Schools",
+      tier: "community",
+      descriptionHtml: "Partnerships with schools in Badore, Ajah, and Lekki for talent identification",
+      logo: { url: "", alt: "Local Schools", caption: "" },
+      websiteUrl: "",
+      order: 20,
+    },
+    {
+      name: "Medical Partners",
+      tier: "community",
+      descriptionHtml: "Healthcare support and fitness assessments for player safety",
+      logo: { url: "", alt: "Medical Partners", caption: "" },
+      websiteUrl: "",
+      order: 30,
+    },
+  ];
+
+  const partnerItems =
+    partnersData.length > 0 && partnersData.some((p) => p.name === "The Rising Stars Project")
+      ? partnersData
+      : partners;
 
   return (
     <div>
@@ -126,36 +180,7 @@ export function StarsPartnersPage() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {(partnersData.length
-              ? partnersData
-              : [
-                  {
-                    name: "Local Schools",
-                    tier: "community",
-                    descriptionHtml:
-                      "Partnerships with schools in Badore, Ajah, and Lekki for talent identification",
-                    logo: { url: "", alt: "Local Schools", caption: "" },
-                    websiteUrl: "",
-                    order: 10,
-                  },
-                  {
-                    name: "Sports Equipment Providers",
-                    tier: "community",
-                    descriptionHtml: "Quality training equipment and gear for our players",
-                    logo: { url: "", alt: "Equipment Providers", caption: "" },
-                    websiteUrl: "",
-                    order: 20,
-                  },
-                  {
-                    name: "Medical Partners",
-                    tier: "community",
-                    descriptionHtml: "Healthcare support and fitness assessments for player safety",
-                    logo: { url: "", alt: "Medical Partners", caption: "" },
-                    websiteUrl: "",
-                    order: 30,
-                  },
-                ]
-            ).map((partner: any, index: number) => (
+            {partnerItems.map((partner: any, index: number) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
@@ -180,49 +205,6 @@ export function StarsPartnersPage() {
                 </Card>
               </motion.div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Become a Sponsor */}
-      <section className="py-16 md:py-24 bg-gradient-to-br from-primary to-accent text-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-            >
-              <Handshake className="w-16 h-16 mx-auto mb-6" />
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">Become a Sponsor</h2>
-              <p className="text-xl mb-8 text-white/90">
-                Partner with Pegasus Football Academy to invest in the future of Nigerian football.
-                Your support helps us provide quality training, equipment, and opportunities to young
-                athletes in Badore and beyond.
-              </p>
-              <div className="grid sm:grid-cols-3 gap-6 mb-10">
-                {[
-                  { label: "Kit Sponsorship", benefit: "Branding on team jerseys" },
-                  { label: "Equipment Support", benefit: "Logo on training gear" },
-                  { label: "Tournament Sponsor", benefit: "Event naming rights" },
-                ].map((option, index) => (
-                  <Card key={index} className="p-6 bg-white/10 text-white border-white/20">
-                    <h3 className="font-bold mb-2">{option.label}</h3>
-                    <p className="text-sm text-white/80">{option.benefit}</p>
-                  </Card>
-                ))}
-              </div>
-              <div className="space-y-4">
-                <p className="text-lg">
-                  <strong>Contact us:</strong> pegasusfcacademy@gmail.com | +234-9034-6304-07
-                </p>
-                <a
-                  href="mailto:pegasusfcacademy@gmail.com?subject=Sponsorship%20Inquiry"
-                  className="inline-block bg-white text-primary px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition"
-                >
-                  Request Sponsorship Package
-                </a>
-              </div>
-            </motion.div>
           </div>
         </div>
       </section>

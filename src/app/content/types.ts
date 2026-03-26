@@ -238,6 +238,17 @@ export type ContactMessage = {
   order?: number;
 };
 
+export type MediaVideo = {
+  title: string;
+  category: string;
+  date: string;
+  videoUrl: string;
+  thumbnailUrl?: string;
+  platform: "youtube" | "facebook";
+  caption?: string;
+  order?: number;
+};
+
 export type ContentType =
   | "homeTeam"
   | "homeHighlight"
@@ -253,6 +264,7 @@ export type ContentType =
   | "star"
   | "achievement"
   | "mediaPhoto"
+  | "mediaVideo"
   | "newsPost"
   | "trial"
   | "registration"

@@ -4,70 +4,102 @@ import { Card } from "../components/ui/card";
 import { Trophy, Users, MapPin, GraduationCap, Target, Heart, Award, Calendar } from "lucide-react";
 import { motion } from "motion/react";
 import { usePublicContent } from "../content/useContent";
-import type { Coach, HomeHighlight, HomeTeam, Manager } from "../content/types";
+import type { Coach, HomeHighlight, HomeTeam, Manager, MediaVideo } from "../content/types";
+import { getVideoEmbedUrl } from "../lib/video";
 
 export function HomePage() {
   const { data: homeTeams } = usePublicContent<HomeTeam>("homeTeam");
   const { data: homeHighlights } = usePublicContent<HomeHighlight>("homeHighlight");
   const { data: coachesData } = usePublicContent<Coach>("coach");
   const { data: managersData } = usePublicContent<Manager>("manager");
+  const { data: videosData } = usePublicContent<MediaVideo>("mediaVideo");
 
   const placeholderPhotoUrl = `${import.meta.env.BASE_URL}placeholders/photo.svg`;
 
+  const showcaseVideos: MediaVideo[] = [
+    {
+      title: "Academy Showcase",
+      category: "Highlights",
+      date: "2025",
+      videoUrl: "https://youtu.be/aiJAIJtytAQ?si=nIQTGvNpRLVtIubK",
+      platform: "youtube",
+    },
+    {
+      title: "Training Ground Action",
+      category: "Training",
+      date: "2025",
+      videoUrl: "https://youtu.be/GNJ5U_m6Cc4?si=EGKaFJ7AAtMWXhqe",
+      platform: "youtube",
+    },
+    {
+      title: "Goal Collection",
+      category: "Match",
+      date: "2025",
+      videoUrl: "https://youtu.be/8woEnstXwY4?si=MwY7aBF6V2vognyJ",
+      platform: "youtube",
+    },
+  ];
+
+  const featuredVideos = videosData.length > 0 ? videosData.slice(0, 3) : showcaseVideos;
+
   const stats = [
-    { label: "Players Trained", value: "150+", icon: Users },
-    { label: "Age Categories", value: "6 Teams", icon: Trophy },
+    { label: "Youths Impacted", value: "1,000+", icon: Users },
+    { label: "Active Players", value: "300+", icon: Trophy },
     { label: "Training Days", value: "Fri & Sat", icon: Calendar },
-    { label: "Location", value: "Badore, Ajah", icon: MapPin },
+    { label: "Age Categories", value: "4 Groups", icon: MapPin },
   ];
 
   const programs = [
     {
-      title: "U7 & U9",
-      subtitle: "Foundation Program",
-      ages: "6-9 years",
-      focus: "Fun & Fundamentals",
-      time: "4:00 PM - 5:00 PM",
+      title: "U5-U2",
+      subtitle: "Early Stars",
+      ages: "2-5 years",
+      focus: "Introduction to Football",
+      time: "2:45 PM - 7:00 PM",
       color: "from-orange-400 to-orange-600",
     },
     {
-      title: "U10",
-      subtitle: "Development Squad",
-      ages: "10 years",
-      focus: "Skill Development",
-      time: "5:00 PM - 6:00 PM",
+      title: "U9-U6",
+      subtitle: "Foundation Program",
+      ages: "6-9 years",
+      focus: "Fun & Fundamentals",
+      time: "2:45 PM - 7:00 PM",
       color: "from-orange-500 to-orange-700",
     },
     {
-      title: "U11-U13",
-      subtitle: "Junior Academy",
-      ages: "11-13 years",
-      focus: "Tactical Awareness",
-      time: "5:00 PM - 6:30 PM",
+      title: "U12-U9",
+      subtitle: "Development Squad",
+      ages: "9-12 years",
+      focus: "Skill Development",
+      time: "2:45 PM - 7:00 PM",
       color: "from-orange-600 to-orange-800",
     },
     {
-      title: "U14-U16",
+      title: "U18-U14",
       subtitle: "Youth Elite",
-      ages: "14-16 years",
+      ages: "14-18 years",
       focus: "Elite Performance",
-      time: "6:00 PM - 7:30 PM",
+      time: "2:45 PM - 7:00 PM",
       color: "from-orange-700 to-orange-900",
     },
   ];
 
-  const programCards = (homeTeams.length ? homeTeams : programs.map((p) => ({
-    title: p.title,
-    subtitle: p.subtitle,
-    ages: p.ages,
-    focus: p.focus,
-    time: p.time,
-    days: "Friday & Saturday",
-    trainerName: "",
-    trainerTitle: "",
-    trainerPhotoUrl: "",
-    order: 0,
-  }))).map((p, index) => {
+  const programCards = (
+    homeTeams.length > 0 && homeTeams.some((t) => t.title === "U5-U2")
+      ? homeTeams
+      : programs.map((p) => ({
+          title: p.title,
+          subtitle: p.subtitle,
+          ages: p.ages,
+          focus: p.focus,
+          time: p.time,
+          days: "Friday & Saturday",
+          trainerName: "",
+          trainerTitle: "",
+          trainerPhotoUrl: "",
+          order: 0,
+        }))
+  ).map((p, index) => {
     const colors = [
       "from-orange-400 to-orange-600",
       "from-orange-500 to-orange-700",
@@ -149,6 +181,66 @@ export function HomePage() {
               </Link>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Video Showreel Section */}
+      <section className="py-16 md:py-24 bg-secondary text-white overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="text-sm uppercase tracking-wide text-primary font-semibold mb-2">
+                Pegasus in Action
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">Video Showreel</h2>
+              <p className="text-gray-300 max-w-2xl mx-auto">
+                Experience the energy, talent, and dedication of our academy stars on the pitch.
+              </p>
+            </motion.div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {featuredVideos.map((video, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="bg-white/5 border-white/10 overflow-hidden shadow-2xl hover:shadow-primary/20 transition-all duration-300">
+                  <div className="aspect-video relative group">
+                    <iframe
+                      src={getVideoEmbedUrl(video.videoUrl)}
+                      className="w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                  </div>
+                  <div className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-semibold text-primary uppercase">
+                        {video.category}
+                      </span>
+                      <span className="text-xs text-gray-400">{video.date}</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-white">{video.title}</h3>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link to="/media">
+              <Button size="lg" className="bg-primary hover:bg-primary/90">
+                View All Videos
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -334,9 +426,9 @@ export function HomePage() {
               },
             ];
             const list = managersData.length ? managersData : fallback;
-            const sorted = [...list].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).slice(0, 4);
+            const sorted = [...list].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
             return (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
                 {sorted.map((m, i) => (
                   <motion.div
                     key={`${m.name}-${i}`}

@@ -298,16 +298,18 @@ export function SquadPage() {
             </p>
           </div>
           {(() => {
-            const s =
-              starPlayersData[0] ??
-              ({
-                topScorerName: "Joseph Musa",
-                topScorerDetail: "15 goals - U10",
-                mostImprovedName: "Tobenna Okeke",
-                mostImprovedDetail: "U7-U9 Category",
-                bestGoalkeeperName: "Samuel Nwankwo",
-                bestGoalkeeperDetail: "10 clean sheets",
-              } as SquadStarPlayers);
+            const s = (
+                starPlayersData.length > 0 && starPlayersData.some((p) => p.topScorerName === "Inas Opeke")
+                  ? starPlayersData[0]
+                  : ({
+                      topScorerName: "Inas Opeke",
+                      topScorerDetail: "50 goals (Academy Record)",
+                      mostImprovedName: "Tobenna Okeke",
+                      mostImprovedDetail: "U7-U9 Category",
+                      bestGoalkeeperName: "Samuel Nwankwo",
+                      bestGoalkeeperDetail: "10 clean sheets",
+                    } as SquadStarPlayers)
+              );
             return (
               <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
                 <Card className="p-6 text-center shadow-lg">

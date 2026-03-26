@@ -14,19 +14,59 @@ export function HallOfFamePage() {
     { season: "2023", title: "Training Facility", description: "Established training facility in Lekki axis", category: "facility", order: 30 },
     { season: "2023", title: "School Partnerships", description: "Partnered with local schools for talent identification", category: "partner", order: 40 },
     { season: "2023", title: "Pegasus Open Day", description: "Hosted inaugural Pegasus Open Day with 300+ attendees", category: "event", order: 50 },
-    { season: "2024", title: "League Participation", description: "Participated in Lagos Junior Football League", category: "league", order: 10 },
-    { season: "2024", title: "Ajah District Cup", description: "U11 team reached semi-finals of Ajah District Cup", category: "tournament", order: 20 },
-    { season: "2024", title: "Lekki Tournament", description: "U14 team won 3rd place in Lekki Inter-Academy Tournament", category: "tournament", order: 30 },
-    { season: "2024", title: "State Trials", description: "5 players selected for Lagos State U15 trials", category: "trials", order: 40 },
-    { season: "2024", title: "Star Clinic", description: "Hosted Nigerian football star clinic", category: "event", order: 50 },
-    { season: "2024", title: "Development Program", description: "Established U7 & U9 development program", category: "program", order: 60 },
+    { 
+      season: "2024", 
+      title: "Youth Fun League", 
+      description: "Champions of Youth Fun League 2024 - Term 2", 
+      category: "trophy", 
+      highlight: true, 
+      order: 10,
+      image: { url: `${import.meta.env.BASE_URL}pegasus archive/youth fun league 2024.jpeg`, alt: "Youth Fun League 2024 Champions" }
+    },
+    { 
+      season: "2024", 
+      title: "Cooperative Tournament", 
+      description: "Champions of Badore Cooperative Tournament 2024", 
+      category: "trophy", 
+      highlight: true, 
+      order: 20,
+      image: { url: `${import.meta.env.BASE_URL}pegasus archive/cooperative tournament.jpeg`, alt: "Cooperative Tournament Celebration" }
+    },
+    { 
+      season: "2024", 
+      title: "Pegasus Free Age vs Remo Stars", 
+      description: "Pegasus Free Age vs Remo Stars Main Team", 
+      category: "match", 
+      highlight: true, 
+      order: 25,
+      image: { url: `${import.meta.env.BASE_URL}pegasus archive/pegasus vs remo stars .jpeg`, alt: "Pegasus vs Remo Stars Match" }
+    },
+    { season: "2024", title: "League Participation", description: "Participated in Lagos Junior Football League", category: "league", order: 30 },
+    { season: "2024", title: "Ajah District Cup", description: "U11 team reached semi-finals of Ajah District Cup", category: "tournament", order: 40 },
+    { season: "2024", title: "Lekki Tournament", description: "U14 team won 3rd place in Lekki Inter-Academy Tournament", category: "tournament", order: 50 },
+    { season: "2024", title: "State Trials", description: "5 players selected for Lagos State U15 trials", category: "trials", order: 60 },
+    { season: "2024", title: "Star Clinic", description: "Hosted Nigerian football star clinic", category: "event", order: 70 },
+    { season: "2024", title: "Development Program", description: "Established U7 & U9 development program", category: "program", order: 80 },
+    { 
+      season: "2025", 
+      title: "NFE Youth Cup", 
+      description: "Second place champions, Tega Yahaya MVP, Chuwkunywm highest goal scorer", 
+      category: "trophy", 
+      highlight: true, 
+      order: 5,
+      image: { url: `${import.meta.env.BASE_URL}pegasus archive/nfe youth cup.jpeg`, alt: "NFE Youth Cup Celebration" }
+    },
     { season: "2025", title: "Badore Community Cup", description: "U10 team - Champions, Badore Community Cup", category: "trophy", highlight: true, order: 10 },
     { season: "2025", title: "Youth Championship", description: "U13 team - Runners-up, Lagos Elite Youth Championship", category: "trophy", highlight: true, order: 20 },
-    { season: "2025", title: "Academy Growth", description: "200+ active players enrolled", category: "growth", order: 30 },
+    { season: "2025", title: "Academy Growth", description: "300+ active players enrolled", category: "growth", order: 30 },
     { season: "2025", title: "Player Pathway", description: "Partnership with local clubs for player pathway", category: "partner", order: 40 },
   ];
 
-  const achievements = achievementsData.length ? achievementsData : defaultAchievements;
+  const achievements = (
+    achievementsData.length > 0 && achievementsData.some((a) => a.title === "Youth Fun League")
+      ? achievementsData
+      : defaultAchievements
+  );
 
   const seasons = Array.from(new Set(achievements.map((a) => a.season))).sort((a, b) => Number(b) - Number(a));
   seasons[0] || "";
@@ -60,6 +100,7 @@ export function HallOfFamePage() {
       icon: iconFor(a),
       text: normalizeCardText(a),
       highlight: Boolean(a.highlight),
+      image: (a as any).image?.url,
     }));
 
   const achievements2024 = achievements
@@ -68,6 +109,7 @@ export function HallOfFamePage() {
     .map((a) => ({
       icon: iconFor(a),
       text: normalizeCardText(a),
+      image: (a as any).image?.url,
     }));
 
   const achievements2023 = achievements
@@ -76,9 +118,15 @@ export function HallOfFamePage() {
     .map((a) => ({
       icon: iconFor(a),
       text: normalizeCardText(a),
+      image: (a as any).image?.url,
     }));
 
   const records = [
+    {
+      title: "Academy Record Scorer",
+      player: "Inas Opeke",
+      detail: "50 goals scored for the academy",
+    },
     {
       title: "First Goal in Academy History",
       player: "Emmanuel Adebayo",
@@ -93,11 +141,6 @@ export function HallOfFamePage() {
       title: "Biggest Win Margin",
       player: "U10 Squad",
       detail: "8-0 vs. Ajah Youth FC",
-    },
-    {
-      title: "Youngest Player to Debut",
-      player: "Tobenna Okeke",
-      detail: "Age 7, U7 Category",
     },
   ];
 
@@ -136,7 +179,7 @@ export function HallOfFamePage() {
               className="rounded-lg overflow-hidden shadow-2xl"
             >
               <img
-                src={placeholderPhotoUrl}
+                src={`${import.meta.env.BASE_URL}pegasus archive/trophies.jpeg`}
                 alt="Trophy Cabinet"
                 className="w-full aspect-video object-cover"
               />
@@ -149,7 +192,7 @@ export function HallOfFamePage() {
       <section className="py-16 md:py-24 bg-gradient-to-br from-primary to-accent text-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">2025 Season (Ongoing)</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">2025 Season</h2>
             <p className="text-xl text-white/90">Our latest achievements</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
@@ -160,9 +203,14 @@ export function HallOfFamePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className={`p-6 ${achievement.highlight ? 'bg-white text-secondary' : 'bg-white/10 text-white border-white/20'} h-full`}>
-                  <achievement.icon className={`w-10 h-10 mb-4 ${achievement.highlight ? 'text-primary' : 'text-white'}`} />
-                  <p className="font-medium">{achievement.text}</p>
+                <Card className={`overflow-hidden flex flex-col ${achievement.highlight ? 'bg-white text-secondary' : 'bg-white/10 text-white border-white/20'} h-full`}>
+                  {achievement.image && (
+                    <img src={achievement.image} alt={achievement.text} className="w-full aspect-video object-cover" />
+                  )}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <achievement.icon className={`w-10 h-10 mb-4 ${achievement.highlight ? 'text-primary' : 'text-white'}`} />
+                    <p className="font-medium">{achievement.text}</p>
+                  </div>
                 </Card>
               </motion.div>
             ))}
@@ -185,9 +233,14 @@ export function HallOfFamePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="p-6 hover:shadow-lg transition-shadow h-full">
-                  <achievement.icon className="w-10 h-10 text-primary mb-4" />
-                  <p className="text-gray-700 font-medium">{achievement.text}</p>
+                <Card className="overflow-hidden flex flex-col hover:shadow-lg transition-shadow h-full">
+                  {achievement.image && (
+                    <img src={achievement.image} alt={achievement.text} className="w-full aspect-video object-cover" />
+                  )}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <achievement.icon className="w-10 h-10 text-primary mb-4" />
+                    <p className="text-gray-700 font-medium">{achievement.text}</p>
+                  </div>
                 </Card>
               </motion.div>
             ))}

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
@@ -33,10 +33,51 @@ export function AboutPageFacilities() {
     order: 0,
   });
 
+  const defaultFacilities: Facility[] = [
+    {
+      name: "Professional Pitch",
+      descriptionHtml: "High-quality training surface for optimal play",
+      amenities: ["All-weather turf", "Standard markings", "Professional goalposts"],
+      images: [{ url: `${import.meta.env.BASE_URL}pitch.jpg`, alt: "Professional Pitch" }],
+      order: 10,
+    },
+    {
+      name: "Modern Equipment",
+      descriptionHtml: "Balls, hurdles, cones, agility ladders, and rings",
+      amenities: ["Size 3, 4, 5 balls", "Speed hurdles", "Agility ladders"],
+      images: [{ url: `${import.meta.env.BASE_URL}facilities.jpg`, alt: "Modern Equipment" }],
+      order: 20,
+    },
+    {
+      name: "Fitness Center",
+      descriptionHtml: "Treadmills, spinning bikes, and strength training gear",
+      amenities: ["Cardio zone", "Strength training", "Flexibility area"],
+      images: [{ url: `${import.meta.env.BASE_URL}placeholders/photo.svg`, alt: "Fitness Center" }],
+      order: 30,
+    },
+  ];
+
+  const mergedFacilities = useMemo(() => {
+    const fromDb = items.map((it) => ({ ...it.data, id: it.id, isDefault: false }));
+    const dbNames = new Set(fromDb.map((f) => f.name));
+    
+    const fallbacks = defaultFacilities
+      .filter((f) => !dbNames.has(f.name))
+      .map((f) => ({ ...f, id: `default-${f.name}`, isDefault: true }));
+    
+    return [...fromDb, ...fallbacks].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  }, [items]);
+
   const handleOpen = (item?: any) => {
     if (item) {
-      setEditingId(item.id);
-      setFormData(item.data);
+      if (item.isDefault) {
+        setEditingId(null);
+        const { id, isDefault, ...cleanData } = item;
+        setFormData(cleanData);
+      } else {
+        setEditingId(item.id);
+        setFormData(item.data || item);
+      }
     } else {
       setEditingId(null);
       setFormData({
@@ -126,8 +167,7 @@ export function AboutPageFacilities() {
     );
   }
 
-  const sortedItems = [...items].sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
-  const previewCards = sortedItems;
+  const previewCards = mergedFacilities;
 
   return (
     <Card>
@@ -141,41 +181,40 @@ export function AboutPageFacilities() {
       <CardContent>
         <div className="mb-8">
           <div className="text-sm font-semibold text-secondary mb-3">Preview (same as website)</div>
-          {previewCards.length === 0 ? (
-            <div className="text-center py-10 text-muted-foreground">
-              No facilities yet. Add your first facility to show on the About page.
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-8 max-w-5xl">
-              {previewCards.map((i) => (
-                <Card
-                  key={i.id}
-                  className="overflow-hidden shadow-lg cursor-pointer"
-                  onClick={() => handleOpen(i)}
-                >
-                  <img
-                    src={i.data.images?.[0]?.url}
-                    alt={i.data.images?.[0]?.alt || i.data.name}
-                    className="w-full aspect-video object-cover"
-                  />
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2 text-secondary">{i.data.name}</h3>
-                    <div className="text-gray-600" dangerouslySetInnerHTML={{ __html: i.data.descriptionHtml }} />
-                    {i.data.amenities?.length ? (
-                      <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-700">
-                        {i.data.amenities.map((a, idx) => (
-                          <li key={idx} className="flex items-center gap-2">
-                            <span className="w-2 h-2 bg-primary rounded-full" />
-                            {a}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : null}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
+            {previewCards.map((i) => (
+              <Card
+                key={i.id}
+                className="overflow-hidden shadow-lg cursor-pointer relative group"
+                onClick={() => handleOpen(i)}
+              >
+                {i.isDefault && (
+                  <div className="absolute top-2 right-2 bg-black/50 text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase z-10">
+                    Not in DB
                   </div>
-                </Card>
-              ))}
-            </div>
-          )}
+                )}
+                <img
+                  src={i.images?.[0]?.url || i.data?.images?.[0]?.url}
+                  alt={i.name || i.data?.name}
+                  className="w-full aspect-video object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2 text-secondary">{i.name || i.data?.name}</h3>
+                  <div className="text-gray-600 text-sm" dangerouslySetInnerHTML={{ __html: i.descriptionHtml || i.data?.descriptionHtml }} />
+                  {(i.amenities || i.data?.amenities)?.length ? (
+                    <ul className="mt-4 grid grid-cols-1 gap-1 text-xs text-gray-700">
+                      {(i.amenities || i.data?.amenities).map((a: string, idx: number) => (
+                        <li key={idx} className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 bg-primary rounded-full" />
+                          {a}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
+              </Card>
+            ))}
+          </div>
         </div>
 
         <Table>
@@ -183,29 +222,41 @@ export function AboutPageFacilities() {
             <TableRow>
               <TableHead>Image</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Amenities</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items.map((item) => (
+            {mergedFacilities.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>
                   <div className="w-12 h-12 rounded overflow-hidden bg-muted">
-                    {item.data.images[0] && (
-                      <img src={item.data.images[0].url} alt={item.data.name} className="w-full h-full object-cover" />
+                    {(item.images?.[0]?.url || item.data?.images?.[0]?.url) && (
+                      <img 
+                        src={item.images?.[0]?.url || item.data?.images?.[0]?.url} 
+                        alt={item.name || item.data?.name} 
+                        className="w-full h-full object-cover" 
+                      />
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="font-medium">{item.data.name}</TableCell>
-                <TableCell>{item.data.amenities.length} items</TableCell>
+                <TableCell className="font-medium">{item.name || item.data?.name}</TableCell>
+                <TableCell>
+                  {item.isDefault ? (
+                    <span className="text-xs bg-muted px-2 py-1 rounded text-muted-foreground">Default (Fallback)</span>
+                  ) : (
+                    <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">Live in DB</span>
+                  )}
+                </TableCell>
                 <TableCell className="text-right">
                   <Button variant="ghost" size="icon" onClick={() => handleOpen(item)} className="mr-2">
                     <Pencil className="w-4 h-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(item.id)} className="text-destructive hover:text-destructive">
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+                  {!item.isDefault && (
+                    <Button variant="ghost" size="icon" onClick={() => handleDelete(item.id)} className="text-destructive hover:text-destructive">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
