@@ -18,22 +18,22 @@ export function HomePage() {
 
   const showcaseVideos: MediaVideo[] = [
     {
-      title: "Academy Showcase",
-      category: "Highlights",
+      title: "Interview with Mrs Maya",
+      category: "Media",
       date: "2025",
       videoUrl: "https://youtu.be/aiJAIJtytAQ?si=nIQTGvNpRLVtIubK",
       platform: "youtube",
     },
     {
-      title: "Training Ground Action",
-      category: "Training",
+      title: "Superscreen Interview with our President",
+      category: "Media",
       date: "2025",
       videoUrl: "https://youtu.be/GNJ5U_m6Cc4?si=EGKaFJ7AAtMWXhqe",
       platform: "youtube",
     },
     {
-      title: "Goal Collection",
-      category: "Match",
+      title: "Pegasus Chat",
+      category: "Media",
       date: "2025",
       videoUrl: "https://youtu.be/8woEnstXwY4?si=MwY7aBF6V2vognyJ",
       platform: "youtube",
