@@ -16,7 +16,7 @@ const LAST_SEEN_KEY = "registrations_last_seen";
 
 export function RegistrationsPage() {
   const [searchParams] = useSearchParams();
-  const { items, loading, updateItem, deleteItem } = useAdminCRUD<Registration>("registration");
+  const { items, loading, error, updateItem, deleteItem } = useAdminCRUD<Registration>("registration");
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -95,6 +95,12 @@ export function RegistrationsPage() {
         </div>
       </CardHeader>
       <CardContent>
+        {error && (
+          <div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6 flex items-center justify-between">
+            <p className="text-sm">Error loading registrations: {error}</p>
+            <Button variant="outline" size="sm" onClick={() => window.location.reload()}>Retry</Button>
+          </div>
+        )}
         <Table>
           <TableHeader>
             <TableRow>

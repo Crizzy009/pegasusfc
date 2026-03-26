@@ -164,7 +164,8 @@ export function ProgramsPage() {
       try {
         await createPublicRegistration(payload);
       } catch (dbErr: any) {
-        console.warn("Database registration failed, proceeding to WhatsApp only:", dbErr);
+        // Log the error but don't stop the user
+        console.error("Database registration failed:", dbErr);
       }
       
       // WhatsApp Redirection
@@ -172,11 +173,18 @@ export function ProgramsPage() {
       const message = `Hello Pegasus Academy, I am registering for the ${selectedProgram.title} program.\n\nPlayer Name: ${formData.playerName}\nGuardian Name: ${formData.guardianName}\n\nI have already submitted the registration form on the website. Please guide me on the next steps.`;
       const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
       
-      window.open(whatsappUrl, "_blank");
+      // Try to open WhatsApp in a new window
+      const whatsappWindow = window.open(whatsappUrl, "_blank");
 
+      // Show success alert
       alert(
-        `Registration Initiated!\n\nProgram: ${selectedProgram.title}\n\nYou are now being redirected to our official WhatsApp chat to finalize your registration.`
+        `Registration Initiated!\n\nProgram: ${selectedProgram.title}\n\nClick OK to finalize your registration on WhatsApp.`
       );
+
+      // If popup was blocked or window couldn't open, try again after alert
+      if (!whatsappWindow) {
+        window.location.href = whatsappUrl;
+      }
 
       // Reset form and close dialog
       setSelectedProgram(null);
@@ -196,7 +204,8 @@ export function ProgramsPage() {
       });
     } catch (err: any) {
       console.error("Critical error in registration flow:", err);
-      alert("An unexpected error occurred. Please try again or contact us directly via WhatsApp.");
+      // Only alert if something truly unexpected happens outside the DB call
+      alert("Registration process encountered an issue. Please contact us directly via WhatsApp at +234-9034-6304-07.");
     } finally {
       setSubmitting(false);
     }

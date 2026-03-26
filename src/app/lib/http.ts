@@ -92,7 +92,7 @@ export async function apiJson(path: string, options?: RequestInit) {
   const body = isJson ? await res.json() : null;
 
   if (!res.ok) {
-    const error = body?.error || res.statusText || "request_failed";
+    const error = body?.error || res.statusText || `Request failed with status ${res.status}`;
     throw new Error(error);
   }
 

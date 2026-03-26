@@ -39,7 +39,8 @@ export function ContactPage() {
       try {
         await createPublicContactMessage(payload);
       } catch (dbErr: any) {
-        console.warn("Database contact message failed, proceeding to WhatsApp only:", dbErr);
+        // Log the error but don't stop the user
+        console.error("Database contact message failed:", dbErr);
       }
 
       // WhatsApp Redirection
@@ -47,11 +48,18 @@ export function ContactPage() {
       const message = `Hello Pegasus Academy, I am contacting you regarding: ${formData.subject}\n\nName: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone || "N/A"}\n\nMessage: ${formData.message}`;
       const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
       
-      window.open(whatsappUrl, "_blank");
+      // Try to open WhatsApp in a new window
+      const whatsappWindow = window.open(whatsappUrl, "_blank");
 
+      // Show success alert
       alert(
-        `Message Sent!\n\nThank you ${formData.name}!\n\nYou are now being redirected to our official WhatsApp chat to finalize your inquiry.`
+        `Message Initiated!\n\nThank you ${formData.name}!\n\nClick OK to finalize your inquiry on WhatsApp.`
       );
+
+      // If popup was blocked or window couldn't open, try again after alert
+      if (!whatsappWindow) {
+        window.location.href = whatsappUrl;
+      }
 
       setFormData({
         name: "",
@@ -62,7 +70,8 @@ export function ContactPage() {
       });
     } catch (err: any) {
       console.error("Critical error in contact flow:", err);
-      alert("An unexpected error occurred. Please try again or contact us directly via WhatsApp.");
+      // Only alert if something truly unexpected happens outside the DB call
+      alert("Encountered an issue sending your message. Please contact us directly via WhatsApp at +234-9034-6304-07.");
     } finally {
       setSubmitting(false);
     }
