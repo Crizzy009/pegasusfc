@@ -159,7 +159,13 @@ export function ProgramsPage() {
         status: "new",
         notes: "",
       };
-      await createPublicRegistration(payload);
+
+      // Attempt database submission
+      try {
+        await createPublicRegistration(payload);
+      } catch (dbErr: any) {
+        console.warn("Database registration failed, proceeding to WhatsApp only:", dbErr);
+      }
       
       // WhatsApp Redirection
       const phoneNumber = "2349034630407"; // Pegasus Academy Official WhatsApp
@@ -169,8 +175,10 @@ export function ProgramsPage() {
       window.open(whatsappUrl, "_blank");
 
       alert(
-        `Registration Submitted Successfully!\n\nProgram: ${selectedProgram.title}\n\nYou are now being redirected to our official WhatsApp chat to finalize your registration.`
+        `Registration Initiated!\n\nProgram: ${selectedProgram.title}\n\nYou are now being redirected to our official WhatsApp chat to finalize your registration.`
       );
+
+      // Reset form and close dialog
       setSelectedProgram(null);
       setFormData({
         playerName: "",
@@ -187,7 +195,8 @@ export function ProgramsPage() {
         emergencyContact: "",
       });
     } catch (err: any) {
-      alert(err?.message ?? "Failed to submit registration");
+      console.error("Critical error in registration flow:", err);
+      alert("An unexpected error occurred. Please try again or contact us directly via WhatsApp.");
     } finally {
       setSubmitting(false);
     }
