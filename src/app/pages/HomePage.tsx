@@ -184,66 +184,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Video Showreel Section */}
-      <section className="py-16 md:py-24 bg-secondary text-white overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <div className="text-sm uppercase tracking-wide text-primary font-semibold mb-2">
-                Pegasus in Action
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">Video Showreel</h2>
-              <p className="text-gray-300 max-w-2xl mx-auto">
-                Experience the energy, talent, and dedication of our academy stars on the pitch.
-              </p>
-            </motion.div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {featuredVideos.map((video, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="bg-white/5 border-white/10 overflow-hidden shadow-2xl hover:shadow-primary/20 transition-all duration-300">
-                  <div className="aspect-video relative group">
-                    <iframe
-                      src={getVideoEmbedUrl(video.videoUrl)}
-                      className="w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    />
-                  </div>
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-primary uppercase">
-                        {video.category}
-                      </span>
-                      <span className="text-xs text-gray-400">{video.date}</span>
-                    </div>
-                    <h3 className="text-lg font-bold text-white">{video.title}</h3>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <Link to="/media">
-              <Button size="lg" className="bg-primary hover:bg-primary/90">
-                View All Videos
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* Quick Stats Bar */}
       <section className="bg-secondary text-white py-8">
         <div className="container mx-auto px-4">
@@ -310,6 +250,66 @@ export function HomePage() {
                 </Button>
               </Link>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Video Showreel Section */}
+      <section className="py-16 md:py-24 bg-secondary text-white overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="text-sm uppercase tracking-wide text-primary font-semibold mb-2">
+                Pegasus in Action
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">Video Showreel</h2>
+              <p className="text-gray-300 max-w-2xl mx-auto">
+                Experience the energy, talent, and dedication of our academy stars on the pitch.
+              </p>
+            </motion.div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {featuredVideos.map((video, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="bg-white/5 border-white/10 overflow-hidden shadow-2xl hover:shadow-primary/20 transition-all duration-300">
+                  <div className="aspect-video relative group">
+                    <iframe
+                      src={getVideoEmbedUrl(video.videoUrl)}
+                      className="w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                  </div>
+                  <div className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-semibold text-primary uppercase">
+                        {video.category}
+                      </span>
+                      <span className="text-xs text-gray-400">{video.date}</span>
+                    </div>
+                    <h3 className="text-lg font-bold text-white">{video.title}</h3>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link to="/media">
+              <Button size="lg" className="bg-primary hover:bg-primary/90">
+                View All Videos
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
