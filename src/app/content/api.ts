@@ -49,6 +49,18 @@ export async function fetchPublicContent<T>(type: ContentType): Promise<ContentI
 }
 
 export async function createPublicRegistration<T>(data: T) {
+  const contentFn = contentFunctionBaseUrl();
+  if (contentFn) {
+    try {
+      const res = await apiJson(contentFn, {
+        method: "POST",
+        body: JSON.stringify({ type: "registration", data, status: "published" }),
+      });
+      return res.id as string;
+    } catch (e: any) {
+      if (String(e?.message) !== "supabase_not_configured") throw e;
+    }
+  }
   const res = await apiJson("/api/public/registrations", {
     method: "POST",
     body: JSON.stringify({ data }),
@@ -57,6 +69,18 @@ export async function createPublicRegistration<T>(data: T) {
 }
 
 export async function createPublicTrialBooking<T>(data: T) {
+  const contentFn = contentFunctionBaseUrl();
+  if (contentFn) {
+    try {
+      const res = await apiJson(contentFn, {
+        method: "POST",
+        body: JSON.stringify({ type: "trialBooking", data, status: "published" }),
+      });
+      return res.id as string;
+    } catch (e: any) {
+      if (String(e?.message) !== "supabase_not_configured") throw e;
+    }
+  }
   const res = await apiJson("/api/public/trial-bookings", {
     method: "POST",
     body: JSON.stringify({ data }),
@@ -65,6 +89,18 @@ export async function createPublicTrialBooking<T>(data: T) {
 }
 
 export async function createPublicContactMessage<T>(data: T) {
+  const contentFn = contentFunctionBaseUrl();
+  if (contentFn) {
+    try {
+      const res = await apiJson(contentFn, {
+        method: "POST",
+        body: JSON.stringify({ type: "contactMessage", data, status: "published" }),
+      });
+      return res.id as string;
+    } catch (e: any) {
+      if (String(e?.message) !== "supabase_not_configured") throw e;
+    }
+  }
   const res = await apiJson("/api/public/contact-messages", {
     method: "POST",
     body: JSON.stringify({ data }),

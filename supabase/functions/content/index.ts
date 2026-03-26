@@ -157,7 +157,35 @@ Deno.serve(async (req) => {
       return json({ items, limit, offset });
     }
 
-    if (!isAdmin) return json({ error: "unauthorized" }, { status: 401 });
+    if (!isAdmin) {
+      if (req.method === "POST" && parts.length === 0) {
+        // Allow public creation for specific types
+        const body = (await req.json().catch(() => null)) as any;
+        const type = String(body?.type ?? "");
+        const allowed = ["registration", "contactMessage", "trialBooking"];
+        if (allowed.includes(type)) {
+          const status = "published";
+          const data = body?.data ?? null;
+          const now = Date.now();
+          if (!data) return json({ error: "invalid_request" }, { status: 400 });
+
+          const row: ContentRow = {
+            id: createId(type),
+            type,
+            status,
+            data,
+            created_at: now,
+            updated_at: now,
+          };
+          const { error } = await service.from("content").insert(row);
+          if (error) {
+            return json({ error: error.message || "server_error" }, { status: 500 });
+          }
+          return json({ id: row.id });
+        }
+      }
+      return json({ error: "unauthorized" }, { status: 401 });
+    }
     const who = await requireAdmin(req);
 
     if (req.method === "POST" && parts[0] === "bulk") {
