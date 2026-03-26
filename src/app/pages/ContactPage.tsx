@@ -34,23 +34,38 @@ export function ContactPage() {
         status: "new",
         notes: "",
       };
-      await createPublicContactMessage(payload);
+
+      // Attempt database submission
+      try {
+        await createPublicContactMessage(payload);
+      } catch (dbErr: any) {
+        console.warn("Database contact message failed, proceeding to WhatsApp only:", dbErr);
+      }
+
+      // WhatsApp Redirection
+      const phoneNumber = "2349034630407"; // Pegasus Academy Official WhatsApp
+      const message = `Hello Pegasus Academy, I am contacting you regarding: ${formData.subject}\n\nName: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone || "N/A"}\n\nMessage: ${formData.message}`;
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      
+      window.open(whatsappUrl, "_blank");
+
       alert(
-        `Message Sent!\n\nThank you ${formData.name}!\n\nWe've received your message and will respond within 24 hours via email or WhatsApp.`
+        `Message Sent!\n\nThank you ${formData.name}!\n\nYou are now being redirected to our official WhatsApp chat to finalize your inquiry.`
       );
+
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
     } catch (err: any) {
-      alert(err?.message ?? "Failed to send message");
-      return;
+      console.error("Critical error in contact flow:", err);
+      alert("An unexpected error occurred. Please try again or contact us directly via WhatsApp.");
     } finally {
       setSubmitting(false);
     }
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      subject: "",
-      message: "",
-    });
   };
 
   const contactInfo = [

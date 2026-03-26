@@ -120,24 +120,39 @@ export function RecruitmentPage() {
         status: "new",
         notes: "",
       };
-      await createPublicTrialBooking(payload);
+
+      // Attempt database submission
+      try {
+        await createPublicTrialBooking(payload);
+      } catch (dbErr: any) {
+        console.warn("Database trial booking failed, proceeding to WhatsApp only:", dbErr);
+      }
+
+      // WhatsApp Redirection
+      const phoneNumber = "2349034630407"; // Pegasus Academy Official WhatsApp
+      const message = `Hello Pegasus Academy, I am booking a trial.\n\nPlayer Name: ${formData.playerName}\nAge: ${formData.age}\nAge Group: ${formData.ageGroup}\nGuardian Name: ${formData.guardianName}\nPhone: ${formData.phone}\nEmail: ${formData.email}`;
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      
+      window.open(whatsappUrl, "_blank");
+
       alert(
-        `Trial Registration Submitted!\n\nThank you ${formData.playerName}!\n\nYou will receive confirmation via WhatsApp and email with:\n- Trial date and time\n- Venue details\n- What to bring\n\nSee you on the pitch!`
+        `Trial Booking Initiated!\n\nThank you ${formData.guardianName}!\n\nYou are now being redirected to our official WhatsApp chat to finalize the booking for ${formData.playerName}.`
       );
+
+      setFormData({
+        playerName: "",
+        age: "",
+        guardianName: "",
+        phone: "",
+        email: "",
+        ageGroup: "",
+      });
     } catch (err: any) {
-      alert(err?.message ?? "Failed to submit trial registration");
-      return;
+      console.error("Critical error in trial booking flow:", err);
+      alert("An unexpected error occurred. Please try again or contact us directly via WhatsApp.");
     } finally {
       setSubmitting(false);
     }
-    setFormData({
-      playerName: "",
-      age: "",
-      guardianName: "",
-      phone: "",
-      email: "",
-      ageGroup: "",
-    });
   };
 
   return (
