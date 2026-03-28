@@ -121,28 +121,11 @@ export function HallOfFamePage() {
       image: (a as any).image?.url,
     }));
 
-  const records = [
-    {
-      title: "Academy Record Scorer",
-      player: "Inas Opeke",
-      detail: "50 goals scored for the academy",
-    },
-    {
-      title: "First Goal in Academy History",
-      player: "Emmanuel Adebayo",
-      detail: "U14 vs. Lekki Stars, 2023",
-    },
-    {
-      title: "Most Appearances",
-      player: "David Okafor",
-      detail: "42 matches since 2023",
-    },
-    {
-      title: "Biggest Win Margin",
-      player: "U10 Squad",
-      detail: "8-0 vs. Ajah Youth FC",
-    },
-  ];
+  const records = achievementsData.filter(a => a.category === 'record').map(a => ({
+    title: a.title,
+    player: (a as any).player || "",
+    detail: a.description || "",
+  }));
 
   return (
     <div>
@@ -274,40 +257,42 @@ export function HallOfFamePage() {
       </section>
 
       {/* Records & Milestones */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-secondary">
-              Records & Milestones
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Historic moments in Pegasus Football Academy history
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {records.map((record, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-              >
-                <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Award className="w-6 h-6 text-primary" />
+      {records.length > 0 && (
+        <section className="py-16 md:py-24 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4 text-secondary">
+                Records & Milestones
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Historic moments in Pegasus Football Academy history
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {records.map((record, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                >
+                  <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Award className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold mb-2 text-secondary">{record.title}</h3>
+                        {record.player && <p className="font-semibold text-primary mb-1">{record.player}</p>}
+                        {record.detail && <p className="text-sm text-gray-600">{record.detail}</p>}
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-bold mb-2 text-secondary">{record.title}</h3>
-                      <p className="font-semibold text-primary mb-1">{record.player}</p>
-                      <p className="text-sm text-gray-600">{record.detail}</p>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
     </div>
   );

@@ -59,7 +59,7 @@ async function requireAdmin(req: Request) {
 
   const email = (data.user.email ?? "").toLowerCase();
   if (!email) throw new Error("invalid_token");
-  if (adminEmails.length && !adminEmails.includes(email)) throw new Error("not_admin");
+  if (!adminEmails.length || !adminEmails.includes(email)) throw new Error("not_admin");
   return { email };
 }
 

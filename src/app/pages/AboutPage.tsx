@@ -264,7 +264,7 @@ export function AboutPage() {
                   <div className="text-sm uppercase tracking-wide text-primary font-semibold mb-2">
                     President & Founder
                   </div>
-                  <h3 className="text-3xl font-bold mb-4 text-secondary">Martins Imabeh</h3>
+                  <h3 className="text-3xl font-bold mb-4 text-secondary">Martins Charming Imabeh</h3>
                   <p className="text-gray-700 mb-4">
                     Martins Imabeh founded Pegasus Football Academy in 2023 with a clear vision: to
                     provide professional football training to the youth of Badore and surrounding

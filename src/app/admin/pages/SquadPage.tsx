@@ -36,8 +36,8 @@ export function SquadPageAdmin({
   const [formData, setFormData] = useState<Player>({
     name: "",
     jersey: 0,
-    position: "Forward",
-    category: "u14-u16",
+    position: "Striker",
+    category: "u18-u14",
     photo: { url: "", alt: "" },
   });
   const placeholderPlayerUrl = `${import.meta.env.BASE_URL}placeholders/player.svg`;
@@ -73,8 +73,8 @@ export function SquadPageAdmin({
       setFormData({
         name: "",
         jersey: 0,
-        position: "Forward",
-        category: "u14-u16",
+        position: "Striker",
+        category: "u18-u14",
         photo: { url: "", alt: "" },
       });
     }
@@ -356,9 +356,16 @@ export function SquadPageAdmin({
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Goalkeeper">Goalkeeper</SelectItem>
-                        <SelectItem value="Defender">Defender</SelectItem>
-                        <SelectItem value="Midfielder">Midfielder</SelectItem>
+                        <SelectItem value="Right Back">Right Back</SelectItem>
+                        <SelectItem value="Left Back">Left Back</SelectItem>
+                        <SelectItem value="Center Back">Center Back</SelectItem>
+                        <SelectItem value="Defensive Midfielder">Defensive Midfielder</SelectItem>
+                        <SelectItem value="Central Midfielder">Central Midfielder</SelectItem>
+                        <SelectItem value="Attacking Midfielder">Attacking Midfielder</SelectItem>
+                        <SelectItem value="Right Winger">Right Winger</SelectItem>
+                        <SelectItem value="Left Winger">Left Winger</SelectItem>
                         <SelectItem value="Forward">Forward</SelectItem>
+                        <SelectItem value="Striker">Striker</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -372,10 +379,10 @@ export function SquadPageAdmin({
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="u7-u9">U7 & U9</SelectItem>
-                        <SelectItem value="u10">U10</SelectItem>
-                        <SelectItem value="u11-u13">U11-U13</SelectItem>
-                        <SelectItem value="u14-u16">U14-U16</SelectItem>
+                        <SelectItem value="u5-u2">U5-U2 (Early Stars)</SelectItem>
+                        <SelectItem value="u9-u6">U9-U6 (Foundation)</SelectItem>
+                        <SelectItem value="u12-u9">U12-U9 (Development)</SelectItem>
+                        <SelectItem value="u18-u14">U18-U14 (Youth Elite)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

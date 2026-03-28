@@ -73,7 +73,10 @@ async function readSupabaseSession(req) {
     .filter(Boolean);
 
   const email = typeof user.email === "string" ? user.email : "";
-  if (allow.length && !allow.includes(email.toLowerCase())) return null;
+  if (!allow.length || !allow.includes(email.toLowerCase())) {
+    console.warn(`Unauthorized access attempt from ${email}`);
+    return null;
+  }
 
   return {
     id: user.id,
