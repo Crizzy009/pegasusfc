@@ -264,21 +264,27 @@ export function MediaHubPage() {
   ];
 
 
-  const isTechnicalCaption = (caption?: string) => {
-    if (!caption) return false;
-    // Check for UUIDs, long strings of hex/random chars, or filenames
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    const technicalRegex = /^[0-9a-f\s]{15,}$/i; // Matches the space-separated hex in your screenshot
-    return uuidRegex.test(caption) || technicalRegex.test(caption) || caption.includes('.jpg') || caption.includes('.png');
+  const isTechnicalCaption = (text?: string) => {
+    if (!text) return false;
+    const t = text.trim();
+    // Check for UUIDs (with hyphens or spaces), long strings of hex/random chars, or filenames
+    const uuidRegex = /^[0-9a-f]{8}[\s-][0-9a-f]{4}[\s-][0-9a-f]{4}[\s-][0-9a-f]{4}[\s-][0-9a-f]{12}$/i;
+    const technicalRegex = /^[0-9a-f\s-]{15,}$/i;
+    return uuidRegex.test(t) || technicalRegex.test(t) || t.includes('.jpg') || t.includes('.png');
   };
 
   const photoItems = [
-    ...photosData.map((p) => ({
-      src: p.image.mediumUrl || p.image.largeUrl || p.image.originalUrl,
-      category: p.category,
-      title: p.title,
-      caption: isTechnicalCaption(p.caption) ? "" : p.caption,
-    })),
+    ...photosData.map((p) => {
+      const cleanTitle = isTechnicalCaption(p.title) ? "Pegasus moments" : (p.title || "Pegasus moments");
+      const cleanCaption = isTechnicalCaption(p.caption) ? "" : (p.caption || "");
+      
+      return {
+        src: p.image.mediumUrl || p.image.largeUrl || p.image.originalUrl,
+        category: p.category,
+        title: cleanTitle,
+        caption: cleanCaption,
+      };
+    }),
     ...photos,
   ];
 
