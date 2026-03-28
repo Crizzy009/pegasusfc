@@ -363,6 +363,7 @@ export function SquadPageAdmin({
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Goalkeeper">Goalkeeper</SelectItem>
+                        <SelectItem value="Defender">Defender</SelectItem>
                         <SelectItem value="Right Back">Right Back</SelectItem>
                         <SelectItem value="Left Back">Left Back</SelectItem>
                         <SelectItem value="Center Back">Center Back</SelectItem>
