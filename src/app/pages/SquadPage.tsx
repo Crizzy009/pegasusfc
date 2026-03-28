@@ -27,10 +27,10 @@ export function SquadPage() {
 
   const categories = [
     { id: "all", label: "All Players" },
-    { id: "u7-u9", label: "U7 & U9" },
-    { id: "u10", label: "U10" },
-    { id: "u11-u13", label: "U11-U13" },
-    { id: "u14-u16", label: "U14-U16" },
+    { id: "u5-u2", label: "U5 & U2" },
+    { id: "u6-u9", label: "U6 & U9" },
+    { id: "u9-u12", label: "U9 & U12" },
+    { id: "u14-u18", label: "U14-U18" },
   ];
 
   const placeholderPlayerPhotoUrl = `${import.meta.env.BASE_URL}placeholders/player.svg`;
