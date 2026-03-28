@@ -311,11 +311,12 @@ export function MediaHubPageAdmin() {
       return;
     }
     try {
+      const finalForm = { ...photoForm, title: "pegasus moments" };
       if (photoEditingId) {
-        await photosCRUD.updateItem(photoEditingId, photoForm);
+        await photosCRUD.updateItem(photoEditingId, finalForm);
         toast.success("Photo updated successfully");
       } else {
-        await photosCRUD.createItem(photoForm, "published");
+        await photosCRUD.createItem(finalForm, "published");
         toast.success("Photo created successfully");
       }
       setPhotoOpen(false);
@@ -427,9 +428,8 @@ export function MediaHubPageAdmin() {
         return { file, img };
       });
       const rows = uploaded.map(({ file, img }, idx) => {
-        const title = normalizeTitleFromFileName(file.name);
         const photo: MediaPhoto = {
-          title,
+          title: "pegasus moments",
           category: bulkPhotoCategory || "Training",
           date: bulkPhotoDate || new Date().toISOString().slice(0, 10),
           image: {

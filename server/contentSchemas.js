@@ -118,7 +118,7 @@ const playerSchema = z.object({
   name: z.string().min(1).max(80),
   jersey: z.number().int().min(0).max(99),
   position: z.string().min(1).max(40),
-  age: z.number().int().min(3).max(25),
+  age: z.number().int().min(3).max(25).optional().or(z.literal(0)).default(0),
   category: z.string().min(1).max(20),
   height: z.string().max(20).optional().default(""),
   goals: z.number().int().min(0).max(999).optional().default(0),

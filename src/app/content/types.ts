@@ -106,7 +106,7 @@ export type Player = {
   name: string;
   jersey: number;
   position: string;
-  age: number;
+  age?: number;
   category: string;
   height?: string;
   goals?: number;

@@ -1,11 +1,52 @@
+import { useState, useEffect } from "react";
 import { Card } from "../components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../components/ui/carousel";
-import { Calendar, Eye } from "lucide-react";
+import { Calendar, Eye, RefreshCw } from "lucide-react";
 import { motion } from "motion/react";
 import { usePublicContent } from "../content/useContent";
 import type { MediaPhoto, NewsPost, MediaVideo } from "../content/types";
 import { getVideoEmbedUrl } from "../lib/video";
+
+function SafeImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
+  const [error, setError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const placeholder = `${import.meta.env.BASE_URL}placeholders/photo.svg`;
+
+  useEffect(() => {
+    setError(false);
+  }, [src]);
+
+  const handleRetry = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setError(false);
+    setRetryCount(prev => prev + 1);
+  };
+
+  if (error) {
+    return (
+      <div className={`flex flex-col items-center justify-center bg-muted gap-2 p-4 ${className}`}>
+        <img src={placeholder} alt="Error placeholder" className="w-12 h-12 opacity-50" />
+        <button 
+          onClick={handleRetry}
+          className="text-xs flex items-center gap-1 text-primary hover:underline"
+        >
+          <RefreshCw className="w-3 h-3" /> Retry
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={retryCount > 0 ? `${src}?retry=${retryCount}` : src}
+      alt={alt}
+      className={className}
+      onError={() => setError(true)}
+      loading="lazy"
+    />
+  );
+}
 
 export function MediaHubPage() {
   const { data: photosData } = usePublicContent<MediaPhoto>("mediaPhoto");
@@ -223,15 +264,23 @@ export function MediaHubPage() {
   ];
 
 
-  const photoItems = (
-    photosData.length > 0 && photosData.some((p) => p.title === "Osinachi Ohale Visit")
-      ? photosData.map((p) => ({
-          src: p.image.mediumUrl || p.image.largeUrl || p.image.originalUrl,
-          category: p.category,
-          title: p.title,
-        }))
-      : photos
-  );
+  const isTechnicalCaption = (caption?: string) => {
+    if (!caption) return false;
+    // Check for UUIDs, long strings of hex/random chars, or filenames
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const technicalRegex = /^[0-9a-f\s]{15,}$/i; // Matches the space-separated hex in your screenshot
+    return uuidRegex.test(caption) || technicalRegex.test(caption) || caption.includes('.jpg') || caption.includes('.png');
+  };
+
+  const photoItems = [
+    ...photosData.map((p) => ({
+      src: p.image.mediumUrl || p.image.largeUrl || p.image.originalUrl,
+      category: p.category,
+      title: p.title,
+      caption: isTechnicalCaption(p.caption) ? "" : p.caption,
+    })),
+    ...photos,
+  ];
 
   const newsItems = (
     newsData.length > 0 && newsData.some((n) => n.title.includes("Osinachi Ohale"))
@@ -361,11 +410,12 @@ export function MediaHubPage() {
                       <CarouselItem key={index} className="pl-3 basis-[85%]">
                         <Card className="overflow-hidden shadow-lg cursor-pointer">
                           <div className="aspect-square overflow-hidden relative">
-                            <img src={photo.src} alt={photo.title} className="w-full h-full object-cover" />
+                            <SafeImage src={photo.src} alt={photo.title} className="w-full h-full object-cover" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
                               <div className="text-white">
                                 <div className="text-xs font-semibold mb-1">{photo.category}</div>
-                                <div className="text-sm">{photo.title}</div>
+                                <div className="text-sm font-bold">{photo.title}</div>
+                                {photo.caption && <div className="text-xs mt-1 opacity-90">{photo.caption}</div>}
                               </div>
                             </div>
                           </div>
@@ -389,7 +439,7 @@ export function MediaHubPage() {
                   >
                     <Card className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow cursor-pointer">
                       <div className="aspect-square overflow-hidden relative group">
-                        <img
+                        <SafeImage
                           src={photo.src}
                           alt={photo.title}
                           className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500"
@@ -397,7 +447,8 @@ export function MediaHubPage() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                           <div className="text-white">
                             <div className="text-xs font-semibold mb-1">{photo.category}</div>
-                            <div className="text-sm">{photo.title}</div>
+                            <div className="text-sm font-bold">{photo.title}</div>
+                            {photo.caption && <div className="text-xs mt-1 opacity-90">{photo.caption}</div>}
                           </div>
                         </div>
                       </div>
@@ -423,7 +474,7 @@ export function MediaHubPage() {
                     >
                       <Card className="overflow-hidden shadow-lg hover:shadow-2xl transition-shadow cursor-pointer">
                         <div className="aspect-video overflow-hidden">
-                          <img
+                          <SafeImage
                             src={article.image}
                             alt={article.title}
                             className="w-full h-full object-cover transition-transform hover:scale-110 duration-500"

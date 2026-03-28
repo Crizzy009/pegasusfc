@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import {
   Dialog,

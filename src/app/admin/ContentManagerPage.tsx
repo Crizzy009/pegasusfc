@@ -1,5 +1,5 @@
 
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 
 export function ContentManagerPage() {
   const { type } = useParams();

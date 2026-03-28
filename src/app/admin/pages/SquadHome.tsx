@@ -71,12 +71,12 @@ export function SquadHome() {
   const starCurrent = starItems[0] ?? null;
   const starData: SquadStarPlayers =
     starCurrent?.data ?? {
-      topScorerName: "Inas Opeke",
-      topScorerDetail: "50 goals (Academy Record)",
-      mostImprovedName: "Tobenna Okeke",
-      mostImprovedDetail: "U7-U9 Category",
-      bestGoalkeeperName: "Samuel Nwankwo",
-      bestGoalkeeperDetail: "10 clean sheets",
+      topScorerName: "",
+      topScorerDetail: "",
+      mostImprovedName: "",
+      mostImprovedDetail: "",
+      bestGoalkeeperName: "",
+      bestGoalkeeperDetail: "",
       order: 10,
     };
 

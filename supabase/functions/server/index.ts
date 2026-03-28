@@ -6,10 +6,10 @@ const port = Number(process.env.PORT || 5174);
 createApp()
   .then((app) => {
     app.listen(port, () => {
-      console.log(`Admin API running on http://localhost:${port}`);
+      process.stdout.write(`Admin API running on http://localhost:${port}\n`);
     });
   })
   .catch((e) => {
-    console.error(e?.stack || e);
+    process.stderr.write(`${e?.stack || e}\n`);
     process.exit(1);
   });

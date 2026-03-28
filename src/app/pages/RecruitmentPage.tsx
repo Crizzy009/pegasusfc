@@ -6,6 +6,7 @@ import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Calendar, Clock, MapPin, CheckCircle2, Users, Target } from "lucide-react";
 import { motion } from "motion/react";
+import { toast } from "sonner";
 import { usePublicContent } from "../content/useContent";
 import type { Trial, TrialBooking } from "../content/types";
 import { createPublicTrialBooking } from "../content/api";
@@ -118,14 +119,15 @@ export function RecruitmentPage() {
         phone: formData.phone,
         email: formData.email,
         status: "new",
-        notes: "",
+        notes: `Age Group Selection: ${formData.ageGroup}`,
       };
 
       // Attempt database submission
       try {
         await createPublicTrialBooking(payload);
       } catch (dbErr: any) {
-        console.warn("Database trial booking failed, proceeding to WhatsApp only:", dbErr);
+        console.error("Database trial booking failed:", dbErr);
+        toast.error(`Database submission failed: ${dbErr.message}. Your WhatsApp message will still be sent.`);
       }
 
       // WhatsApp Redirection
@@ -267,7 +269,13 @@ export function RecruitmentPage() {
                 <p className="text-gray-600">Fill out the form below to register</p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  void handleSubmit(e);
+                }}
+                className="space-y-6"
+              >
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="playerName">Player's Full Name *</Label>

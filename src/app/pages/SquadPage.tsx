@@ -299,7 +299,7 @@ export function SquadPage() {
           </div>
           {(() => {
             const s = (
-                starPlayersData.length > 0 && starPlayersData.some((p) => p.topScorerName === "Inas Opeke")
+                starPlayersData.length > 0
                   ? starPlayersData[0]
                   : ({
                       topScorerName: "Inas Opeke",
@@ -488,18 +488,24 @@ export function SquadPage() {
                     <div className="p-6">
                       <h3 className="text-2xl font-bold mb-2 text-secondary">{player.name}</h3>
                       <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
-                        <div>
-                          <div className="text-xs text-gray-500">Age</div>
-                          <div className="font-semibold">{player.age} years</div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-gray-500">Height</div>
-                          <div className="font-semibold">{player.height}</div>
-                        </div>
-                        <div className="col-span-2">
-                          <div className="text-xs text-gray-500">Goals This Season</div>
-                          <div className="font-semibold text-primary text-lg">{player.goals}</div>
-                        </div>
+                        {player.age ? (
+                          <div>
+                            <div className="text-xs text-gray-500">Age</div>
+                            <div className="font-semibold">{player.age} years</div>
+                          </div>
+                        ) : null}
+                        {player.height ? (
+                          <div>
+                            <div className="text-xs text-gray-500">Height</div>
+                            <div className="font-semibold">{player.height}</div>
+                          </div>
+                        ) : null}
+                        {player.goals !== undefined && player.goals !== null ? (
+                          <div className="col-span-2">
+                            <div className="text-xs text-gray-500">Goals This Season</div>
+                            <div className="font-semibold text-primary text-lg">{player.goals}</div>
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   </Card>

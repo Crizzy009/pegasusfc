@@ -1,5 +1,5 @@
 
-import { Navigate } from "react-router";
+import { Navigate } from "react-router-dom";
 import { useAdminAuth } from "./auth";
 import { Loader2 } from "lucide-react";
 import { getAccessToken } from "../supabase/auth";

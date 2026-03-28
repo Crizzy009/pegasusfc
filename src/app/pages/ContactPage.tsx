@@ -5,7 +5,27 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { MapPin, Phone, Mail, Clock, Facebook } from "lucide-react";
+import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { toast } from "sonner";
+
+function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+    </svg>
+  );
+}
 import { motion } from "motion/react";
 import type { ContactMessage } from "../content/types";
 import { createPublicContactMessage } from "../content/api";
@@ -39,8 +59,9 @@ export function ContactPage() {
       try {
         await createPublicContactMessage(payload);
       } catch (dbErr: any) {
-        // Log the error but don't stop the user
+        // Show an error toast if database submission fails
         console.error("Database contact message failed:", dbErr);
+        toast.error(`Database submission failed: ${dbErr.message}. Your WhatsApp message will still be sent.`);
       }
 
       // WhatsApp Redirection
@@ -170,7 +191,13 @@ export function ContactPage() {
             >
               <Card className="p-8 shadow-xl">
                 <h2 className="text-3xl font-bold mb-6 text-secondary">Send us a Message</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    void handleSubmit(e);
+                  }}
+                  className="space-y-6"
+                >
                   <div>
                     <Label htmlFor="name">Your Name *</Label>
                     <Input
@@ -276,7 +303,7 @@ export function ContactPage() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 p-4 bg-muted rounded-lg hover:bg-primary/10 transition"
                   >
-                    <Facebook className="w-6 h-6 text-primary" />
+                    <FacebookIcon className="w-6 h-6 text-primary" />
                     <div>
                       <div className="font-semibold text-secondary">Facebook</div>
                       <div className="text-sm text-gray-600">@pegasusfootballacademy</div>

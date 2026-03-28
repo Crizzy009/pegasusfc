@@ -7,6 +7,7 @@ import { Textarea } from "../components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Calendar, Clock, MapPin, Users, Target, TrendingUp, Award, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "motion/react";
+import { toast } from "sonner";
 import { usePublicContent } from "../content/useContent";
 import type { Program, Registration } from "../content/types";
 import { createPublicRegistration } from "../content/api";
@@ -164,8 +165,9 @@ export function ProgramsPage() {
       try {
         await createPublicRegistration(payload);
       } catch (dbErr: any) {
-        // Log the error but don't stop the user
+        // Show an error toast if database submission fails
         console.error("Database registration failed:", dbErr);
+        toast.error(`Database submission failed: ${dbErr.message}. Your WhatsApp message will still be sent.`);
       }
       
       // WhatsApp Redirection
@@ -581,7 +583,7 @@ export function ProgramsPage() {
 
                 <form
                   onSubmit={(e) => {
-                    handleSubmit(e);
+                    e.preventDefault();
                     void submitRegistration();
                   }}
                   className="space-y-6"

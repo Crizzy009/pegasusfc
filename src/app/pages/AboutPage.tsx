@@ -27,7 +27,7 @@ export function AboutPage() {
       name: "Fitness Center",
       descriptionHtml: "Treadmills, spinning bikes, and strength training gear",
       amenities: ["Cardio zone", "Strength training", "Flexibility area"],
-      images: [{ url: placeholderPhotoUrl, alt: "Fitness Center" }],
+      images: [{ url: `${import.meta.env.BASE_URL}fitness.jpg`, alt: "Fitness Center" }],
       order: 30,
     },
   ];

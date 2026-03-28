@@ -37,10 +37,7 @@ export function SquadPageAdmin({
     name: "",
     jersey: 0,
     position: "Forward",
-    age: 0,
     category: "u14-u16",
-    height: "",
-    goals: 0,
     photo: { url: "", alt: "" },
   });
   const placeholderPlayerUrl = `${import.meta.env.BASE_URL}placeholders/player.svg`;
@@ -77,10 +74,7 @@ export function SquadPageAdmin({
         name: "",
         jersey: 0,
         position: "Forward",
-        age: 0,
         category: "u14-u16",
-        height: "",
-        goals: 0,
         photo: { url: "", alt: "" },
       });
     }
@@ -392,16 +386,15 @@ export function SquadPageAdmin({
                     <Input 
                       id="age" 
                       type="number"
-                      value={formData.age} 
-                      onChange={(e) => setFormData({...formData, age: parseInt(e.target.value)})} 
-                      required 
+                      value={formData.age || ""} 
+                      onChange={(e) => setFormData({...formData, age: e.target.value ? parseInt(e.target.value) : 0})} 
                     />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="height">Height</Label>
                     <Input 
                       id="height" 
-                      value={formData.height} 
+                      value={formData.height || ""} 
                       onChange={(e) => setFormData({...formData, height: e.target.value})} 
                       placeholder={`5'8"`}
                     />
@@ -411,8 +404,8 @@ export function SquadPageAdmin({
                     <Input 
                       id="goals" 
                       type="number"
-                      value={formData.goals} 
-                      onChange={(e) => setFormData({...formData, goals: parseInt(e.target.value)})} 
+                      value={formData.goals || ""} 
+                      onChange={(e) => setFormData({...formData, goals: e.target.value ? parseInt(e.target.value) : 0})} 
                     />
                   </div>
                 </div>

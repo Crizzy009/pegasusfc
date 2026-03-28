@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 import { Trophy, Users, MapPin, GraduationCap, Target, Heart, Award, Calendar } from "lucide-react";
@@ -138,7 +138,11 @@ export function HomePage() {
   const highlightCards = [...homeHighlights]
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     .slice(0, 3)
-    .map((h) => ({ title: h.title, description: h.description, image: h.image.url }));
+    .map((h) => ({ 
+      title: h.title, 
+      description: h.description, 
+      image: h.image?.url || placeholderPhotoUrl 
+    }));
 
   return (
     <div>

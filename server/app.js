@@ -41,6 +41,7 @@ export async function createApp() {
   app.use("/api/admin", requireAdmin, createAdminRouter({ db }));
   app.use("/api/public", createPublicRouter({ db }));
 
+  app.get("/", (_req, res) => res.json({ status: "ok", message: "Pegasus API Server" }));
   app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
   app.use((err, _req, res, _next) => {

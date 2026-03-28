@@ -58,7 +58,7 @@ export async function createPublicRegistration<T>(data: T) {
       });
       return res.id as string;
     } catch (e: any) {
-      if (String(e?.message) !== "supabase_not_configured") throw e;
+      if (String(e?.message) !== "supabase_not_configured" && String(e?.message) !== "unauthorized") throw e;
     }
   }
   const res = await apiJson("/api/public/registrations", {
@@ -78,7 +78,7 @@ export async function createPublicTrialBooking<T>(data: T) {
       });
       return res.id as string;
     } catch (e: any) {
-      if (String(e?.message) !== "supabase_not_configured") throw e;
+      if (String(e?.message) !== "supabase_not_configured" && String(e?.message) !== "unauthorized") throw e;
     }
   }
   const res = await apiJson("/api/public/trial-bookings", {
@@ -98,7 +98,7 @@ export async function createPublicContactMessage<T>(data: T) {
       });
       return res.id as string;
     } catch (e: any) {
-      if (String(e?.message) !== "supabase_not_configured") throw e;
+      if (String(e?.message) !== "supabase_not_configured" && String(e?.message) !== "unauthorized") throw e;
     }
   }
   const res = await apiJson("/api/public/contact-messages", {
