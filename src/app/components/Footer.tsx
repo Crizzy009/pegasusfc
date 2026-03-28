@@ -58,7 +58,7 @@ export function Footer() {
           <div>
             <h3 className="font-bold mb-4 text-primary">Training Schedule</h3>
             <ul className="space-y-2 text-sm text-gray-300">
-              <li><strong>Fridays:</strong> -  4:00 PM - 7:00 PM</li>
+              <li><strong>Fridays:</strong> -  2:45:00 PM - 7:00 PM</li>
               <li><strong>Saturdays:</strong> - 12:00 PM - 7:00 PM</li>
               <li><strong>Age Groups:</strong> U2 - U18</li>
               <li><strong>Location:</strong> Badore, Ajah, Lekki</li>
