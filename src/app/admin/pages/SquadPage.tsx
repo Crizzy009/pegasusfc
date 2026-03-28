@@ -33,9 +33,9 @@ export function SquadPageAdmin({
   const [uploading, setUploading] = useState(false);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkText, setBulkText] = useState("");
-  const [formData, setFormData] = useState<Player>({
+  const [formData, setFormData] = useState<any>({
     name: "",
-    jersey: 0,
+    jersey: "",
     position: "Striker",
     category: "u18-u14",
     photo: { url: "", alt: "" },
@@ -72,7 +72,7 @@ export function SquadPageAdmin({
       setEditingId(null);
       setFormData({
         name: "",
-        jersey: 0,
+        jersey: "",
         position: "Striker",
         category: "u18-u14",
         photo: { url: "", alt: "" },
@@ -105,11 +105,18 @@ export function SquadPageAdmin({
     }
 
     try {
+      const payload = {
+        ...formData,
+        jersey: parseInt(String(formData.jersey)),
+        age: formData.age ? parseInt(String(formData.age)) : 0,
+        goals: formData.goals ? parseInt(String(formData.goals)) : 0,
+      };
+
       if (editingId) {
-        await updateItem(editingId, formData);
+        await updateItem(editingId, payload);
         toast.success("Player updated successfully");
       } else {
-        await createItem(formData, "published");
+        await createItem(payload, "published");
         toast.success("Player created successfully");
       }
       setIsOpen(false);
@@ -339,7 +346,7 @@ export function SquadPageAdmin({
                       id="jersey" 
                       type="number"
                       value={formData.jersey} 
-                      onChange={(e) => setFormData({...formData, jersey: parseInt(e.target.value)})} 
+                      onChange={(e) => setFormData({...formData, jersey: e.target.value})} 
                       required 
                     />
                   </div>
@@ -394,7 +401,7 @@ export function SquadPageAdmin({
                       id="age" 
                       type="number"
                       value={formData.age || ""} 
-                      onChange={(e) => setFormData({...formData, age: e.target.value ? parseInt(e.target.value) : 0})} 
+                      onChange={(e) => setFormData({...formData, age: e.target.value})} 
                     />
                   </div>
                   <div className="grid gap-2">
@@ -412,7 +419,7 @@ export function SquadPageAdmin({
                       id="goals" 
                       type="number"
                       value={formData.goals || ""} 
-                      onChange={(e) => setFormData({...formData, goals: e.target.value ? parseInt(e.target.value) : 0})} 
+                      onChange={(e) => setFormData({...formData, goals: e.target.value})} 
                     />
                   </div>
                 </div>
