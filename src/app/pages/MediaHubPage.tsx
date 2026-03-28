@@ -92,7 +92,7 @@ export function MediaHubPage() {
       platform: "youtube",
     },
     {
-      title: "Interview with Dolapo on Superscreen",
+      title: "Interview with Mr Princewill Oviesan on Superscreen TV",
       category: "Media",
       date: "2025",
       videoUrl: "https://youtu.be/YxtpG5ISyzg?si=vRjOsp3m5AypPoEL",
