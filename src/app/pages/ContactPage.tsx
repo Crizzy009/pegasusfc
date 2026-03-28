@@ -119,7 +119,11 @@ export function ContactPage() {
     {
       icon: Clock,
       title: "Training Schedule",
-      details: ["Fridays & Saturdays", "4:00 PM - 7:30 PM", "(Times vary by age group)"],
+      details: [
+        "Friday: 2:45pm to 7pm",
+        "Saturday: 12:45pm to 7pm",
+        "(Times vary by age group)",
+      ],
     },
   ];
 

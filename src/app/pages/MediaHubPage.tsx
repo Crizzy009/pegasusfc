@@ -57,7 +57,7 @@ export function MediaHubPage() {
 
   const videos: MediaVideo[] = [
     {
-      title: "Superscreen Interview",
+      title: "Interview with Mr Princewill Oviesan on Superscreen TV",
       category: "Media",
       date: "2025",
       videoUrl: "https://youtu.be/GNJ5U_m6Cc4?si=EGKaFJ7AAtMWXhqe",
