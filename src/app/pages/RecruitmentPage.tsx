@@ -188,7 +188,7 @@ export function RecruitmentPage() {
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5 text-primary" />
-                <span>9:00 AM - 12:00 PM</span>
+                <span>12:45 PM - 7:00 PM</span>
               </div>
             </div>
           </motion.div>
