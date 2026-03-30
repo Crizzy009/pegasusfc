@@ -50,7 +50,7 @@ export function HallOfFamePage() {
     { 
       season: "2025", 
       title: "NFE Youth Cup", 
-      description: "Second place champions, Monday Yahaya MVP, Nathan Chuwkunywm highest goal scorer", 
+      description: "Second place champions, Monday Yahaya MVP, Nathan Chukwuyem highest goal scorer", 
       category: "trophy", 
       highlight: true, 
       order: 5,
