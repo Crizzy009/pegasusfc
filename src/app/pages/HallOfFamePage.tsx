@@ -1,5 +1,5 @@
 import { Card } from "../components/ui/card";
-import { Trophy, Award, Star, TrendingUp, Users, Target } from "lucide-react";
+import { Trophy, Award, Star, TrendingUp, Users, Target, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 import { usePublicContent } from "../content/useContent";
 import type { Achievement as AchievementType } from "../content/types";
@@ -9,6 +9,42 @@ export function HallOfFamePage() {
   const placeholderPhotoUrl = `${import.meta.env.BASE_URL}placeholders/photo.svg`;
 
   const defaultAchievements: AchievementType[] = [
+    {
+      season: "2026",
+      title: "100 Goals Milestone",
+      description: "Pedro Carrena scored his 100th goal, a historic milestone for Pegasus Football Academy.",
+      category: "record",
+      highlight: true,
+      order: 1,
+      image: { url: `${import.meta.env.BASE_URL}pegasus archive/PEDRO CARRENA 100 Goals Milestone/WhatsApp Image 2026-06-12 at 2.43.57 PM.jpeg`, alt: "Pedro Carrena 100 Goals Celebration" }
+    },
+    {
+      season: "2026",
+      title: "Wolverhampton & Brentford Scouting",
+      description: "Hosted professional English Premier League scouts at our academy fields.",
+      category: "trials",
+      highlight: true,
+      order: 2,
+      image: { url: `${import.meta.env.BASE_URL}pegasus archive/Scout game from WolverhampthonWanderers and Brentforf FC in England/WhatsApp Image 2026-06-12 at 2.43.58 PM.jpeg`, alt: "EPL Scouting Session" }
+    },
+    {
+      season: "2026",
+      title: "Basketball Academy Launch",
+      description: "Officially unveiled our basketball team with a stunning photoshoot on June 5th, 2026.",
+      category: "event",
+      highlight: true,
+      order: 3,
+      image: { url: `${import.meta.env.BASE_URL}pegasus archive/We lunched our basketball team 5th of June/image 6.jpeg`, alt: "Basketball Team Unveiling" }
+    },
+    {
+      season: "2026",
+      title: "Beyond Limits Ogun Match",
+      description: "Played an intense, highly competitive match against Beyond Limits in Ogun state.",
+      category: "match",
+      highlight: false,
+      order: 4,
+      image: { url: `${import.meta.env.BASE_URL}pegasus archive/Pictures from our last game against beyond limits in Ogun state/WhatsApp Image 2026-06-12 at 2.55.40 PM.jpeg`, alt: "Match against Beyond Limits" }
+    },
     { season: "2023", title: "Academy Launch", description: "Academy successfully launched in Badore, Ajah", category: "milestone", order: 10 },
     { season: "2023", title: "Enrollment Growth", description: "Enrolled 150+ players across 6 age categories", category: "growth", order: 20 },
     { season: "2023", title: "Training Facility", description: "Established training facility in Lekki axis", category: "facility", order: 30 },
@@ -68,9 +104,6 @@ export function HallOfFamePage() {
       : defaultAchievements
   );
 
-  const seasons = Array.from(new Set(achievements.map((a) => a.season))).sort((a, b) => Number(b) - Number(a));
-  seasons[0] || "";
-
   const iconFor = (a: AchievementType) => {
     const c = (a.category || "").toLowerCase();
     if (c.includes("trophy") || c.includes("tournament")) return Trophy;
@@ -82,15 +115,22 @@ export function HallOfFamePage() {
     return Award;
   };
 
-  achievements.find((a) => a.image?.url)?.image?.url ||
-    placeholderPhotoUrl;
-
   const normalizeCardText = (a: AchievementType) => {
     const t = String(a.title ?? "").trim();
     const d = String(a.description ?? "").trim();
     if (t && d) return `${t}: ${d}`;
     return t || d || "Achievement";
   };
+
+  const achievements2026 = achievements
+    .filter((a) => String(a.season) === "2026")
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .map((a) => ({
+      icon: iconFor(a),
+      text: normalizeCardText(a),
+      highlight: Boolean(a.highlight),
+      image: (a as any).image?.url,
+    }));
 
   const achievements2025 = achievements
     .filter((a) => String(a.season) === "2025")
@@ -126,6 +166,15 @@ export function HallOfFamePage() {
     player: (a as any).player || "",
     detail: a.description || "",
   }));
+
+  const fallbackRecords = [
+    {
+      title: "Pedro Carrena 100 Goals",
+      player: "Pedro Carrena",
+      detail: "Reached a historic 100 goals milestone for the academy (Academy Record)",
+    },
+    ...records
+  ];
 
   return (
     <div>
@@ -167,6 +216,39 @@ export function HallOfFamePage() {
                 className="w-full aspect-video object-cover"
               />
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+
+      {/* 2026 Season Highlights */}
+      <section className="py-16 md:py-24 bg-gradient-to-br from-secondary to-[#1e293b] text-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 flex items-center justify-center gap-2 italic">
+              <Sparkles className="w-8 h-8 text-primary animate-pulse" /> 2026 Season
+            </h2>
+            <p className="text-xl text-white/90">Our Latest Milestones & Scouting Games</p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {achievements2026.map((achievement, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className={`overflow-hidden flex flex-col ${achievement.highlight ? 'bg-white text-secondary' : 'bg-white/10 text-white border-white/20'} h-full shadow-lg`}>
+                  {achievement.image && (
+                    <img src={achievement.image} alt={achievement.text} className="w-full aspect-video object-cover" />
+                  )}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <achievement.icon className={`w-10 h-10 mb-4 ${achievement.highlight ? 'text-primary' : 'text-white'}`} />
+                    <p className="font-medium text-sm md:text-base leading-relaxed">{achievement.text}</p>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>

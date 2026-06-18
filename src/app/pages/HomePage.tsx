@@ -18,24 +18,24 @@ export function HomePage() {
 
   const showcaseVideos: MediaVideo[] = [
     {
-      title: "Interview with Mrs Maya",
-      category: "Media",
-      date: "2025",
-      videoUrl: "https://youtu.be/aiJAIJtytAQ?si=nIQTGvNpRLVtIubK",
+      title: "Congratulations on your success \"PEDRO CARRENA\" 100 Goals Milestone",
+      category: "Milestone",
+      date: "2026",
+      videoUrl: "https://youtube.com/shorts/oQW8nfkT9vo?si=zgqp9eeDXWTNpx7I",
       platform: "youtube",
     },
     {
-      title: "Superscreen Interview with our President",
-      category: "Media",
-      date: "2025",
-      videoUrl: "https://youtu.be/GNJ5U_m6Cc4?si=EGKaFJ7AAtMWXhqe",
+      title: "RYAN DICKSON INTERVIEW AFTER THE SCOUTING PROGRAM",
+      category: "Scouting",
+      date: "2026",
+      videoUrl: "https://youtu.be/0bTj7_QmW_Q?si=SIBMQXAsukhu32Af",
       platform: "youtube",
     },
     {
-      title: "Pegasus Chat",
+      title: "BEYOND LIMITS - PEGASUS ACADEMY",
       category: "Media",
-      date: "2025",
-      videoUrl: "https://youtu.be/8woEnstXwY4?si=MwY7aBF6V2vognyJ",
+      date: "2026",
+      videoUrl: "https://youtu.be/VtfONgiA338?si=t_demn-ipCEDZMxM",
       platform: "youtube",
     },
   ];
@@ -135,7 +135,36 @@ export function HomePage() {
     },
   ];
 
-  const highlightCards = [...homeHighlights]
+  const defaultHighlights = [
+    {
+      title: "Pedro Carrena 100 Goals Milestone",
+      description: "Pedro Carrena scored his historic 100th goal, establishing an unmatched record.",
+      image: {
+        url: `${import.meta.env.BASE_URL}pegasus archive/PEDRO CARRENA 100 Goals Milestone/WhatsApp Image 2026-06-12 at 2.43.57 PM.jpeg`,
+      },
+      order: 1,
+    },
+    {
+      title: "Wolverhampton & Brentford Scouting",
+      description: "Hosted professional English Premier League scouts at our academy fields.",
+      image: {
+        url: `${import.meta.env.BASE_URL}pegasus archive/Scout game from WolverhampthonWanderers and Brentforf FC in England/WhatsApp Image 2026-06-12 at 2.43.58 PM.jpeg`,
+      },
+      order: 2,
+    },
+    {
+      title: "Basketball Academy Grand Launch",
+      description: "Celebrated the official team launch and photoshoot on June 5, 2026.",
+      image: {
+        url: `${import.meta.env.BASE_URL}pegasus archive/We lunched our basketball team 5th of June/image 6.jpeg`,
+      },
+      order: 3,
+    },
+  ];
+
+  const highlightsToUse = homeHighlights.length > 0 ? homeHighlights : defaultHighlights;
+
+  const highlightCards = [...highlightsToUse]
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     .slice(0, 3)
     .map((h) => ({ 

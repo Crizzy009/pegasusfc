@@ -40,7 +40,12 @@ function isAbsoluteUrl(value) {
 }
 
 function isUploadUrl(value) {
-  return typeof value === "string" && value.startsWith("/uploads/");
+  return typeof value === "string" && (
+    value.startsWith("/uploads/") ||
+    value.startsWith("/pegasus archive/") ||
+    value.startsWith("/placeholders/") ||
+    value.startsWith("/basketball flyer")
+  );
 }
 
 const assetUrlSchema = z

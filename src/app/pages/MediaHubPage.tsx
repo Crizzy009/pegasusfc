@@ -57,115 +57,168 @@ export function MediaHubPage() {
 
   const videos: MediaVideo[] = [
     {
-      title: "Interview with Mr Princewill Oviesan on Superscreen TV",
+      title: "Congratulations on your success \"PEDRO CARRENA\" 100 Goals Milestone",
+      category: "Milestone",
+      date: "2026",
+      videoUrl: "https://youtube.com/shorts/oQW8nfkT9vo?si=zgqp9eeDXWTNpx7I",
+      platform: "youtube",
+    },
+    {
+      title: "RYAN DICKSON INTERVIEW AFTER THE SCOUTING PROGRAM",
+      category: "Interview",
+      date: "2026",
+      videoUrl: "https://youtu.be/0bTj7_QmW_Q?si=SIBMQXAsukhu32Af",
+      platform: "youtube",
+    },
+    {
+      title: "SCOUTS FROM ENGLAND",
+      category: "Scouting",
+      date: "2026",
+      videoUrl: "https://youtu.be/bPckYiFCCIM?si=AsubYpvCX3llFuHM",
+      platform: "youtube",
+    },
+    {
+      title: "PEGASUS ACADEMY BASKETBALL TEAM TRAINING",
+      category: "Basketball",
+      date: "2026",
+      videoUrl: "https://youtu.be/57ly26n3wJo?si=knpTV4LZ3ASVICN2",
+      platform: "youtube",
+    },
+    {
+      title: "Training time - Agility, strength, endurance & ball mastery",
+      category: "Training",
+      date: "2026",
+      videoUrl: "https://youtu.be/brUxA4v6hx4?si=STF-vB1FK2HijoZw",
+      platform: "youtube",
+    },
+    {
+      title: "Beautiful solo goal from our 14 years old \"FRIDAY EWUNTIN\"",
+      category: "Match Highlight",
+      date: "2026",
+      videoUrl: "https://youtu.be/v9yGJg6DJPA?si=v03cYn9az4tY2Kd3",
+      platform: "youtube",
+    },
+    {
+      title: "BEYOND LIMITS - PEGASUS ACADEMY",
       category: "Media",
-      date: "2025",
-      videoUrl: "https://youtu.be/GNJ5U_m6Cc4?si=EGKaFJ7AAtMWXhqe",
+      date: "2026",
+      videoUrl: "https://youtu.be/VtfONgiA338?si=t_demn-ipCEDZMxM",
       platform: "youtube",
     },
     {
-      title: "Osinachi Ohale's Visit",
-      category: "Event",
-      date: "2025",
-      videoUrl: "https://youtu.be/RUeGKwCz27s?si=c2QlXhwWVG59sW7m",
+      title: "Training time - Under 6",
+      category: "Training",
+      date: "2026",
+      videoUrl: "https://youtu.be/HrjyqjsGYiQ?si=3fyQa6asXccNuaxe",
       platform: "youtube",
     },
     {
-      title: "Superstar Agent Visit",
-      category: "Event",
-      date: "2025",
-      videoUrl: "https://youtube.com/shorts/Krr3bYqsNZw?si=e8b0IYrrNFrfV7gF",
+      title: "Training time - Under 10",
+      category: "Training",
+      date: "2026",
+      videoUrl: "https://youtu.be/vy5ahJsy-Zc?si=azFxKW2C611bVSlC",
       platform: "youtube",
     },
     {
-      title: "Pegasus Chat",
-      category: "Media",
-      date: "2025",
-      videoUrl: "https://youtu.be/V1GH7l8tp_4?si=g5f-5ERaKAvS32XW",
+      title: "Training time - Under 12",
+      category: "Training",
+      date: "2026",
+      videoUrl: "https://youtu.be/GkRXuMKBNlY?si=BjRVtXbxy-AbqAQW",
       platform: "youtube",
     },
     {
-      title: "Interview with Mrs Maya",
-      category: "Media",
-      date: "2025",
-      videoUrl: "https://youtu.be/aiJAIJtytAQ?si=nIQTGvNpRLVtIubK",
+      title: "MRS CHIGOZIE",
+      category: "Interview",
+      date: "2026",
+      videoUrl: "https://youtu.be/PTvjJElAX68?si=DyhHI2Ic74zOZO5F",
       platform: "youtube",
     },
     {
-      title: "Interview with Mr Princewill Oviesan on Superscreen TV",
-      category: "Media",
-      date: "2025",
-      videoUrl: "https://youtu.be/YxtpG5ISyzg?si=vRjOsp3m5AypPoEL",
+      title: "HANNIEL IFEOLUWA TIJANI",
+      category: "Interview",
+      date: "2026",
+      videoUrl: "https://youtu.be/hH5zRQzWDgY?si=WFfJkdvqIkLwwELm",
       platform: "youtube",
     },
     {
-      title: "Pegasus Chat",
-      category: "Media",
-      date: "2025",
-      videoUrl: "https://youtu.be/8woEnstXwY4?si=MwY7aBF6V2vognyJ",
+      title: "SCOUTING PROGRAM (first)",
+      category: "Scouting",
+      date: "2026",
+      videoUrl: "https://youtube.com/shorts/O3bOWFMQmOA?si=Nm-EiRon9e2-XhMh",
       platform: "youtube",
     },
     {
-      title: "Match Players Feedback",
-      category: "Match",
-      date: "2025",
-      videoUrl: "https://youtu.be/vETfZy-fHCA?si=Gv6DDbENZGMEU5s7",
+      title: "SCOUTING PROGRAM (second)",
+      category: "Scouting",
+      date: "2026",
+      videoUrl: "https://youtube.com/shorts/_AKhUOEdvsM?si=es7trA2bSXzEYuKj",
       platform: "youtube",
     },
     {
-      title: "Team Arrival at Onikan Stadium",
-      category: "Event",
-      date: "2025",
-      videoUrl: "https://youtu.be/WDHsJ6MyBUA?si=xkpkMiI74TjVHnoX",
+      title: "Pegasus Sports Academy top-notch facilities",
+      category: "Facilities",
+      date: "2026",
+      videoUrl: "https://youtu.be/_PFKOfk5sgM?si=GMxIJBxJmiPQeU-g",
       platform: "youtube",
-    },
-    {
-      title: "Live Match Replay",
-      category: "Match",
-      date: "2025",
-      videoUrl: "https://youtu.be/LNOVbLvXIEY?si=mfGkEl7B0JFdhAIm",
-      platform: "youtube",
-    },
-    {
-      title: "Instagram Live Chat",
-      category: "Media",
-      date: "2025",
-      videoUrl: "https://youtu.be/Uzw7Nu4g08s?si=-LGWsTI80n0ofIQz",
-      platform: "youtube",
-    },
-    {
-      title: "Star Player Melvin Highlight",
-      category: "Match",
-      date: "2024",
-      videoUrl: "https://youtu.be/8-wO0XVIFBA?si=PvQ1rS-yefVSGmUc",
-      platform: "youtube",
-    },
-    {
-      title: "TVC Television Interview with our President",
-      category: "Media",
-      date: "2025",
-      videoUrl: "https://youtu.be/CsVtq0kQ3SM?si=vVu5QpT2BS3irEql",
-      platform: "youtube",
-    },
-    {
-      title: "Facebook Academy Moments",
-      category: "Community",
-      date: "2025",
-      videoUrl: "https://www.facebook.com/share/v/1C2YyiynnA/?mibextid=WC7FNe",
-      platform: "facebook",
-    },
-    {
-      title: "Match Day Atmosphere",
-      category: "Community",
-      date: "2025",
-      videoUrl: "https://www.facebook.com/share/v/1aYtbUrmEb/?mibextid=WC7FNe",
-      platform: "facebook",
     },
   ];
 
-  const videoItems = videosData.length > 0 ? videosData : videos;
+  const videoItems = [
+    ...videosData.map(v => ({ ...v, order: v.order ?? 999 })),
+    ...videos.map((v, i) => ({ ...v, order: v.order ?? (i + 1000) }))
+  ].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
 
   const photos = [
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/PEDRO CARRENA 100 Goals Milestone/WhatsApp Image 2026-06-12 at 2.43.57 PM.jpeg`,
+      category: "Milestone",
+      title: "Pedro Carrena 100 Goals Celebration",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/PEDRO CARRENA 100 Goals Milestone/WhatsApp Image 2026-06-12 at 2.43.57 PM (1).jpeg`,
+      category: "Milestone",
+      title: "Martins Imabeh presenting award to Pedro Carrena",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/Scout game from WolverhampthonWanderers and Brentforf FC in England/WhatsApp Image 2026-06-12 at 2.43.58 PM.jpeg`,
+      category: "Scouting",
+      title: "Wolverhampton & Brentford English Scouts at Pegasus",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/Scout game from WolverhampthonWanderers and Brentforf FC in England/WhatsApp Image 2026-06-12 at 2.44.00 PM (4).jpeg`,
+      category: "Scouting",
+      title: "High intensity trial matches for EPL scouts",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/Pictures from our last game against beyond limits in Ogun state/WhatsApp Image 2026-06-12 at 2.55.39 PM (3).jpeg`,
+      category: "Matches",
+      title: "Beyond Limits vs Pegasus action in Ogun State",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/Pictures from our last game against beyond limits in Ogun state/WhatsApp Image 2026-06-12 at 2.55.40 PM.jpeg`,
+      category: "Matches",
+      title: "Pegasus team setup against Beyond Limits",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/We lunched our basketball team 5th of June/image 6.jpeg`,
+      category: "Basketball",
+      title: "Inaugural Basketball Squad Official Launch",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/Basketball photoshootunveiling/WhatsApp Image 2026-06-12 at 2.51.21 PM.jpeg`,
+      category: "Basketball",
+      title: "Basketball Jersey Unveiling",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/pegasus moments/WhatsApp Image 2026-06-12 at 2.43.48 PM.jpeg`,
+      category: "Training",
+      title: "Agility & coordination drills on the pitch",
+    },
+    {
+      src: `${import.meta.env.BASE_URL}pegasus archive/pegasus moments/WhatsApp Image 2026-06-12 at 2.43.51 PM (3).jpeg`,
+      category: "Training",
+      title: "Coaches briefing players before tactical drills",
+    },
     {
       src: `${import.meta.env.BASE_URL}pegasus archive/ogeneyi.jpeg`,
       category: "Special Guest",
@@ -231,36 +284,6 @@ export function MediaHubPage() {
       category: "Launch",
       title: "Basketball Academy Ajah",
     },
-    {
-      src: placeholderPhotoUrl,
-      category: "Training",
-      title: "Saturday Skills Session",
-    },
-    {
-      src: placeholderPhotoUrl,
-      category: "Match",
-      title: "U10 Championship Celebration",
-    },
-    {
-      src: placeholderPhotoUrl,
-      category: "Training",
-      title: "Coaching Masterclass",
-    },
-    {
-      src: placeholderPhotoUrl,
-      category: "Match",
-      title: "Match Day Action",
-    },
-    {
-      src: placeholderPhotoUrl,
-      category: "Training",
-      title: "Youth Development Program",
-    },
-    {
-      src: placeholderPhotoUrl,
-      category: "Events",
-      title: "Team Photo Day",
-    },
   ];
 
 
@@ -283,10 +306,14 @@ export function MediaHubPage() {
         category: p.category,
         title: cleanTitle,
         caption: cleanCaption,
+        order: p.order ?? 100,
       };
     }),
-    ...photos,
-  ];
+    ...photos.map((p, index) => ({
+      ...p,
+      order: p.order ?? (index * 0.1 + 200),
+    })),
+  ].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
 
   const newsItems = (
     newsData.length > 0 && newsData.some((n) => n.title.includes("Osinachi Ohale"))

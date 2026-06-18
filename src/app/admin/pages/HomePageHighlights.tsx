@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { Loader2, Plus, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
 
 export function HomePageHighlights() {
-  const { items, loading, createItem, updateItem, deleteItem, upload } = useAdminCRUD<HomeHighlight>("homeHighlight");
+  const { items, loading, createItem, updateItem, deleteItem, upload, createMany, deleteMany } = useAdminCRUD<HomeHighlight>("homeHighlight");
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -30,6 +30,58 @@ export function HomePageHighlights() {
     image: { url: "", alt: "", caption: "" },
     order: 0,
   });
+
+  const handleSyncDefaults = async () => {
+    if (confirm("This will replace all highlights in the database with the default 2026 highlights. Are you sure you want to proceed?")) {
+      const loadingToast = toast.loading("Syncing default 2026 highlights...");
+      try {
+        if (items.length > 0) {
+          const ids = items.map((it) => it.id);
+          await deleteMany(ids);
+        }
+        
+        const defaults: HomeHighlight[] = [
+          {
+            title: "Pedro Carrena 100 Goals Milestone",
+            description: "Pedro Carrena scored his historic 100th goal, establishing an unmatched record.",
+            image: {
+              url: "/pegasus archive/PEDRO CARRENA 100 Goals Milestone/WhatsApp Image 2026-06-12 at 2.43.57 PM.jpeg",
+              alt: "Pedro Carrena 100 Goals Milestone",
+              caption: "Pedro Carrena 100 Goals Milestone",
+            },
+            order: 1,
+          },
+          {
+            title: "Wolverhampton & Brentford Scouting",
+            description: "Hosted professional English Premier League scouts at our academy fields.",
+            image: {
+              url: "/pegasus archive/Scout game from WolverhampthonWanderers and Brentforf FC in England/WhatsApp Image 2026-06-12 at 2.43.58 PM.jpeg",
+              alt: "Wolverhampton & Brentford Scouting",
+              caption: "Wolverhampton & Brentford Scouting",
+            },
+            order: 2,
+          },
+          {
+            title: "Basketball Academy Grand Launch",
+            description: "Celebrated the official team launch and photoshoot on June 5, 2026.",
+            image: {
+              url: "/pegasus archive/We lunched our basketball team 5th of June/image 6.jpeg",
+              alt: "Basketball Academy Grand Launch",
+              caption: "Basketball Academy Grand Launch",
+            },
+            order: 3,
+          },
+        ];
+
+        await createMany(defaults.map((d) => ({ data: d, status: "published" })));
+        toast.dismiss(loadingToast);
+        toast.success("Successfully synced database with the default 2026 highlights!");
+      } catch (err: any) {
+        toast.dismiss(loadingToast);
+        toast.error("Failed to sync highlights: " + err.message);
+      }
+    }
+  };
 
   const handleOpen = (item?: any) => {
     if (item) {
@@ -113,10 +165,15 @@ export function HomePageHighlights() {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Recent Highlights Management</CardTitle>
-        <Button onClick={() => handleOpen()}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Highlight
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleSyncDefaults}>
+            Sync to Default 2026 Highlights
+          </Button>
+          <Button onClick={() => handleOpen()}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Highlight
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <Table>
