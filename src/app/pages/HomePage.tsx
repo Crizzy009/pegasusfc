@@ -356,7 +356,15 @@ export function HomePage() {
             <h2 className="text-4xl font-bold text-secondary">Meet the Team</h2>
           </div>
           {(() => {
+            const dejiDaniel: Coach = {
+              name: "Mr. Deji Daniel",
+              title: "Sporting & Technical Director",
+              bio: "Overseeing sporting programs, coaching structure, and player development pathways.",
+              photo: { url: `${import.meta.env.BASE_URL}deji sporting dir.jpeg`, alt: "Mr. Deji Daniel" },
+              order: 1,
+            };
             const fallback: Coach[] = [
+              dejiDaniel,
               {
                 name: "Coach Emeka",
                 title: "Head Coach",
@@ -386,10 +394,11 @@ export function HomePage() {
                 order: 40,
               },
             ];
-            const list = coachesData.length ? coachesData : fallback;
-            const sorted = [...list].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).slice(0, 4);
+            const dbList = coachesData.length ? coachesData.filter(c => !c.name.toLowerCase().includes("deji")) : fallback.slice(1);
+            const merged = [dejiDaniel, ...dbList];
+            const sorted = [...merged].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).slice(0, 5);
             return (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-6 max-w-6xl mx-auto">
                 {sorted.map((c, i) => (
                   <motion.div
                     key={`${c.name}-${i}`}
@@ -400,7 +409,7 @@ export function HomePage() {
                     <Card className="p-5 h-full shadow-lg hover:shadow-2xl transition-shadow">
                       <div className="flex flex-col items-center gap-3 md:flex-row md:items-center md:gap-4">
                         <div className="w-16 h-20 rounded-md overflow-hidden bg-muted border shrink-0">
-                          <img src={c.photo?.url || placeholderPhotoUrl} alt={c.photo?.alt || c.name} className="w-full h-full object-cover" />
+                          <img src={c.photo?.url || placeholderPhotoUrl} alt={c.photo?.alt || c.name} className="w-full h-full object-cover object-top" />
                         </div>
                         <div className="min-w-0 text-center md:text-left">
                           <div className="font-bold text-secondary leading-tight break-words line-clamp-2">{c.name}</div>

@@ -8,7 +8,7 @@ import { usePublicContent } from "../content/useContent";
 import type { MediaPhoto, NewsPost, MediaVideo } from "../content/types";
 import { getVideoEmbedUrl } from "../lib/video";
 
-function SafeImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
+function SafeImage({ src, alt, className, style }: { src: string; alt: string; className?: string; style?: React.CSSProperties }) {
   const [error, setError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const placeholder = `${import.meta.env.BASE_URL}placeholders/photo.svg`;
@@ -42,6 +42,7 @@ function SafeImage({ src, alt, className }: { src: string; alt: string; classNam
       src={retryCount > 0 ? `${src}?retry=${retryCount}` : src}
       alt={alt}
       className={className}
+      style={style}
       onError={() => setError(true)}
       loading="lazy"
     />
@@ -325,6 +326,13 @@ export function MediaHubPage() {
         }))
       : [
           {
+            date: "June 2026",
+            title: "Mr. Deji Daniel Appointed Sporting & Technical Director",
+            excerpt:
+              "We are pleased to announce the appointment of Mr. Deji Daniel as the new Sporting and Technical Director of Pegasus Sports Academy, effective immediately. He will oversee our sporting programs, coaching structure, player development pathways, and overall technical direction.",
+            image: `${import.meta.env.BASE_URL}deji sporting dir.jpeg`,
+          },
+          {
             date: "2025",
             title: "Super Eagle Ogenyi Onazi Visits Pegasus",
             excerpt:
@@ -510,7 +518,7 @@ export function MediaHubPage() {
                           <SafeImage
                             src={article.image}
                             alt={article.title}
-                            className="w-full h-full object-cover transition-transform hover:scale-110 duration-500"
+                            className="w-full h-full object-cover object-top transition-transform hover:scale-110 duration-500"
                           />
                         </div>
                         <div className="p-6">

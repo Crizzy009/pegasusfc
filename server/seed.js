@@ -150,6 +150,18 @@ export function ensureSeedData(db) {
     order: 10,
   });
 
+  seed("coach", "published", {
+    name: "Mr. Deji Daniel",
+    title: "Sporting & Technical Director",
+    bio: "Overseeing sporting programs, coaching structure, player development pathways, and overall technical direction of the academy.",
+    photo: {
+      url: "/deji sporting dir.jpeg",
+      alt: "Mr. Deji Daniel - Sporting & Technical Director",
+      caption: "",
+    },
+    order: 1,
+  });
+
   const mediaPhotos = [
     {
       title: "Pedro Carrena 100 Goals Celebration",
@@ -450,6 +462,20 @@ export function ensureSeedData(db) {
   mediaVideos.forEach((v) => seed("mediaVideo", "published", v));
 
   const newsPosts = [
+    {
+      title: "Mr. Deji Daniel Appointed Sporting & Technical Director",
+      excerpt: "We are pleased to announce the appointment of Mr. Deji Daniel as the new Sporting and Technical Director of Pegasus Sports Academy, effective immediately.",
+      bodyHtml:
+        "<p>We are pleased to announce the appointment of Mr. Deji Daniel as the new Sporting and Technical Director of Pegasus Sports Academy, effective immediately.</p><p>Mr. Deji brings a wealth of experience and a strong passion for youth development, player growth, and technical excellence. In this role, he will oversee our sporting programs, coaching structure, player development pathways, and overall technical direction of the academy.</p><p>Please join us in welcoming him to the Pegasus family and giving him your full support as we take the next step forward. Let's keep building together!</p>",
+      date: "June 2026",
+      image: {
+        url: "/deji sporting dir.jpeg",
+        alt: "Mr. Deji Daniel - Sporting & Technical Director",
+        caption: "Congratulations Mr. Deji Daniel",
+      },
+      scheduledAt: "",
+      order: 0.1,
+    },
     {
       title: "Super Eagle Ogenyi Onazi Visits Pegasus",
       excerpt: "We were thrilled to welcome Super Eagles midfielder Ogenyi Onazi to our academy for a special training and inspiration session.",
